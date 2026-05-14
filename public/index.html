@@ -1,0 +1,2133 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="theme-color" content="#0f0f13">
+<title>NegadosApp</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<style>
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;}
+body{font-family:system-ui,-apple-system,sans-serif;background:#0f0f13;color:#f0f0f5;max-width:480px;margin:0 auto;min-height:100vh;}
+.hide{display:none!important;}
+.scr{display:none;flex-direction:column;min-height:100vh;}
+.scr.on{display:flex;}
+.topbar{background:#17171e;border-bottom:1px solid rgba(255,255,255,.08);padding:12px 14px;display:flex;align-items:center;gap:10px;font-size:16px;font-weight:700;position:sticky;top:0;z-index:10;}
+.body{flex:1;padding:14px;display:flex;flex-direction:column;gap:12px;padding-bottom:76px;overflow-y:auto;}
+.card{background:#22222d;border:1px solid rgba(255,255,255,.08);border-radius:12px;padding:14px;}
+.card h3{font-size:11px;font-weight:600;color:#8888a0;text-transform:uppercase;letter-spacing:.06em;margin-bottom:10px;}
+input,select{width:100%;background:#1e1e28;border:1px solid rgba(255,255,255,.12);border-radius:8px;color:#f0f0f5;font-size:15px;padding:11px 13px;font-family:inherit;}
+input:focus,select:focus{outline:2px solid #3d9be9;border-color:transparent;}
+select option{background:#1e1e28;}
+.btn{width:100%;padding:13px;border-radius:9px;border:none;font-size:15px;font-weight:700;cursor:pointer;font-family:inherit;}
+.btn:active{opacity:.8;}
+.btn-r{background:#e84855;color:#fff;}
+.btn-b{background:#3d9be9;color:#fff;}
+.btn-g{background:#30c97e;color:#fff;}
+.btn-o{background:transparent;color:#f0f0f5;border:1px solid rgba(255,255,255,.15);}
+.row{display:flex;gap:8px;align-items:center;}
+.jb{justify-content:space-between;}
+.tgl{flex:1;padding:11px 6px;border-radius:8px;border:1px solid rgba(255,255,255,.12);background:#1e1e28;color:#8888a0;font-size:13px;font-weight:600;cursor:pointer;font-family:inherit;text-align:center;}
+.tgl.sr{background:rgba(232,72,85,.2);border-color:#e84855;color:#ff7a85;}
+.tgl.sb{background:rgba(61,155,233,.2);border-color:#3d9be9;color:#6bb8f7;}
+.tgl.sg{background:rgba(48,201,126,.2);border-color:#30c97e;color:#5ddea0;}
+.pill{display:inline-flex;padding:2px 9px;border-radius:20px;font-size:11px;font-weight:700;}
+.pr{background:rgba(232,72,85,.2);color:#ff7a85;}
+.pb{background:rgba(61,155,233,.2);color:#6bb8f7;}
+.pg{background:rgba(48,201,126,.2);color:#5ddea0;}
+.pw{background:rgba(247,183,49,.2);color:#ffd060;}
+.al{border-radius:8px;padding:10px 13px;font-size:13px;margin-top:8px;}
+.al-r{background:rgba(232,72,85,.15);border:1px solid rgba(232,72,85,.3);color:#ff7a85;}
+.al-b{background:rgba(61,155,233,.15);border:1px solid rgba(61,155,233,.3);color:#6bb8f7;}
+.al-g{background:rgba(48,201,126,.15);border:1px solid rgba(48,201,126,.3);color:#5ddea0;}
+.al-w{background:rgba(247,183,49,.15);border:1px solid rgba(247,183,49,.3);color:#ffd060;}
+.li{background:#1e1e28;border-radius:9px;padding:11px 13px;border-left:3px solid transparent;margin-bottom:7px;}
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:8px;}
+.sc{background:#1e1e28;border-radius:10px;padding:12px;cursor:pointer;}
+.sc:active{opacity:.8;}
+.sc .v{font-size:24px;font-weight:700;margin-bottom:2px;}
+.sc .l{font-size:11px;color:#8888a0;}
+.pb2{background:#17171e;border-radius:4px;height:7px;overflow:hidden;margin-top:5px;}
+.pf{height:100%;border-radius:4px;}
+.av{width:34px;height:34px;border-radius:50%;background:#e84855;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:13px;flex-shrink:0;}
+.fg{display:grid;grid-template-columns:1fr 1fr;gap:8px;}
+.fb{background:#1e1e28;border:1px solid rgba(255,255,255,.08);border-radius:9px;padding:11px 8px;cursor:pointer;text-align:center;font-size:12px;color:#f0f0f5;font-family:inherit;}
+.fb:active{background:rgba(61,155,233,.2);}
+.mr{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:10px;}
+.mb{padding:16px;border-radius:9px;border:1px solid rgba(255,255,255,.08);background:#1e1e28;cursor:pointer;font-size:15px;font-weight:700;font-family:inherit;}
+.mb:active{opacity:.8;}
+.mb-g{background:rgba(48,201,126,.15);border-color:#30c97e;color:#30c97e;}
+.mb-r{background:rgba(232,72,85,.15);border-color:#e84855;color:#e84855;}
+.slist{display:flex;flex-direction:column;max-height:320px;overflow-y:auto;}
+.emp{text-align:center;color:#8888a0;font-size:13px;padding:24px 0;}
+.nav{position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:100%;max-width:480px;background:#17171e;border-top:1px solid rgba(255,255,255,.08);display:flex;z-index:20;}
+.ni{flex:1;display:flex;flex-direction:column;align-items:center;padding:9px 0 6px;cursor:pointer;color:#8888a0;font-size:10px;gap:3px;border:none;background:none;font-family:inherit;}
+.ni.on{color:#e84855;}
+.ni span:first-child{font-size:20px;}
+.back-btn{background:none;border:none;color:#8888a0;font-size:24px;cursor:pointer;padding:0;line-height:1;}
+.ac-wrap{position:relative;}
+.ac-drop{position:absolute;top:100%;left:0;right:0;background:#22222d;border:1px solid rgba(255,255,255,.15);border-radius:8px;z-index:50;max-height:220px;overflow-y:auto;display:none;}
+.ac-item{padding:10px 13px;cursor:pointer;font-size:13px;border-bottom:1px solid rgba(255,255,255,.05);}
+.ac-item:last-child{border-bottom:none;}
+.ac-item:active{background:rgba(61,155,233,.15);}
+.ac-cod{font-family:monospace;font-weight:700;color:#6bb8f7;}
+.ac-desc{color:#8888a0;font-size:11px;margin-top:2px;}
+.chtab{padding:6px 13px;border-radius:20px;border:1px solid rgba(255,255,255,.1);background:#1e1e28;color:#8888a0;font-size:12px;font-weight:600;cursor:pointer;white-space:nowrap;font-family:inherit;}
+.chtab.on{background:rgba(61,155,233,.2);border-color:#3d9be9;color:#6bb8f7;}
+.motbtn{padding:13px 8px;border-radius:9px;border:1px solid rgba(255,255,255,.12);background:#1e1e28;color:#8888a0;font-size:13px;font-weight:600;cursor:pointer;font-family:inherit;text-align:center;}
+.motbtn.sel{background:rgba(232,72,85,.2);border-color:#e84855;color:#ff7a85;}
+.motbtn-ok{color:#8888a0;}
+.motbtn-ok.sel{background:rgba(48,201,126,.2);border-color:#30c97e;color:#5ddea0;}
+.spin{display:inline-block;width:14px;height:14px;border:2px solid rgba(255,255,255,.2);border-top-color:#fff;border-radius:50%;animation:sp .7s linear infinite;vertical-align:middle;margin-right:6px;}
+@keyframes sp{to{transform:rotate(360deg);}}
+.slbl{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;padding:0 2px;}
+.dt-badge{font-size:11px;background:#e84855;color:#fff;padding:2px 8px;border-radius:20px;white-space:nowrap;}
+.offbar{background:#f7b731;color:#000;text-align:center;font-size:12px;font-weight:700;padding:6px;display:none;}
+</style>
+</head>
+<body>
+
+<div id="offBar" class="offbar">⚠️ Sin conexión al servidor</div>
+
+<!-- ════════ LOGIN ════════ -->
+<div id="scrLogin" class="scr on" style="justify-content:center;padding:32px 20px;gap:16px;min-height:100vh;flex-direction:column;">
+  <div style="text-align:center;padding:16px 0;">
+    <div id="logoWrap" style="margin-bottom:8px;">
+      <img id="logoImg" src="/logo.png"
+           style="width:90px;height:90px;border-radius:16px;object-fit:contain;"
+           onerror="this.style.display='none';document.getElementById('logoEmoji').style.display='block';" />
+      <div id="logoEmoji" style="font-size:52px;display:none;">🚫</div>
+    </div>
+    <div style="font-size:28px;font-weight:800;margin-top:4px;letter-spacing:-.02em;">NegadosApp</div>
+    <div style="font-size:13px;color:#8888a0;margin-top:6px;">IUSA · Gestión de negados</div>
+  </div>
+  <div class="card" style="display:flex;flex-direction:column;gap:12px;">
+    <h3>Acceso</h3>
+    <div>
+      <label style="font-size:12px;color:#8888a0;display:block;margin-bottom:4px;">NOMBRE COMPLETO</label>
+      <input id="iNom" type="text" placeholder="Ej: Juan García" autocomplete="name" />
+    </div>
+    <div>
+      <label style="font-size:12px;color:#8888a0;display:block;margin-bottom:4px;">NÚMERO DE CELULAR</label>
+      <input id="iCel" type="tel" placeholder="Ej: 3312345678" autocomplete="tel" />
+    </div>
+    <button class="btn btn-r" id="btnLogin" onclick="doLogin()">Entrar →</button>
+    <div id="lErr" class="al al-r hide"></div>
+  </div>
+  <div style="font-size:11px;color:#444;text-align:center;">9,097 códigos IUSA</div>
+</div>
+
+<!-- ════════ CAPTURA ════════ -->
+<div id="scrCaptura" class="scr">
+  <div class="topbar">
+    <div id="avt" class="av">U</div>
+    <span id="usrLbl" style="font-size:13px;max-width:130px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;"></span>
+    <span id="dtLbl" class="dt-badge" style="margin-left:auto;margin-right:4px;">--/--/----</span>
+    <span id="rolTopBadge" style="font-size:10px;font-weight:700;padding:2px 8px;border-radius:20px;margin-right:4px;"></span>
+    <button onclick="doLogout()" style="background:none;border:1px solid rgba(255,255,255,.15);border-radius:6px;color:#8888a0;font-size:12px;cursor:pointer;padding:4px 8px;font-family:inherit;">Salir</button>
+  </div>
+  <!-- Sticky search area — never scrolls away -->
+  <div style="position:sticky;top:56px;z-index:9;background:#0f0f13;padding:12px 14px 0;">
+
+    <!-- Filtro por asesor — solo admins -->
+    <div id="captAsesorBar" class="hide" style="background:#22222d;border:1px solid rgba(247,183,49,.2);border-radius:10px;padding:10px 12px;margin-bottom:8px;display:flex;align-items:center;gap:10px;">
+      <span style="font-size:18px;">👥</span>
+      <div style="flex:1;">
+        <div style="font-size:10px;font-weight:700;color:#ffd060;margin-bottom:4px;text-transform:uppercase;letter-spacing:.06em;">Ver capturas de:</div>
+        <select id="captAsesorSel" onchange="setCaptAsesor(this.value)"
+          style="background:#1e1e28;border:1px solid rgba(255,255,255,.12);border-radius:7px;color:#f0f0f5;font-size:13px;padding:6px 10px;width:100%;">
+          <option value="">Todos los asesores</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="card" style="margin-bottom:0;">
+      <h3>Buscar código</h3>
+      <div class="ac-wrap">
+        <input id="codIn" type="text" placeholder="Código o descripción del producto..." oninput="onCodInput(this.value)" autocomplete="off" />
+        <div id="acDrop" class="ac-drop"></div>
+      </div>
+      <button class="btn btn-b" style="margin-top:10px;" onclick="validarCod()">🔍 Validar código</button>
+      <div id="valRes"></div>
+    </div>
+  </div>
+
+  <!-- Scrollable area below -->
+  <div class="body" style="padding-top:8px;">
+
+    <div id="regForm" class="card hide">
+      <div id="formTitle" style="font-size:12px;font-weight:700;text-transform:uppercase;color:#8888a0;margin-bottom:10px;letter-spacing:.05em;">Registrar</div>
+      <div id="codInfo" style="margin-bottom:12px;"></div>
+
+      <div id="tipoRow" style="margin-bottom:10px;">
+        <div style="font-size:11px;color:#8888a0;margin-bottom:7px;font-weight:600;">TIPO DE REGISTRO</div>
+        <div class="row">
+          <button class="tgl" id="tNeg" onclick="setTipo('negado')">🚫 Negado</button>
+          <button class="tgl" id="tFue" onclick="setTipo('fuera')">📦 Fuera catálogo</button>
+        </div>
+      </div>
+
+      <!-- CAMPOS NEGADO: dist + piezas -->
+      <div id="camNeg" class="hide">
+        <div style="margin-bottom:10px;">
+          <div style="font-size:11px;color:#8888a0;margin-bottom:7px;font-weight:600;">¿DISTRIBUIDOR MANEJA ESTE CÓDIGO?</div>
+          <div class="row">
+            <button class="tgl" id="dSi" onclick="setDist('si')">✅ Sí lo maneja</button>
+            <button class="tgl" id="dNo" onclick="setDist('no')">❌ No lo maneja</button>
+          </div>
+        </div>
+        <div style="margin-bottom:12px;">
+          <div style="font-size:11px;color:#8888a0;margin-bottom:7px;font-weight:600;">PIEZAS NEGADAS</div>
+          <input id="pzNeg" type="number" min="1" placeholder="Cantidad" style="text-align:center;font-size:22px;font-weight:700;" />
+        </div>
+      </div>
+
+
+
+      <div id="camFue" class="hide">
+        <div style="background:rgba(61,155,233,.08);border:1px solid rgba(61,155,233,.2);border-radius:8px;padding:10px;margin-bottom:12px;">
+          <div style="font-size:11px;font-weight:700;color:#6bb8f7;">📦 FUERA DE CATÁLOGO — no existe en lista de precios IUSA</div>
+        </div>
+        <div style="margin-bottom:10px;">
+          <div style="font-size:11px;color:#8888a0;margin-bottom:7px;font-weight:600;">DESCRIPCIÓN DEL CLIENTE (opcional)</div>
+          <input id="fDesc" type="text" placeholder="¿Cómo llama el cliente este producto?" />
+        </div>
+        <div style="margin-bottom:10px;">
+          <div style="font-size:11px;color:#8888a0;margin-bottom:7px;font-weight:600;">PIEZAS SOLICITADAS</div>
+          <input id="pzFue" type="number" min="1" placeholder="Cantidad" style="text-align:center;font-size:22px;font-weight:700;" />
+        </div>
+        <div style="margin-bottom:12px;">
+          <div style="font-size:11px;color:#8888a0;margin-bottom:7px;font-weight:600;">¿DISTRIBUIDOR CONOCE ALGO SIMILAR?</div>
+          <div class="row">
+            <button class="tgl" id="dSiF" onclick="setDistF('si')">✅ Sí</button>
+            <button class="tgl" id="dNoF" onclick="setDistF('no')">❌ No</button>
+          </div>
+        </div>
+      </div>
+
+      <button class="btn btn-g" onclick="guardarReg()">💾 Guardar registro</button>
+      <div id="saveMsg"></div>
+    </div>
+
+    <div class="card">
+      <div class="row jb" style="margin-bottom:10px;">
+        <h3 id="hoyTitle" style="margin:0;">Mis registros de hoy</h3>
+        <span id="hoyN" class="pill pr">0</span>
+      </div>
+      <div id="listHoy"><div class="emp">Sin registros hoy</div></div>
+    </div>
+    </div>
+</div>
+</div>
+
+<!-- ════════ DASHBOARD ════════ -->
+<div id="scrDash" class="scr">
+  <div class="topbar">
+    <div id="avt2" class="av" style="flex-shrink:0;">U</div>
+    <span id="usrLbl2" style="font-size:13px;max-width:100px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;"></span>
+    <span style="font-size:16px;margin-left:4px;">📊</span><span style="font-size:15px;font-weight:700;">Dashboard</span>
+    <span id="dtLbl2" class="dt-badge" style="margin-left:auto;margin-right:4px;">--/--/----</span>
+    <span id="rolTopBadge2" style="font-size:10px;font-weight:700;padding:2px 8px;border-radius:20px;"></span>
+  </div>
+  <div class="body">
+    <div id="adminBar" class="card hide">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;">
+        <div style="font-size:11px;font-weight:700;color:#ffd060;">👑 Vista administrador</div>
+        <div id="merchAdminTotals" style="font-size:12px;color:#8888a0;"></div>
+      </div>
+      <select id="vendSel" onchange="setVendedor(this.value)"></select>
+    </div>
+
+    <!-- SEMANA -->
+    <div class="card" style="padding:10px 8px;">
+      <!-- Header: arrows + week label -->
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;">
+        <button onclick="navWeek(-1)" style="background:none;border:1px solid rgba(255,255,255,.15);border-radius:7px;color:#f0f0f5;font-size:16px;cursor:pointer;padding:3px 10px;font-family:inherit;">‹</button>
+        <div id="weekLabel" style="font-size:11px;font-weight:700;color:#8888a0;text-transform:uppercase;letter-spacing:.06em;text-align:center;"></div>
+        <button onclick="navWeek(1)" id="weekNextBtn" style="background:none;border:1px solid rgba(255,255,255,.15);border-radius:7px;color:#f0f0f5;font-size:16px;cursor:pointer;padding:3px 10px;font-family:inherit;">›</button>
+      </div>
+      <!-- Day letters header L M M J V S D -->
+      <div style="display:grid;grid-template-columns:repeat(7,1fr);gap:4px;margin-bottom:3px;">
+        <div style="text-align:center;font-size:9px;font-weight:700;color:#8888a0;">L</div>
+        <div style="text-align:center;font-size:9px;font-weight:700;color:#8888a0;">M</div>
+        <div style="text-align:center;font-size:9px;font-weight:700;color:#8888a0;">M</div>
+        <div style="text-align:center;font-size:9px;font-weight:700;color:#8888a0;">J</div>
+        <div style="text-align:center;font-size:9px;font-weight:700;color:#8888a0;">V</div>
+        <div style="text-align:center;font-size:9px;font-weight:700;color:#8888a0;">S</div>
+        <div style="text-align:center;font-size:9px;font-weight:700;color:#8888a0;">D</div>
+      </div>
+      <!-- Day numbers -->
+      <div id="weekRow" style="display:grid;grid-template-columns:repeat(7,1fr);gap:4px;"></div>
+    </div>
+
+    <!-- DETALLE DEL DÍA SELECCIONADO -->
+    <div id="dayDetailCard" class="card hide">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;">
+        <h3 id="dayDetailTitle" style="margin:0;">Registros del día</h3>
+        <button onclick="cerrarDayDetail()" style="background:none;border:none;color:#8888a0;font-size:18px;cursor:pointer;padding:0;">✕</button>
+      </div>
+      <div id="dayDetailStats" style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:10px;"></div>
+      <div id="dayDetailList" class="slist" style="max-height:280px;"></div>
+    </div>
+
+    <div class="slbl" style="color:#3d9be9;">✅ Distribuidor SÍ maneja</div>
+    <div class="g2">
+      <div class="sc" onclick="irRepDist('si','hoy')" style="border-top:2px solid #3d9be9;">
+        <div class="v" id="dSiH" style="color:#3d9be9;">0</div><div class="l">Hoy</div>
+        <div id="dSiHp" style="font-size:12px;color:#6bb8f7;font-weight:600;margin-top:2px;">0 pz</div>
+        <div style="font-size:10px;color:#555;margin-top:3px;">Ver →</div>
+      </div>
+      <div class="sc" onclick="irRepDist('si','mes')" style="border-top:2px solid #3d9be9;">
+        <div class="v" id="dSiM" style="color:#3d9be9;">0</div><div class="l">Este mes</div>
+        <div id="dSiMp" style="font-size:12px;color:#6bb8f7;font-weight:600;margin-top:2px;">0 pz</div>
+        <div style="font-size:10px;color:#555;margin-top:3px;">Ver →</div>
+      </div>
+    </div>
+
+    <div class="slbl" style="color:#e84855;">❌ Distribuidor NO maneja</div>
+    <div class="g2">
+      <div class="sc" onclick="irRepDist('no','hoy')" style="border-top:2px solid #e84855;">
+        <div class="v" id="dNoH" style="color:#e84855;">0</div><div class="l">Hoy</div>
+        <div id="dNoHp" style="font-size:12px;color:#ff7a85;font-weight:600;margin-top:2px;">0 pz</div>
+        <div style="font-size:10px;color:#555;margin-top:3px;">Ver →</div>
+      </div>
+      <div class="sc" onclick="irRepDist('no','mes')" style="border-top:2px solid #e84855;">
+        <div class="v" id="dNoM" style="color:#e84855;">0</div><div class="l">Este mes</div>
+        <div id="dNoMp" style="font-size:12px;color:#ff7a85;font-weight:600;margin-top:2px;">0 pz</div>
+        <div style="font-size:10px;color:#555;margin-top:3px;">Ver →</div>
+      </div>
+    </div>
+
+    <div class="card" style="padding:12px;">
+      <div style="display:flex;gap:6px;margin-bottom:12px;overflow-x:auto;">
+        <button class="chtab on" id="tab-dia"    onclick="setTab('dia')">Por día</button>
+        <button class="chtab"    id="tab-familia" onclick="setTab('familia')">Familia</button>
+        <button class="chtab"    id="tab-codigo"  onclick="setTab('codigo')">Código</button>
+        <button class="chtab"    id="tab-piezas"  onclick="setTab('piezas')">Piezas</button>
+      </div>
+      <div id="ch-dia"><canvas id="cvDia" height="180"></canvas></div>
+      <div id="ch-familia" class="hide"><canvas id="cvFam" height="260"></canvas></div>
+      <div id="ch-codigo"  class="hide"><canvas id="cvCod" height="260"></canvas></div>
+      <div id="ch-piezas"  class="hide"><canvas id="cvPz"  height="180"></canvas></div>
+    </div>
+
+    <div class="slbl" style="color:#3d9be9;">✅ Top familias — SÍ maneja</div>
+    <div class="card" style="border-top:2px solid #3d9be9;"><div id="famSi"><div class="emp">Sin datos</div></div></div>
+    <div class="slbl" style="color:#e84855;">❌ Top familias — NO maneja</div>
+    <div class="card" style="border-top:2px solid #e84855;"><div id="famNo"><div class="emp">Sin datos</div></div></div>
+    <div class="slbl" style="color:#3d9be9;">✅ Top códigos — SÍ maneja</div>
+    <div class="card" style="border-top:2px solid #3d9be9;"><div id="topSi" class="slist"><div class="emp">Sin datos</div></div></div>
+    <div class="slbl" style="color:#e84855;">❌ Top códigos — NO maneja</div>
+    <div class="card" style="border-top:2px solid #e84855;"><div id="topNo" class="slist"><div class="emp">Sin datos</div></div></div>
+
+    <!-- Resultados inline al tocar tarjeta -->
+    <div id="dashInlineCard" class="card hide">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;">
+        <h3 id="dashInlineTitle" style="margin:0;font-size:13px;"></h3>
+        <button onclick="hide('dashInlineCard')" style="background:none;border:none;color:#8888a0;font-size:18px;cursor:pointer;padding:0;">✕</button>
+      </div>
+      <div id="dashInlineList" class="slist" style="max-height:400px;overflow-y:auto;"></div>
+    </div>
+  </div>
+</div>
+<!-- ════════ MERCH ════════ -->
+<div id="scrMerch" class="scr">
+  <div class="topbar">
+    <div id="avt3" class="av" style="flex-shrink:0;">U</div>
+    <span id="usrLbl3" style="font-size:13px;max-width:100px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;"></span>
+    <span style="font-size:16px;margin-left:4px;">🛒</span><span style="font-size:15px;font-weight:700;">Merch</span>
+    <span id="dtLbl3" class="dt-badge" style="margin-left:auto;margin-right:4px;">--/--/----</span>
+    <span id="rolTopBadge3" style="font-size:10px;font-weight:700;padding:2px 8px;border-radius:20px;"></span>
+  </div>
+  <div class="body">
+
+    <!-- Admin filter bar — vendors + date -->
+    <div id="merchAdminBar" class="card hide">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;">
+        <div style="font-size:11px;font-weight:700;color:#ffd060;">👑 Vista administrador</div>
+        <div id="merchAdminTotals" style="font-size:12px;color:#8888a0;"></div>
+      </div>
+      <select id="merchVendSel" onchange="setMerchVendedor(this.value)" style="margin-bottom:10px;">
+        <option value="">Todos los asesores</option>
+      </select>
+      <!-- Semana Merch -->
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px;">
+        <button onclick="navMerchWeek(-1)" style="background:none;border:1px solid rgba(255,255,255,.15);border-radius:7px;color:#f0f0f5;font-size:16px;cursor:pointer;padding:3px 10px;font-family:inherit;">‹</button>
+        <div id="merchWeekLabel" style="font-size:11px;font-weight:700;color:#8888a0;text-align:center;"></div>
+        <button onclick="navMerchWeek(1)" id="merchNextBtn" style="background:none;border:1px solid rgba(255,255,255,.15);border-radius:7px;color:#f0f0f5;font-size:16px;cursor:pointer;padding:3px 10px;font-family:inherit;">›</button>
+      </div>
+      <!-- Day letters -->
+      <div style="display:grid;grid-template-columns:repeat(7,1fr);gap:3px;margin-bottom:3px;">
+        <div style="text-align:center;font-size:9px;font-weight:700;color:#8888a0;">L</div>
+        <div style="text-align:center;font-size:9px;font-weight:700;color:#8888a0;">M</div>
+        <div style="text-align:center;font-size:9px;font-weight:700;color:#8888a0;">M</div>
+        <div style="text-align:center;font-size:9px;font-weight:700;color:#8888a0;">J</div>
+        <div style="text-align:center;font-size:9px;font-weight:700;color:#8888a0;">V</div>
+        <div style="text-align:center;font-size:9px;font-weight:700;color:#8888a0;">S</div>
+        <div style="text-align:center;font-size:9px;font-weight:700;color:#8888a0;">D</div>
+      </div>
+      <div id="merchWeekRow" style="display:grid;grid-template-columns:repeat(7,1fr);gap:3px;margin-bottom:8px;"></div>
+      <button onclick="limpiarFiltroMerch()" style="background:none;border:1px solid rgba(255,255,255,.15);border-radius:7px;color:#8888a0;font-size:12px;cursor:pointer;padding:6px 12px;font-family:inherit;width:100%;">✕ Ver todo</button>
+    </div>
+
+    <div id="mStep1" class="card">
+      <h3>Selecciona una familia</h3>
+      <input id="mFamSearch" type="text" placeholder="Buscar familia..." oninput="filtrarFams(this.value)" style="margin-bottom:10px;" />
+      <div class="fg" id="famGrid"></div>
+    </div>
+    <div id="mStep2" class="hide" style="flex-direction:column;gap:12px;">
+      <div class="card">
+        <div class="row" style="margin-bottom:12px;gap:12px;">
+          <button class="back-btn" onclick="mVolver()">‹</button>
+          <div>
+            <div style="font-size:11px;color:#8888a0;font-weight:600;">FAMILIA</div>
+            <div id="mFamSel" style="font-size:13px;font-weight:700;"></div>
+          </div>
+        </div>
+        <h3>Código a sugerir al cliente</h3>
+        <div style="position:relative;margin-bottom:6px;">
+          <input id="mCod" type="text" placeholder="Escribe código o descripción..." oninput="onMerchInput(this.value)" autocomplete="off" style="width:100%;" />
+          <!-- Results list — absolute so it doesn't push content down -->
+          <div id="mSearchList" style="display:none;position:absolute;top:100%;left:0;right:0;z-index:50;background:#22222d;border:1px solid rgba(61,155,233,.3);border-radius:8px;max-height:240px;overflow-y:auto;box-shadow:0 4px 20px rgba(0,0,0,.4);"></div>
+        </div>
+        <!-- PASO 1: Acepto / Rechazo -->
+        <div id="mP1">
+          <div style="font-size:11px;color:#8888a0;margin-bottom:8px;font-weight:600;">RESPUESTA DEL CLIENTE</div>
+          <div class="mr">
+            <button class="mb mb-g" onclick="mResp('acepto')">✅ Aceptó</button>
+            <button class="mb mb-r" onclick="mResp('rechazo')">❌ Rechazó</button>
+          </div>
+        </div>
+
+        <!-- PASO 2A: Motivos ACEPTO -->
+        <div id="mP2Acepto" class="hide">
+          <div style="background:rgba(48,201,126,.08);border:1px solid rgba(48,201,126,.25);border-radius:9px;padding:12px;margin-bottom:12px;">
+            <div style="font-size:11px;color:#5ddea0;font-weight:700;margin-bottom:3px;">✅ ¿Por qué aceptó el cliente?</div>
+            <div id="mCodAc" style="font-size:14px;font-weight:700;font-family:monospace;margin-top:3px;"></div>
+          </div>
+          <div style="font-size:11px;color:#8888a0;margin-bottom:8px;font-weight:600;">MOTIVO DE ACEPTACIÓN</div>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:12px;">
+            <button class="motbtn motbtn-ok" id="maOK1" onclick="selMot('precio')">💰 Precio</button>
+            <button class="motbtn motbtn-ok" id="maOK2" onclick="selMot('durabilidad')">🏆 Durabilidad</button>
+            <button class="motbtn motbtn-ok" id="maOK3" onclick="selMot('ya lo manejaba')" style="grid-column:span 2;">✔️ Ya lo manejaba</button>
+          </div>
+          <div style="display:flex;gap:8px;">
+            <button class="btn btn-o" style="flex:1;padding:11px;" onclick="mP1Back()">‹ Cambiar</button>
+            <button class="btn btn-g" style="flex:1;padding:11px;" id="mGuardarAc" onclick="guardarMerch()" disabled>Guardar →</button>
+          </div>
+        </div>
+
+        <!-- PASO 2B: Motivos RECHAZO -->
+        <div id="mP2Rec" class="hide">
+          <div style="background:rgba(232,72,85,.08);border:1px solid rgba(232,72,85,.2);border-radius:9px;padding:12px;margin-bottom:12px;">
+            <div style="font-size:11px;color:#ff7a85;font-weight:700;margin-bottom:3px;">❌ ¿Por qué rechazó el cliente?</div>
+            <div id="mCodRec" style="font-size:14px;font-weight:700;font-family:monospace;margin-top:3px;"></div>
+          </div>
+          <div style="font-size:11px;color:#8888a0;margin-bottom:8px;font-weight:600;">MOTIVO DEL RECHAZO</div>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:8px;">
+            <button class="motbtn" id="mrR1" onclick="selMotRec('precio')">💰 Precio</button>
+            <button class="motbtn" id="mrR2" onclick="selMot('no le interesa')">🚫 No le interesa</button>
+            <button class="motbtn" id="mrR3" onclick="selMot('presentacion')">📦 Presentación</button>
+            <button class="motbtn" id="mrR4" onclick="selMot('no lo conoce')">❓ No lo conoce</button>
+            <button class="motbtn" id="mrR5" onclick="selMot('inventario')" style="grid-column:span 2;">📋 Inventario</button>
+          </div>
+          <!-- Sub-motivo precio: competencia -->
+          <div id="mPrecioSub" class="hide" style="background:rgba(247,183,49,.08);border:1px solid rgba(247,183,49,.2);border-radius:9px;padding:10px;margin-bottom:10px;">
+            <div style="font-size:10px;color:#ffd060;font-weight:700;margin-bottom:8px;">💰 PRECIO — ¿Con quién compara?</div>
+            <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px;margin-bottom:10px;">
+              <button class="motbtn" id="mpc1" onclick="selMotPrecio('Argos')"    style="font-size:12px;padding:10px 4px;">Argos</button>
+              <button class="motbtn" id="mpc2" onclick="selMotPrecio('Kobrex')"   style="font-size:12px;padding:10px 4px;">Kobrex</button>
+              <button class="motbtn" id="mpc3" onclick="selMotPrecio('Condulac')" style="font-size:12px;padding:10px 4px;">Condulac</button>
+            </div>
+            <div id="mPrecioInputWrap" class="hide">
+              <div style="font-size:10px;color:#ffd060;font-weight:700;margin-bottom:6px;">¿A qué precio lo vende la competencia?</div>
+              <input id="mPrecioInput" type="number" min="0" step="0.01" placeholder="Ej: 125.50"
+                style="text-align:center;font-size:20px;font-weight:700;background:#1e1e28;border:1px solid rgba(247,183,49,.4);border-radius:8px;color:#ffd060;width:100%;"
+                oninput="onPrecioInput(this.value)" />
+              <div style="font-size:10px;color:#8888a0;margin-top:4px;text-align:center;">Ingresa el precio para poder guardar</div>
+            </div>
+          </div>
+          <div style="display:flex;gap:8px;">
+            <button class="btn btn-o" style="flex:1;padding:11px;" onclick="mP1Back()">‹ Cambiar</button>
+            <button class="btn btn-r" style="flex:1;padding:11px;" id="mGuardar" onclick="guardarMerch()" disabled>Guardar →</button>
+          </div>
+        </div>
+        <div id="mMsg" style="margin-top:8px;"></div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="row jb" style="margin-bottom:8px;">
+        <h3 style="margin:0;">Historial Merch</h3>
+        <div id="mStats" style="font-size:11px;color:#8888a0;"></div>
+      </div>
+      <div id="mList" class="slist"><div class="emp">Sin registros</div></div>
+    </div>
+
+    <!-- GRÁFICAS MERCH -->
+    <div class="card" style="padding:12px;">
+      <div style="display:flex;gap:6px;margin-bottom:12px;overflow-x:auto;">
+        <button class="chtab on" id="mtab-resumen"    onclick="setMTab('resumen')">Resumen</button>
+        <button class="chtab"    id="mtab-motivos"    onclick="setMTab('motivos')">Motivos</button>
+        <button class="chtab"    id="mtab-familia"    onclick="setMTab('familia')">Familia</button>
+        <button class="chtab"    id="mtab-dias"       onclick="setMTab('dias')">Por día</button>
+        <button class="chtab"    id="mtab-competencia" onclick="setMTab('competencia')">🏆 Competencia</button>
+      </div>
+      <div id="mch-resumen">
+        <div style="font-size:11px;color:#8888a0;margin-bottom:8px;font-weight:600;">ACEPTO vs RECHAZO TOTAL</div>
+        <canvas id="cvMRes" height="180"></canvas>
+      </div>
+      <div id="mch-motivos" class="hide">
+        <div style="font-size:11px;color:#8888a0;margin-bottom:4px;font-weight:600;">MOTIVOS DE ACEPTACIÓN</div>
+        <canvas id="cvMAc" height="140"></canvas>
+        <div style="font-size:11px;color:#8888a0;margin:12px 0 4px;font-weight:600;">MOTIVOS DE RECHAZO</div>
+        <canvas id="cvMRec" height="160"></canvas>
+      </div>
+      <div id="mch-familia" class="hide">
+        <div style="font-size:11px;color:#8888a0;margin-bottom:8px;font-weight:600;">ACEPTO vs RECHAZO POR FAMILIA</div>
+        <canvas id="cvMFam" height="240"></canvas>
+      </div>
+      <div id="mch-dias" class="hide">
+        <div style="font-size:11px;color:#8888a0;margin-bottom:8px;font-weight:600;">REGISTROS POR DÍA — 14 DÍAS</div>
+        <canvas id="cvMDias" height="180"></canvas>
+      </div>
+      <div id="mch-competencia" class="hide">
+        <div style="font-size:11px;color:#8888a0;margin-bottom:8px;font-weight:600;">🏆 NEGADOS POR PRECIO — ¿A QUIÉN LE COMPRAN?</div>
+        <canvas id="cvMComp" height="160"></canvas>
+
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ════════ REPORTES ════════ -->
+<div id="scrRep" class="scr">
+  <div class="topbar">
+    <div id="avt4" class="av" style="flex-shrink:0;">U</div>
+    <span id="usrLbl4" style="font-size:13px;max-width:100px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;"></span>
+    <span style="font-size:16px;margin-left:4px;">📁</span><span style="font-size:15px;font-weight:700;">Reportes</span>
+    <span id="dtLbl4" class="dt-badge" style="margin-left:auto;margin-right:4px;">--/--/----</span>
+    <span id="rolTopBadge4" style="font-size:10px;font-weight:700;padding:2px 8px;border-radius:20px;"></span>
+  </div>
+  <div class="body">
+    <div class="card">
+      <h3>Filtros</h3>
+      <select id="fTipo" style="margin-bottom:8px;">
+        <option value="">Todos los tipos</option>
+        <option value="negado">🚫 Negado</option>
+        <option value="fuera">📦 Fuera de catálogo</option>
+      </select>
+      <select id="fDist" style="margin-bottom:8px;">
+        <option value="">Todos</option>
+        <option value="si">✅ Distribuidor SÍ maneja</option>
+        <option value="no">❌ Distribuidor NO maneja</option>
+      </select>
+      <div id="fVendRow" class="hide" style="margin-bottom:8px;">
+        <select id="fVend"></select>
+      </div>
+      <div class="row" style="margin-bottom:8px;gap:6px;">
+        <input id="fDia"  type="number" placeholder="Día"  min="1" max="31" style="flex:1;font-size:13px;padding:8px 10px;" />
+        <input id="fMes"  type="number" placeholder="Mes"  min="1" max="12" style="flex:1;font-size:13px;padding:8px 10px;" />
+        <input id="fAnio" type="number" placeholder="Año"                   style="flex:1;font-size:13px;padding:8px 10px;" />
+      </div>
+      <button class="btn btn-b" onclick="filtrar()">🔍 Filtrar resultados</button>
+      <div style="font-size:11px;color:#8888a0;margin-top:10px;margin-bottom:6px;font-weight:600;">EXPORTAR LO FILTRADO A EXCEL (.CSV):</div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;">
+        <button class="btn btn-g" style="margin:0;padding:10px;font-size:13px;" onclick="exportar('regs')">⬇ Captura</button>
+        <button class="btn btn-o" style="margin:0;padding:10px;font-size:13px;" onclick="exportar('merch')">⬇ Merch</button>
+        <button class="btn btn-o" style="margin:0;padding:10px;font-size:13px;grid-column:span 2;" onclick="exportar('codigo')">⬇ Códigos</button>
+        <button class="btn btn-o" style="margin:0;padding:10px;font-size:13px;grid-column:span 2;" onclick="exportar('competencia')">⬇ Competencia &amp; Precio</button>
+      </div>
+    </div>
+    <div class="card">
+      <div class="row jb" style="margin-bottom:10px;">
+        <h3 style="margin:0;">Resultados</h3>
+        <span id="repN" class="pill pb">0</span>
+      </div>
+      <div id="repList" class="slist"><div class="emp">Aplica filtros arriba</div></div>
+    </div>
+    <div id="trkCard" class="card hide">
+      <h3>🔐 Actividad <span style="font-size:10px;color:#ffd060;">(Admin)</span></h3>
+      <div id="trkList" class="slist" style="max-height:200px;"><div class="emp">Sin actividad</div></div>
+    </div>
+    <div class="card"><h3>Usuarios</h3><div id="uList"><div class="emp">Sin datos</div></div></div>
+  </div>
+</div>
+
+<nav class="nav hide" id="mainNav">
+  <button class="ni on" id="navC" onclick="ir('Captura')"><span>📝</span>Captura</button>
+  <button class="ni" id="navD" onclick="ir('Dash')"><span>📊</span>Dashboard</button>
+  <button class="ni" id="navM" onclick="ir('Merch')"><span>🛒</span>Merch</button>
+  <button class="ni" id="navR" onclick="ir('Rep')"><span>📁</span>Reportes</button>
+  <button class="ni hide" id="navA" onclick="ir('Accesos')"><span>👥</span>Accesos</button>
+</nav>
+
+
+<!-- ════════ VENTAS ════════ -->
+<div id="scrVentas" class="scr">
+  <div class="topbar">
+    <span>💰</span><span>Ventas</span>
+    <span id="dtVLbl" class="dt-badge" style="margin-left:auto;">--/--/----</span>
+  </div>
+  <div class="body">
+    <div class="card">
+      <h3>Buscar código vendido</h3>
+      <div class="ac-wrap">
+        <input id="vCodIn" type="text" placeholder="Código o descripción..." oninput="onVCodInput(this.value)" autocomplete="off" />
+        <div id="vAcDrop" class="ac-drop"></div>
+      </div>
+      <button class="btn btn-b" style="margin-top:10px;" onclick="validarVenta()">🔍 Validar código</button>
+      <div id="vValRes"></div>
+    </div>
+
+    <div id="vForm" class="card hide">
+      <div id="vCodInfo" style="margin-bottom:12px;"></div>
+      <div style="margin-bottom:14px;">
+        <div style="font-size:11px;color:#8888a0;margin-bottom:7px;font-weight:600;">CANTIDAD VENDIDA</div>
+        <input id="vPzas" type="number" min="1" placeholder="Ej: 5"
+               style="text-align:center;font-size:26px;font-weight:700;" />
+      </div>
+      <button class="btn btn-g" onclick="guardarVenta()">💰 Registrar venta</button>
+      <div id="vSaveMsg"></div>
+    </div>
+
+    <div class="card">
+      <div class="row jb" style="margin-bottom:10px;">
+        <h3 style="margin:0;">Mis ventas de hoy</h3>
+        <span id="vHoyN" class="pill pg">0</span>
+      </div>
+      <div id="vListHoy"><div class="emp">Sin ventas hoy</div></div>
+    </div>
+  </div>
+</div>
+
+<!-- ════════ ACCESOS (solo admin) ════════ -->
+<div id="scrAccesos" class="scr">
+  <div class="topbar"><span>👥</span><span>Gestión de Accesos</span><span id="rolBadge" style="font-size:11px;padding:2px 9px;border-radius:20px;background:rgba(247,183,49,.2);color:#ffd060;margin-left:auto;"></span></div>
+  <div class="body">
+    <!-- Crear nuevo acceso -->
+    <div class="card">
+      <h3>Crear nuevo acceso</h3>
+      <div style="display:flex;flex-direction:column;gap:10px;">
+        <div>
+          <label style="font-size:11px;color:#8888a0;display:block;margin-bottom:4px;">NOMBRE COMPLETO</label>
+          <input id="accNom" type="text" placeholder="Ej: Juan García" />
+        </div>
+        <div>
+          <label style="font-size:11px;color:#8888a0;display:block;margin-bottom:4px;">NÚMERO DE CELULAR</label>
+          <input id="accCel" type="tel" placeholder="Ej: 3312345678" />
+        </div>
+        <div style="font-size:11px;color:#8888a0;margin-bottom:6px;font-weight:600;">TIPO DE ACCESO</div>
+        <div class="row" style="margin-bottom:4px;">
+          <button class="tgl" id="accRolAdmin" onclick="setAccRol('admin')">🔑 Administrador</button>
+          <button class="tgl" id="accRolUser"  onclick="setAccRol('usuario')">👤 Promotor</button>
+        </div>
+        <button class="btn btn-g" onclick="crearAcceso()">➕ Crear acceso</button>
+        <div id="accMsg"></div>
+      </div>
+    </div>
+
+    <!-- Lista de accesos -->
+    <div class="card">
+      <div class="row jb" style="margin-bottom:12px;">
+        <h3 style="margin:0;">Usuarios con acceso</h3>
+        <span id="accCount" class="pill pg">0</span>
+      </div>
+      <div id="accList"><div class="emp">Sin usuarios registrados</div></div>
+    </div>
+
+    <!-- Sesiones activas -->
+    <div class="card">
+      <h3>🟢 Sesiones activas ahora</h3>
+      <div id="sesionList"><div class="emp">Sin sesiones activas</div></div>
+    </div>
+  </div>
+</div>
+
+<script>
+// ════════════════════════════════════════════════════════════
+// ESTADO GLOBAL
+// ════════════════════════════════════════════════════════════
+let CU = null, ADM = false, ROL = 'vendedor';
+let sAccRol = 'usuario'; // rol para crear acceso
+let sVCod = null; // código para venta
+let captAsesorFil = ''; // asesor filter in captura (admin only)
+let LISTA = [], FAMS = ["Artefactos Electricos", "Iluminacion", "Alambres, Cables y Cordones", "Energia Solar", "Almacenamiento de Agua", "Sistemas de bombeo", "Plomeria", "Controles de agua y gas", "Linea Blanca", "Calentadores de auga", "Herramientas", "Medicion, Seguridad y Pintura", "Generadores Electricos", "Electromovilidad", "Reparacion de neumaticos", "Salud", "Ecotecnologias", "Soluciones para el punto de venta"], MAPA = {};
+let FAM_ICONS = {"Artefactos Electricos": "⚡", "Iluminacion": "💡", "Alambres, Cables y Cordones": "🔌", "Energia Solar": "☀️", "Almacenamiento de Agua": "💧", "Sistemas de bombeo": "🔧", "Plomeria": "🚿", "Controles de agua y gas": "🔩", "Linea Blanca": "🏠", "Calentadores de auga": "🔥", "Herramientas": "🛠️", "Medicion, Seguridad y Pintura": "📐", "Generadores Electricos": "⚙️", "Electromovilidad": "🚗", "Reparacion de neumaticos": "🔄", "Salud": "🏥", "Ecotecnologias": "🌱", "Soluciones para el punto de venta": "🛒"};
+let sTipo=null, sDist=null, sDistF=null, sCod=null;
+let sFam=null, mRes=null, mMot=null, vendedor='', tab='dia';
+let mCompetencia='', mPrecioCap='', mVendedor='';
+let chs={};
+
+// ════════════════════════════════════════════════════════════
+// API
+// ════════════════════════════════════════════════════════════
+async function api(method, path, body) {
+  try {
+    const r = await fetch(path, {
+      method,
+      headers: {'Content-Type':'application/json'},
+      body: body ? JSON.stringify(body) : undefined
+    });
+    document.getElementById('offBar').style.display = 'none';
+    return await r.json();
+  } catch(e) {
+    document.getElementById('offBar').style.display = 'block';
+    console.error('API error:', path, e.message);
+    return null;
+  }
+}
+const GET  = p => api('GET', p);
+const POST = (p,b) => api('POST', p, b);
+function aq() {
+  return '?cel=' + encodeURIComponent(CU.celular) + '&nom=' + encodeURIComponent(CU.nombre) + '&token=' + encodeURIComponent(CU.token||'');
+}
+
+// ════════════════════════════════════════════════════════════
+// HELPERS
+// ════════════════════════════════════════════════════════════
+function show(id){ const e=document.getElementById(id); if(e){e.classList.remove('hide'); if(e.classList.contains('scr')||e.style.flexDirection)e.style.display='flex'; else e.style.display='';} }
+function hide(id){ const e=document.getElementById(id); if(e) e.classList.add('hide'); }
+function el(id){ return document.getElementById(id); }
+function nowD(){
+  const d=new Date();
+  return {dt:d.toISOString().slice(0,10),hr:d.toTimeString().slice(0,8),d:d.getDate(),m:d.getMonth()+1,y:d.getFullYear(),ts:d.toISOString()};
+}
+function today(){ return new Date().toISOString().slice(0,10); }
+
+// Load catalog async
+async function loadCatalog() {
+  try {
+    const r = await fetch('/catalogo.json');
+    const d = await r.json();
+    LISTA = d.lista || [];
+    FAMS  = d.fams  || FAMS;
+    LISTA.forEach(p => { MAPA[p.c] = p; });
+    console.log('Catálogo:', LISTA.length, 'códigos');
+  } catch(e) {
+    console.error('Error cargando catálogo:', e);
+  }
+}
+
+// ════════════════════════════════════════════════════════════
+// LOGIN / LOGOUT
+// ════════════════════════════════════════════════════════════
+async function doLogin() {
+  const nom = el('iNom').value.trim();
+  const cel = el('iCel').value.trim();
+  const err = el('lErr');
+  err.classList.add('hide');
+  if (nom.length < 2) { err.textContent='Ingresa tu nombre completo.'; err.classList.remove('hide'); return; }
+  if (cel.length < 8) { err.textContent='El celular debe tener al menos 8 dígitos.'; err.classList.remove('hide'); return; }
+
+  const btn = el('btnLogin');
+  btn.innerHTML = '<span class="spin"></span>Entrando...';
+  btn.disabled = true;
+
+  const data = await POST('/api/login', { nombre: nom, celular: cel });
+
+  btn.innerHTML = 'Entrar →';
+  btn.disabled = false;
+
+  if (!data) {
+    err.textContent = 'No se pudo conectar al servidor. ¿Está corriendo en PowerShell?';
+    err.classList.remove('hide');
+    return;
+  }
+  if (!data.ok) {
+    if (data.sesionActiva) {
+      err.innerHTML = '⚠️ ' + data.error + '<br><small style="color:#8888a0;">Contacta al administrador si necesitas acceso.</small>';
+    } else {
+      err.textContent = data.error || 'Error al entrar.';
+    }
+    err.classList.remove('hide');
+    return;
+  }
+
+  CU  = { nombre: data.user.nombre, celular: data.user.celular, token: data.token };
+  ADM = data.admin;
+  ROL = data.rol || 'vendedor';
+  // No guardar sesión — siempre pedir login al abrir
+  iniciarApp();
+}
+
+function doLogout() {
+  // Notificar al servidor para cerrar sesión
+  if (CU && CU.token) {
+    fetch('/api/logout', {method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({celular:CU.celular, token:CU.token})}).catch(()=>{});
+  }
+  CU = null; ADM = false; ROL = 'vendedor'; vendedor = '';
+  localStorage.removeItem('ncu');
+  hide('mainNav');
+  ['Captura','Dash','Merch','Rep'].forEach(s => { const e=el('scr'+s); if(e){e.classList.remove('on');e.style.display='';} });
+  el('scrLogin').classList.add('on');
+  el('scrLogin').style.display = 'flex';
+  el('iNom').value = '';
+  el('iCel').value = '';
+}
+
+function iniciarApp() {
+  el('scrLogin').classList.remove('on');
+  el('scrLogin').style.display = 'none';
+  show('mainNav');
+  // ── Permisos por rol ──────────────────────────────────────
+  // ROL=superadmin → Luis Gomez, todo permitido
+  // ROL=admin      → admins creados, ven todo, no pueden eliminar/desactivar
+  // ROL=vendedor   → solo sus datos, sin barra ni pestaña Accesos
+  const isSuperAdmin = ROL === 'superadmin';
+  const isAdminRole  = ROL === 'admin';
+  const isVendedor   = ROL === 'vendedor';
+
+  // Pestaña Accesos: superadmin y admin la ven
+  const navAEl = el('navA');
+  if(navAEl){
+    if(isSuperAdmin || isAdminRole){
+      navAEl.classList.remove('hide'); navAEl.style.display='';
+    } else {
+      navAEl.classList.add('hide'); navAEl.style.display='none';
+    }
+  }
+
+  // Barra de selección de asesor en Captura: superadmin y admin la ven
+  const captBar = el('captAsesorBar');
+  if(captBar){
+    if(isSuperAdmin || isAdminRole){
+      captBar.classList.remove('hide');
+      captBar.style.display='flex';
+      poblarCaptAsesorSel();
+    } else {
+      captBar.classList.add('hide');
+      captBar.style.display='none';
+    }
+  }
+
+  // Set all topbars with name + date + role
+  const nd2 = new Date();
+  const dateStr = nd2.getDate()+'/'+(nd2.getMonth()+1)+'/'+nd2.getFullYear();
+  const ini2 = CU.nombre.split(' ').map(w=>w[0]).join('').slice(0,2).toUpperCase();
+  let rolTxt='', rolBg='', rolCol='';
+  if(ROL==='superadmin'){ rolTxt='👑 Admin General'; rolBg='rgba(247,183,49,.2)'; rolCol='#ffd060'; }
+  else if(ROL==='admin'){ rolTxt='🔑 Administrador'; rolBg='rgba(61,155,233,.2)'; rolCol='#6bb8f7'; }
+  else { rolTxt='👤 Promotor'; rolBg='rgba(136,136,160,.15)'; rolCol='#8888a0'; }
+  const nombre1 = CU.nombre.split(' ')[0];
+  // Apply to all screens
+  [1,2,3,4].forEach(n=>{
+    const avtEl=el('avt'+(n===1?'':''+n));
+    const lblEl=el('usrLbl'+(n===1?'':''+n));
+    const dtEl =el('dtLbl'+(n===1?'':''+n));
+    const rtbEl=el('rolTopBadge'+(n===1?'':''+n));
+    if(avtEl) avtEl.textContent=ini2;
+    if(lblEl) lblEl.textContent=nombre1;
+    if(dtEl)  dtEl.textContent=dateStr;
+    if(rtbEl){ rtbEl.textContent=rolTxt; rtbEl.style.background=rolBg; rtbEl.style.color=rolCol; }
+  });
+
+  // Show merch admin bar ONLY for superadmin and admin roles
+  const mab = el('merchAdminBar');
+  if(mab){
+    if(ROL === 'superadmin' || ROL === 'admin'){
+      mab.classList.remove('hide');
+      mab.style.display='block';
+    } else {
+      mab.classList.add('hide');
+      mab.style.display='none';
+    }
+  }
+  loadCatalog().then(() => { buildFamGrid(); ir('Captura'); });
+}
+
+// ════════════════════════════════════════════════════════════
+// NAVEGACIÓN
+// ════════════════════════════════════════════════════════════
+const SCRS = ['Captura','Dash','Merch','Rep','Accesos','Ventas'];
+const NIDS = {Captura:'navC',Dash:'navD',Merch:'navM',Rep:'navR',Accesos:'navA',Ventas:''};
+function ir(nm) {
+  SCRS.forEach(s => {
+    const e = el('scr'+s); if(e){e.classList.remove('on');e.style.display='';}
+    const n = el(NIDS[s]); if(n) n.classList.remove('on');
+  });
+  const e = el('scr'+nm);
+  if(e){
+    e.classList.add('on');
+    e.style.display='flex';
+    // Scroll to top when switching screens
+    e.scrollTop = 0;
+    window.scrollTo(0,0);
+    // Also scroll the body div inside the screen
+    const body = e.querySelector('.body');
+    if(body) body.scrollTop = 0;
+  }
+  const n = el(NIDS[nm]); if(n) n.classList.add('on');
+  if(nm==='Captura')  refCaptura();
+  if(nm==='Dash')     { buildWeek(); refDash(); }
+  if(nm==='Ventas')   refVentas();
+  if(nm==='Merch')    { if(ROL==='superadmin'||ROL==='admin'){ poblarMerchVendSel(); buildMerchWeek(); } refMerch(); }
+  if(nm==='Rep')      refRep();
+  if(nm==='Accesos')  refAccesos();
+}
+
+// ════════════════════════════════════════════════════════════
+// AUTOCOMPLETE
+// ════════════════════════════════════════════════════════════
+function acSearch(q, max, pool) {
+  if(!q||q.length<2) return [];
+  const qu = q.toUpperCase(), res = [], src = pool||LISTA;
+  for(let i=0; i<src.length && res.length<max; i++) {
+    const p=src[i];
+    if(p.c.startsWith(qu)||p.c.includes(qu)||p.d.toUpperCase().includes(qu)) res.push(p);
+  }
+  return res;
+}
+function onCodInput(v) {
+  const drop = el('acDrop');
+  if(!v||v.length<2){drop.style.display='none';return;}
+  const res = acSearch(v,8);
+  if(!res.length){drop.style.display='none';return;}
+  drop.innerHTML = res.map(p=>`<div class="ac-item" onclick="selAC('${p.c.replace(/'/g,"\'")}')"><div class="ac-cod">${p.c}</div><div class="ac-desc">${p.d} · ${p.f}</div></div>`).join('');
+  drop.style.display='block';
+}
+function selAC(c){ el('codIn').value=c; el('acDrop').style.display='none'; validarCod(); }
+function onMerchInput(v) {
+  const list = el('mSearchList');
+  // Uppercase input
+  const inp = el('mCod');
+  if(inp && v !== v.toUpperCase()) {
+    const pos = inp.selectionStart;
+    inp.value = v.toUpperCase();
+    inp.setSelectionRange(pos, pos);
+    v = inp.value;
+  }
+  if(!v || v.length < 1) {
+    if(list) list.style.display='none';
+    return;
+  }
+  if(!LISTA || !LISTA.length) {
+    if(list){ list.style.display='block'; list.innerHTML='<div style="padding:10px;font-size:12px;color:#8888a0;">Cargando catálogo...</div>'; }
+    return;
+  }
+  // Try filtering by family first; if empty results, search all catalog
+  let pool = sFam ? LISTA.filter(p => p.f === sFam) : LISTA;
+  const vUp = v.toUpperCase();
+  const res = [];
+  for(let i=0; i<pool.length && res.length<15; i++){
+    const p=pool[i];
+    if(p.c.startsWith(vUp)||p.c.includes(vUp)||p.d.toUpperCase().includes(vUp)) res.push(p);
+  }
+  // If no results with family filter, try without
+  if(!res.length && sFam && pool.length < LISTA.length) {
+    for(let i=0; i<LISTA.length && res.length<15; i++){
+      const p=LISTA[i];
+      if(p.c.startsWith(vUp)||p.c.includes(vUp)||p.d.toUpperCase().includes(vUp)) res.push(p);
+    }
+  }
+  if(!list) return;
+  if(!res.length){ list.style.display='none'; return; }
+  list.style.display='block';
+  list.innerHTML=res.map(p=>`
+    <div onclick="selMAC('${p.c.replace(/'/g,"\'")}');"
+         style="padding:9px 13px;cursor:pointer;border-bottom:1px solid rgba(255,255,255,.05);display:flex;align-items:center;justify-content:space-between;">
+      <div style="min-width:0;">
+        <div style="font-family:monospace;font-weight:700;color:#6bb8f7;font-size:14px;">${p.c}</div>
+        <div style="font-size:11px;color:#8888a0;margin-top:2px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${p.d}</div>
+      </div>
+      <div style="font-size:10px;color:#5ddea0;flex-shrink:0;margin-left:8px;text-align:right;">${p.f}</div>
+    </div>`).join('');
+}
+
+function selMAC(c) {
+  el('mCod').value = c;
+  const list = el('mSearchList');
+  if(list) list.style.display = 'none';
+}
+document.addEventListener('click', e => {
+  if(!e.target.closest('.ac-wrap')) {
+    document.querySelectorAll('.ac-drop').forEach(d=>d.style.display='none');
+  }
+  if(!e.target.closest('.ac-wrap') && !e.target.closest('#mSearchList') && !e.target.closest('#mStep2')) {
+    const msl = el('mSearchList');
+    if(msl) msl.style.display='none';
+  }
+});
+
+// ════════════════════════════════════════════════════════════
+// CAPTURA
+// ════════════════════════════════════════════════════════════
+function resetForm() {
+  sTipo=null; sDist=null; sDistF=null; sCod=null;
+  el('saveMsg').innerHTML='';
+  hide('camNeg'); hide('camFue'); hide('camVen');
+  show('tipoRow');
+  el('formTitle').textContent='Registrar';
+  el('formTitle').style.color='#8888a0';
+  ['tNeg','tFue','tVen','dSi','dNo','dSiF','dNoF'].forEach(id=>{
+    const e=el(id); if(e){e.className='tgl';e.disabled=false;e.style.opacity='1';}
+  });
+}
+
+function validarCod() {
+  const v = el('codIn').value.trim().toUpperCase();
+  el('acDrop').style.display='none';
+  if(!v){ el('valRes').innerHTML='<div class="al al-w">Ingresa un código primero.</div>'; return; }
+  el('codIn').value = v;
+  resetForm();
+  show('regForm');
+  const found = MAPA[v];
+  if(found) {
+    sCod = {...found, cat:true};
+    el('valRes').innerHTML='<div class="al al-g">✅ Código encontrado en catálogo IUSA</div>';
+    el('codInfo').innerHTML=`<div style="background:#1e1e28;border-radius:8px;padding:10px;"><div style="font-size:16px;font-weight:700;font-family:monospace;color:#6bb8f7;">${found.c}</div><div style="font-size:13px;margin-top:4px;">${found.d}</div><div style="margin-top:6px;"><span class="pill pg">${found.f}</span></div></div>`;
+    el('tFue').disabled=true; el('tFue').style.opacity='.35';
+    setTipo('negado');
+  } else {
+    sCod = {c:v, d:'Fuera de catálogo', f:'—', cat:false};
+    el('valRes').innerHTML='<div class="al al-b">📦 No existe en catálogo — fuera de catálogo</div>';
+    el('codInfo').innerHTML=`<div style="background:#1e1e28;border-radius:8px;padding:10px;"><div style="font-size:16px;font-weight:700;font-family:monospace;color:#6bb8f7;">${v}</div><div style="font-size:12px;color:#8888a0;margin-top:4px;">No existe en lista de precios IUSA</div></div>`;
+    el('tNeg').disabled=true; el('tNeg').style.opacity='.35';
+    if(el('tVen')){ el('tVen').disabled=true; el('tVen').style.opacity='.35'; }
+    hide('tipoRow');
+    setTipo('fuera');
+  }
+}
+
+function setTipo(t) {
+  sTipo=t;
+  el('tNeg').className='tgl'+(t==='negado'?' sr':'');
+  el('tFue').className='tgl'+(t==='fuera'?' sb':'');
+  if(el('tVen')) el('tVen').className='tgl'+(t==='vendido'?' sg':'');
+  hide('camNeg'); hide('camFue'); hide('camVen');
+  if(t==='negado')  { show('camNeg'); el('formTitle').textContent='🚫 Código negado'; el('formTitle').style.color='#ff7a85'; }
+  else if(t==='fuera')   { show('camFue'); el('formTitle').textContent='📦 Fuera de catálogo'; el('formTitle').style.color='#6bb8f7'; }
+  else if(t==='vendido') { show('camVen'); el('formTitle').textContent='💰 Código vendido'; el('formTitle').style.color='#5ddea0'; }
+}
+function setDist(d){ sDist=d; el('dSi').className='tgl'+(d==='si'?' sg':''); el('dNo').className='tgl'+(d==='no'?' sr':''); }
+function setDistF(d){ sDistF=d; el('dSiF').className='tgl'+(d==='si'?' sg':''); el('dNoF').className='tgl'+(d==='no'?' sr':''); }
+
+async function guardarReg() {
+  const m = el('saveMsg');
+  if(!sTipo){ m.innerHTML='<div class="al al-w">Selecciona el tipo de registro.</div>'; return; }
+  let pz, diVal, descExtra='';
+  if(sTipo==='negado') {
+    if(!sDist){ m.innerHTML='<div class="al al-w">Indica si el distribuidor lo maneja.</div>'; return; }
+    pz = parseInt(el('pzNeg').value)||0;
+    if(!pz){ m.innerHTML='<div class="al al-w">Ingresa las piezas negadas.</div>'; return; }
+    diVal=sDist;
+  } else if(sTipo==='vendido') {
+    pz = parseInt(el('pzVen').value)||0;
+    if(!pz){ m.innerHTML='<div class="al al-w">Ingresa la cantidad vendida.</div>'; return; }
+    diVal='si'; // vendido implica que el distribuidor lo maneja
+  } else {
+    pz = parseInt(el('pzFue').value)||0;
+    if(!pz){ m.innerHTML='<div class="al al-w">Ingresa las piezas solicitadas.</div>'; return; }
+    diVal=sDistF||'no';
+    descExtra=el('fDesc').value.trim();
+  }
+  const n=nowD();
+  m.innerHTML='<div class="al al-b"><span class="spin"></span>Guardando...</div>';
+  const res=await POST('/api/registros',{
+    codigo:sCod.c, descripcion:descExtra||sCod.d, familia:sCod.f,
+    tipo:sTipo, distribuidor:diVal, piezas:pz, desc_cliente:descExtra,
+    token:CU.token, usuario_cel:CU.celular, usuario_nom:CU.nombre,
+    fecha:n.dt, hora:n.hr, dia:n.d, mes:n.m, anio:n.y, ts:n.ts
+  });
+  if(!res||!res.ok){ m.innerHTML='<div class="al al-r">Error al guardar. Verifica la conexión.</div>'; return; }
+  m.innerHTML='<div class="al al-g">✅ Registro guardado correctamente</div>';
+  el('codIn').value='';
+  ['pzNeg','pzFue','pzVen','fDesc'].forEach(id=>{ const e=el(id); if(e) e.value=''; });
+  el('valRes').innerHTML='';
+  hide('regForm');
+  resetForm();
+  refCaptura();
+  setTimeout(()=>{ m.innerHTML=''; },2500);
+}
+
+function setCaptAsesor(v) {
+  captAsesorFil = v;
+  refCaptura();
+}
+
+async function poblarCaptAsesorSel() {
+  if(!ADM) return;
+  const users = await GET('/api/usuarios'+aq());
+  if(!users) return;
+  const sel = el('captAsesorSel');
+  const cur = sel.value;
+  const nd = new Date();
+  const hoyQ = aq()+'&dia='+nd.getDate()+'&mes='+(nd.getMonth()+1)+'&anio='+nd.getFullYear();
+  const hoyRows = await GET('/api/registros'+hoyQ+'&limit=9999');
+  const hoyCount = {};
+  if(hoyRows) hoyRows.forEach(r => { hoyCount[r.usuario_cel] = (hoyCount[r.usuario_cel]||0)+1; });
+  const hoyAll = hoyRows ? hoyRows.length : 0;
+  sel.innerHTML = `<option value="">Todos los asesores — ${hoyAll} hoy</option>`;
+  users.forEach(u => {
+    const o = document.createElement('option');
+    o.value = u.celular;
+    const hoy = hoyCount[u.celular] || 0;
+    o.textContent = u.nombre + '  —  ' + hoy + ' hoy';
+    if(u.celular === cur) o.selected = true;
+    sel.appendChild(o);
+  });
+}
+
+async function refCaptura() {
+  const nd=new Date();
+  el('dtLbl').textContent=nd.getDate()+'/'+(nd.getMonth()+1)+'/'+nd.getFullYear();
+  let q=aq()+'&dia='+nd.getDate()+'&mes='+(nd.getMonth()+1)+'&anio='+nd.getFullYear()+'&limit=50';
+  if(ADM && captAsesorFil) q+='&vendedor='+encodeURIComponent(captAsesorFil);
+  const rows = await GET('/api/registros'+q);
+  if(!rows) return;
+  el('hoyN').textContent = rows.length;
+  const ht = el('hoyTitle');
+  if(ht){
+    if(ADM && captAsesorFil){
+      const sel=el('captAsesorSel');
+      const nm=sel?sel.options[sel.selectedIndex].text:'Asesor';
+      ht.textContent='Registros de '+nm+' hoy';
+    } else if(ADM && !captAsesorFil){
+      ht.textContent='Registros de todos — hoy';
+    } else {
+      ht.textContent='Mis registros de hoy';
+    }
+  }
+  const lst = el('listHoy');
+  if(!rows.length){ lst.innerHTML='<div class="emp">Sin registros hoy</div>'; return; }
+  lst.innerHTML = rows.map(r=>`
+    <div style="padding:8px 0;border-bottom:1px solid rgba(255,255,255,.05);">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:3px;">
+        <div style="display:flex;align-items:center;gap:7px;flex-wrap:wrap;">
+          <span style="font-family:monospace;font-weight:700;font-size:14px;">${r.codigo}</span>
+          <span style="font-size:10px;font-weight:700;padding:1px 7px;border-radius:20px;${r.tipo==='negado'?'background:rgba(232,72,85,.2);color:#ff7a85':'background:rgba(61,155,233,.2);color:#6bb8f7'}">${r.tipo==='negado'?'🚫 Neg':'📦 Fuera'}</span>
+          <span style="font-size:10px;font-weight:700;padding:1px 7px;border-radius:20px;${r.distribuidor==='si'?'background:rgba(61,155,233,.15);color:#6bb8f7':'background:rgba(232,72,85,.12);color:#ff7a85'}">${r.distribuidor==='si'?'✅':'❌'}</span>
+        </div>
+        <span style="font-size:12px;font-weight:700;color:${r.distribuidor==='si'?'#6bb8f7':'#ff7a85'};flex-shrink:0;">${r.piezas||1}pz</span>
+      </div>
+      <div style="font-size:11px;color:#8888a0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${r.descripcion}${ADM&&!captAsesorFil?' · <span style=\"color:#6bb8f7;\">'+r.usuario_nom+'</span>':''}</div>
+    </div>`).join('');
+}
+
+// ════════════════════════════════════════════════════════════
+// DASHBOARD
+// ════════════════════════════════════════════════════════════
+function setVendedor(v){ vendedor=v; refDash(); }
+function irRepDist(dist,periodo){
+  const nd=new Date();
+  if(periodo==='hoy'){
+    // Solo scroll al bloque de top codigos correspondiente — los datos ya están ahí
+    const target = dist==='si' ? el('topSi') : el('topNo');
+    if(target){
+      // Highlight briefly
+      target.style.transition='background .3s';
+      target.style.background='rgba(61,155,233,.15)';
+      setTimeout(()=>{ target.style.background=''; },1000);
+      target.closest('.card').scrollIntoView({behavior:'smooth',block:'start'});
+    }
+    return;
+  }
+  // Para "mes" → crear tabla inline abajo
+  let mes='', anio='';
+  if(periodo==='mes'){ mes=nd.getMonth()+1; anio=nd.getFullYear(); }
+  mostrarInlineDash(dist, '', mes, anio);
+}
+
+async function mostrarInlineDash(dist, dia, mes, anio){
+  let q=aq();
+  if(dist) q+='&distribuidor='+dist;
+  if(ADM && vendedor) q+='&vendedor='+encodeURIComponent(vendedor);
+  if(dia)  q+='&dia='+dia;
+  if(mes)  q+='&mes='+mes;
+  if(anio) q+='&anio='+anio;
+  const rows=await GET('/api/registros'+q);
+  const card=el('dashInlineCard'), lst=el('dashInlineList'), ttl=el('dashInlineTitle');
+  if(!card||!lst||!ttl) return;
+  const MESES=['','Ene','Feb','Mar','Abr','May','Jun','Jul','Ago','Sep','Oct','Nov','Dic'];
+  const distLbl=dist==='si'?'✅ SÍ maneja':'❌ NO maneja';
+  const perLbl=dia?dia+' '+MESES[parseInt(mes)]+' '+anio:mes?MESES[parseInt(mes)]+' '+anio:'Total';
+  ttl.textContent=distLbl+' — '+perLbl+' ('+(rows?rows.length:0)+' registros)';
+  ttl.style.color=dist==='si'?'#6bb8f7':'#ff7a85';
+  card.classList.remove('hide'); card.style.display='block';
+  if(!rows||!rows.length){ lst.innerHTML='<div class="emp">Sin registros</div>'; card.scrollIntoView({behavior:'smooth',block:'start'}); return; }
+  lst.innerHTML=rows.slice(0,60).map(r=>`
+    <div style="padding:8px 0;border-bottom:1px solid rgba(255,255,255,.05);">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:2px;">
+        <div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap;">
+          <span style="font-family:monospace;font-weight:700;font-size:14px;">${r.codigo}</span>
+          <span style="font-size:10px;font-weight:700;padding:1px 7px;border-radius:20px;${r.tipo==='negado'?'background:rgba(232,72,85,.2);color:#ff7a85':'background:rgba(61,155,233,.2);color:#6bb8f7'}">${r.tipo==='negado'?'🚫':'📦'}</span>
+          <span style="font-size:10px;padding:1px 7px;border-radius:20px;${r.distribuidor==='si'?'background:rgba(61,155,233,.15);color:#6bb8f7':'background:rgba(232,72,85,.12);color:#ff7a85'}">${r.distribuidor==='si'?'✅':'❌'}</span>
+        </div>
+        <span style="font-size:11px;font-weight:700;color:${r.distribuidor==='si'?'#6bb8f7':'#ff7a85'};flex-shrink:0;">${r.piezas||1}pz</span>
+      </div>
+      <div style="font-size:11px;color:#8888a0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${r.descripcion}</div>
+      <div style="font-size:10px;color:#666;margin-top:1px;">${r.fecha} · ${r.usuario_nom}</div>
+    </div>`).join('');
+  card.scrollIntoView({behavior:'smooth',block:'start'});
+}
+
+// ── Semana y detalle de día ─────────────────────────────────
+let selDay    = null;  // fecha seleccionada YYYY-MM-DD
+let weekOffset = 0;    // 0=esta semana, -1=semana anterior, etc.
+let _allRegs  = [];    // cache de todos los registros
+
+const MESES_CORTO = ['','Ene','Feb','Mar','Abr','May','Jun','Jul','Ago','Sep','Oct','Nov','Dic'];
+
+// Get Monday of the week with offset (weekOffset weeks from today)
+function getMondayOfWeek(offset) {
+  const nd = new Date();
+  nd.setDate(nd.getDate() + offset * 7);
+  const dow = nd.getDay(); // 0=Sun,1=Mon,...
+  const diff = dow === 0 ? -6 : 1 - dow; // distance to Monday
+  const mon = new Date(nd);
+  mon.setDate(nd.getDate() + diff);
+  mon.setHours(0,0,0,0);
+  return mon;
+}
+
+function navWeek(dir) {
+  weekOffset += dir;
+  // Can't go to future weeks
+  if (weekOffset > 0) weekOffset = 0;
+  buildWeek();
+  // If selected day is not in current week range, clear it
+  if (selDay) {
+    const mon = getMondayOfWeek(weekOffset);
+    const sun = new Date(mon); sun.setDate(mon.getDate() + 6);
+    const selD = new Date(selDay);
+    if (selD < mon || selD > sun) {
+      selDay = null;
+      hide('dayDetailCard');
+    }
+  }
+}
+
+function buildWeek() {
+  const today = new Date(); today.setHours(0,0,0,0);
+  const todayStr = today.toISOString().slice(0,10);
+  const mon = getMondayOfWeek(weekOffset);
+
+  // Week label: "L 28 Abr – D 4 May"
+  const sun = new Date(mon); sun.setDate(mon.getDate() + 6);
+  const monP = mon.toISOString().slice(0,10).split('-');
+  const sunP = sun.toISOString().slice(0,10).split('-');
+  const lbl = parseInt(monP[2])+' '+MESES_CORTO[parseInt(monP[1])]+' — '+parseInt(sunP[2])+' '+MESES_CORTO[parseInt(sunP[1])];
+  const lblEl = el('weekLabel');
+  if (lblEl) lblEl.textContent = lbl;
+
+  // Disable next arrow if this week (weekOffset===0)
+  const nextBtn = el('weekNextBtn');
+  if (nextBtn) {
+    nextBtn.disabled = weekOffset >= 0;
+    nextBtn.style.opacity = weekOffset >= 0 ? '.3' : '1';
+    nextBtn.style.cursor  = weekOffset >= 0 ? 'default' : 'pointer';
+  }
+
+  // Build 7 day buttons — Monday(0) to Sunday(6)
+  let html2 = '';
+  for (let i = 0; i < 7; i++) {
+    const d  = new Date(mon); d.setDate(mon.getDate() + i);
+    const ds = d.toISOString().slice(0,10);
+    const isToday = ds === todayStr;
+    const isSel   = ds === selDay;
+    const isFut   = d > today;
+    const hasData = _allRegs.some(r => r.fecha === ds);
+    html2 += `<button onclick="selectDay('${ds}')"
+      style="display:flex;flex-direction:column;align-items:center;
+        padding:7px 2px;border-radius:10px;cursor:${isFut?'default':'pointer'};font-family:inherit;
+        background:${isSel?'#e84855':isToday?'rgba(232,72,85,.2)':'rgba(255,255,255,.04)'};
+        opacity:${isFut?'.3':'1'};
+        border:${isToday&&!isSel?'1px solid #e84855':isSel?'1px solid #e84855':'1px solid transparent'};
+        position:relative;">
+      <span style="font-size:14px;font-weight:700;color:${isSel?'#fff':isToday?'#ff7a85':'#f0f0f5'};">${d.getDate()}</span>
+      ${hasData&&!isFut?`<span style="width:4px;height:4px;border-radius:50%;background:${isSel?'#fff':'#e84855'};margin-top:2px;display:block;"></span>`:'<span style="width:4px;height:4px;margin-top:2px;display:block;"></span>'}
+    </button>`;
+  }
+  el('weekRow').innerHTML = html2;
+}
+
+function selectDay(ds) {
+  const today = new Date(); today.setHours(0,0,0,0);
+  const selD  = new Date(ds);
+  if (selD > today) return; // no futuro
+  // If clicking selected day again, deselect
+  if (selDay === ds) {
+    selDay = null;
+    buildWeek();
+    hide('dayDetailCard');
+    return;
+  }
+  selDay = ds;
+  buildWeek();
+  showDayDetail(ds);
+}
+
+function cerrarDayDetail() {
+  selDay = null;
+  buildWeek();
+  hide('dayDetailCard');
+  refDash(); // refresh stats back to today
+}
+
+function showDayDetail(ds) {
+  const p = ds.split('-');
+  const MESES = ['','Ene','Feb','Mar','Abr','May','Jun','Jul','Ago','Sep','Oct','Nov','Dic'];
+  const titulo = p[2]+' '+MESES[parseInt(p[1])]+' '+p[0];
+  el('dayDetailTitle').textContent = 'Registros — '+titulo;
+  // If vendor filter active, show it in title
+  const vsel = el('vendSel');
+  if(vsel && vsel.value && vsel.options[vsel.selectedIndex]) {
+    const vnom = vsel.options[vsel.selectedIndex].text;
+    el('dayDetailTitle').textContent = vnom+' — '+titulo;
+  }
+
+  // Filter from cached registros
+  const dayRegs = _allRegs.filter(r => r.fecha === ds);
+  const siR = dayRegs.filter(r => r.distribuidor === 'si');
+  const noR = dayRegs.filter(r => r.distribuidor !== 'si');
+  const pzSi = siR.reduce((s,r)=>s+(r.piezas||1),0);
+  const pzNo = noR.reduce((s,r)=>s+(r.piezas||1),0);
+
+  el('dayDetailStats').innerHTML = `
+    <div style="background:#1e1e28;border-radius:9px;padding:10px;text-align:center;border-top:2px solid #3d9be9;">
+      <div style="font-size:22px;font-weight:700;color:#3d9be9;">${siR.length}</div>
+      <div style="font-size:11px;color:#8888a0;">✅ SÍ maneja</div>
+      <div style="font-size:12px;color:#6bb8f7;font-weight:600;">${pzSi} pz</div>
+    </div>
+    <div style="background:#1e1e28;border-radius:9px;padding:10px;text-align:center;border-top:2px solid #e84855;">
+      <div style="font-size:22px;font-weight:700;color:#e84855;">${noR.length}</div>
+      <div style="font-size:11px;color:#8888a0;">❌ NO maneja</div>
+      <div style="font-size:12px;color:#ff7a85;font-weight:600;">${pzNo} pz</div>
+    </div>`;
+
+  const lst = el('dayDetailList');
+  if (!dayRegs.length) {
+    lst.innerHTML = '<div class="emp">Sin registros este día</div>';
+  } else {
+    lst.innerHTML = [...dayRegs].reverse().map(r=>`
+      <div style="padding:8px 0;border-bottom:1px solid rgba(255,255,255,.05);">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:2px;">
+          <div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap;">
+            <span style="font-family:monospace;font-weight:700;font-size:13px;">${r.codigo}</span>
+            <span style="font-size:10px;font-weight:700;padding:1px 7px;border-radius:20px;${r.tipo==='negado'?'background:rgba(232,72,85,.2);color:#ff7a85':'background:rgba(61,155,233,.2);color:#6bb8f7'}">${r.tipo==='negado'?'🚫':'📦'}</span>
+            <span style="font-size:10px;padding:1px 7px;border-radius:20px;${r.distribuidor==='si'?'background:rgba(61,155,233,.15);color:#6bb8f7':'background:rgba(232,72,85,.12);color:#ff7a85'}">${r.distribuidor==='si'?'✅':'❌'}</span>
+          </div>
+          <span style="font-size:11px;font-weight:700;color:${r.distribuidor==='si'?'#6bb8f7':'#ff7a85'};flex-shrink:0;">${r.piezas||1}pz</span>
+        </div>
+        <div style="font-size:11px;color:#8888a0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${r.descripcion} · ${r.hora}</div>
+      </div>`).join('');
+  }
+  show('dayDetailCard');
+  el('dayDetailCard').scrollIntoView({behavior:'smooth',block:'nearest'});
+}
+
+async function refDash() {
+  let q=aq();
+  if(ADM&&vendedor) q+='&vendedor='+encodeURIComponent(vendedor);
+  // Pass selected day to stats so cards show data for that day
+  if(selDay) q+='&fecha='+selDay;
+  const data=await GET('/api/stats'+q);
+  if(!data) return;
+  const s=data.stats;
+  el('dSiH').textContent=s.siHoy;  el('dSiHp').textContent=s.pzSiHoy+' pz';
+  el('dSiM').textContent=s.siMes;  el('dSiMp').textContent=s.pzSiMes+' pz';
+  el('dNoH').textContent=s.noHoy;  el('dNoHp').textContent=s.pzNoHoy+' pz';
+  el('dNoM').textContent=s.noMes;  el('dNoMp').textContent=s.pzNoMes+' pz';
+  // Update card labels based on selected day
+  const MESES_L=['','Ene','Feb','Mar','Abr','May','Jun','Jul','Ago','Sep','Oct','Nov','Dic'];
+  const lHoy = selDay ? (()=>{ const p=selDay.split('-'); return parseInt(p[2])+' '+MESES_L[parseInt(p[1])]; })() : 'Hoy';
+  const lMes = selDay ? (()=>{ const p=selDay.split('-'); return MESES_L[parseInt(p[1])]+' '+p[0]; })() : 'Este mes';
+  document.querySelectorAll('.l').forEach(e=>{ if(e.textContent==='Hoy'||e.textContent.match(/^\d+ [A-Z]/)) e.textContent=lHoy; });
+  document.querySelectorAll('.l').forEach(e=>{ if(e.textContent==='Este mes'||e.textContent.match(/^[A-Z][a-z]+ \d{4}/)) e.textContent=lMes; });
+
+  if(ADM) {
+    show('adminBar');
+    const users=await GET('/api/usuarios'+aq());
+    if(users) {
+      const sel=el('vendSel'); const cur=sel.value;
+      sel.innerHTML='<option value="">Todos los vendedores ('+s.totalRegs+' reg.)</option>';
+      users.forEach(u=>{ const o=document.createElement('option'); o.value=u.celular; o.textContent=u.nombre+' — '+u.registros+' reg.'; if(u.celular===cur)o.selected=true; sel.appendChild(o); });
+    }
+  } else {
+    hide('adminBar');
+  }
+
+  buildBars(data.famSi,'famSi','#3d9be9');
+  buildBars(data.famNo,'famNo','#e84855');
+  buildTop(data.codSi,'topSi','#6bb8f7','#3d9be9');
+  buildTop(data.codNo,'topNo','#ff7a85','#e84855');
+  buildCharts(data.dias, tab, data);
+
+  // Cache all registros (no day filter) for the week view
+  let qAll = aq();
+  if(ADM && activeVendor) qAll += '&vendedor='+encodeURIComponent(activeVendor);
+  const allR = await GET('/api/registros'+qAll+'&limit=9999');
+  if (allR) _allRegs = allR;
+
+  // Build weekly calendar (dots update after _allRegs loads)
+  buildWeek();
+  // If a day was selected, refresh its detail
+  if (selDay) showDayDetail(selDay);
+}
+
+function buildBars(arr,id,col){
+  const e=el(id); if(!arr||!arr.length){e.innerHTML='<div class="emp">Sin datos</div>';return;}
+  const mx=arr[0][1]||1;
+  e.innerHTML=arr.map(([f,c])=>`<div style="margin-bottom:9px;"><div style="display:flex;justify-content:space-between;margin-bottom:3px;"><span style="font-size:12px;">${f}</span><span style="font-size:12px;font-weight:700;color:${col};">${c}</span></div><div class="pb2"><div class="pf" style="width:${Math.round(c/mx*100)}%;background:${col};"></div></div></div>`).join('');
+}
+function buildTop(arr,id,col,bcol){
+  const e=el(id); if(!arr||!arr.length){e.innerHTML='<div class="emp">Sin datos</div>';return;}
+  e.innerHTML=arr.map(r=>`
+    <div style="padding:8px 0;border-bottom:1px solid rgba(255,255,255,.05);border-left:3px solid ${bcol};padding-left:10px;margin-bottom:2px;">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:3px;">
+        <span style="font-family:monospace;font-weight:700;font-size:14px;color:${col};">${r.codigo}</span>
+        <div style="display:flex;gap:5px;align-items:center;flex-shrink:0;">
+          <span class="pill" style="background:${bcol}22;color:${col};font-size:11px;">${r.count}x</span>
+          <span class="pill pw" style="font-size:11px;">${r.piezas}pz</span>
+        </div>
+      </div>
+      <div style="font-size:11px;color:#8888a0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${MAPA[r.codigo]?MAPA[r.codigo].d:'—'}</div>
+    </div>`).join('');
+}
+
+function mkChart(id,cfg){if(chs[id])chs[id].destroy();const c=el(id);if(!c)return;chs[id]=new Chart(c.getContext('2d'),cfg);}
+const scX={ticks:{color:'#8888a0',font:{size:9}},grid:{color:'rgba(255,255,255,.04)'}};
+const scY={ticks:{color:'#8888a0',font:{size:10}},grid:{color:'rgba(255,255,255,.04)'}};
+const scYH={ticks:{color:'#8888a0',font:{size:9}},grid:{color:'rgba(255,255,255,.04)'}};
+
+// Store last stats for chart re-use when switching tabs
+let _lastStats = null;
+
+function buildCharts(dias, t, statsData){
+  if(statsData) _lastStats = statsData;
+  const sd = _lastStats;
+
+  const dsSi=(data,lbl)=>({label:'✅ SÍ maneja',data,backgroundColor:'rgba(61,155,233,.85)',borderColor:'#3d9be9',borderWidth:1,borderRadius:4,barPercentage:.38});
+  const dsNo=(data,lbl)=>({label:'❌ NO maneja',data,backgroundColor:'rgba(232,72,85,.85)',borderColor:'#e84855',borderWidth:1,borderRadius:4,barPercentage:.38});
+  const optsV ={responsive:true,plugins:{legend:{labels:{color:'#f0f0f5',font:{size:11},boxWidth:10}}},scales:{x:scX,y:scY}};
+  const optsH ={responsive:true,plugins:{legend:{labels:{color:'#f0f0f5',font:{size:11},boxWidth:10}}},scales:{x:{...scX},y:{...scYH,ticks:{color:'#8888a0',font:{size:10}}}}};
+
+  if(t==='dia' && dias && dias.length){
+    const labels=dias.map(d=>d.label);
+    const si=dias.map(d=>d.si), no=dias.map(d=>d.no);
+    mkChart('cvDia',{type:'bar',data:{labels,datasets:[dsSi(si),dsNo(no)]},options:optsV});
+  }
+
+  if(t==='piezas' && dias && dias.length){
+    const labels=dias.map(d=>d.label);
+    const psi=dias.map(d=>d.pzSi), pno=dias.map(d=>d.pzNo);
+    mkChart('cvPz',{type:'bar',data:{labels,datasets:[dsSi(psi),dsNo(pno)]},options:optsV});
+  }
+
+  if(t==='familia' && sd){
+    // Build unified label list merging famSi and famNo
+    const mapSi={}, mapNo={};
+    (sd.famSi||[]).forEach(([f,c])=>mapSi[f]=c);
+    (sd.famNo||[]).forEach(([f,c])=>mapNo[f]=c);
+    const allFams=[...new Set([...Object.keys(mapSi),...Object.keys(mapNo)])];
+    // Sort by total desc
+    allFams.sort((a,b)=>((mapSi[b]||0)+(mapNo[b]||0))-((mapSi[a]||0)+(mapNo[a]||0)));
+    const labels=allFams.slice(0,12);
+    mkChart('cvFam',{
+      type:'bar',
+      data:{labels,datasets:[
+        {...dsSi(labels.map(f=>mapSi[f]||0))},
+        {...dsNo(labels.map(f=>mapNo[f]||0))}
+      ]},
+      options:{...optsH, indexAxis:'y',
+        scales:{
+          x:{ticks:{color:'#8888a0',font:{size:10}},grid:{color:'rgba(255,255,255,.04)'}},
+          y:{ticks:{color:'#8888a0',font:{size:9}},grid:{color:'rgba(255,255,255,.04)'}}
+        }
+      }
+    });
+  }
+
+  if(t==='codigo' && sd){
+    // Build unified label list merging codSi and codNo
+    const mapSi={}, mapNo={};
+    (sd.codSi||[]).forEach(r=>mapSi[r.codigo]=r.count);
+    (sd.codNo||[]).forEach(r=>mapNo[r.codigo]=r.count);
+    const allCods=[...new Set([...Object.keys(mapSi),...Object.keys(mapNo)])];
+    allCods.sort((a,b)=>((mapSi[b]||0)+(mapNo[b]||0))-((mapSi[a]||0)+(mapNo[a]||0)));
+    const labels=allCods.slice(0,12);
+    mkChart('cvCod',{
+      type:'bar',
+      data:{labels,datasets:[
+        {...dsSi(labels.map(c=>mapSi[c]||0))},
+        {...dsNo(labels.map(c=>mapNo[c]||0))}
+      ]},
+      options:{...optsH, indexAxis:'y',
+        scales:{
+          x:{ticks:{color:'#8888a0',font:{size:10}},grid:{color:'rgba(255,255,255,.04)'}},
+          y:{ticks:{color:'#8888a0',font:{size:9}},grid:{color:'rgba(255,255,255,.04)'}}
+        }
+      }
+    });
+  }
+}
+
+function setTab(t){
+  tab=t;
+  ['dia','familia','codigo','piezas'].forEach(x=>{
+    const e=el('ch-'+x);
+    if(e) e.className = (x===t ? '' : 'hide');
+    el('tab-'+x).className = 'chtab'+(x===t?' on':'');
+  });
+  // If we already have stats data, just rebuild the chart without a full API call
+  if(_lastStats && (t==='familia'||t==='codigo')){
+    buildCharts(_lastStats.dias, t, _lastStats);
+  } else {
+    refDash();
+  }
+}
+
+// ════════════════════════════════════════════════════════════
+// MERCH
+// ════════════════════════════════════════════════════════════
+function buildFamGrid(filter){
+  const list=filter?FAMS.filter(f=>f.toLowerCase().includes(filter.toLowerCase())):FAMS;
+  el('famGrid').innerHTML=list.map(f=>{
+    const ic=FAM_ICONS[f]||'📦';
+    const fs=f.replace(/'/g,"\'");
+    return `<button class="fb" onclick="selFam('${fs}')"><div style="font-size:22px;margin-bottom:4px;">${ic}</div><div style="font-size:11px;line-height:1.3;">${f}</div></button>`;
+  }).join('');
+}
+function filtrarFams(v){ buildFamGrid(v); }
+
+function resetMerch(){
+  mRes=null; mMot=null; mCompetencia='';
+  el('mP1').classList.remove('hide');
+  el('mP2Acepto').classList.add('hide');
+  el('mP2Rec').classList.add('hide');
+  const sub=el('mPrecioSub'); if(sub) sub.classList.add('hide');
+  document.querySelectorAll('.motbtn').forEach(b=>{ b.className = b.classList.contains('motbtn-ok') ? 'motbtn motbtn-ok' : 'motbtn'; });
+  const bg=el('mGuardar'); if(bg) bg.disabled=true;
+  const bg2=el('mGuardarAc'); if(bg2) bg2.disabled=true;
+}
+function selFam(f){
+  sFam=f;
+  el('mFamSel').textContent=f;
+  el('mStep1').style.display='none';
+  const s2=el('mStep2'); s2.classList.remove('hide'); s2.style.display='flex';
+  el('mCod').value=''; el('mMsg').innerHTML='';
+  resetMerch();
+}
+function mVolver(){
+  el('mStep1').style.display='';
+  el('mStep2').classList.add('hide');
+  el('mCod').value=''; el('mMsg').innerHTML='';
+  const msl=el('mSearchList');if(msl)msl.style.display='none';
+  resetMerch(); sFam=null;
+}
+function mResp(res){
+  const c=el('mCod').value.trim().toUpperCase();
+  if(!c){ el('mMsg').innerHTML='<div class="al al-w">Ingresa el código primero.</div>'; return; }
+  el('mMsg').innerHTML=''; mRes=res;
+  el('mP1').classList.add('hide');
+  document.querySelectorAll('.motbtn').forEach(b=>{ b.className = b.classList.contains('motbtn-ok') ? 'motbtn motbtn-ok' : 'motbtn'; });
+  if(res==='acepto'){
+    el('mP2Acepto').classList.remove('hide');
+    el('mP2Rec').classList.add('hide');
+    if(el('mCodAc')) el('mCodAc').textContent=c;
+    if(el('mGuardarAc')) el('mGuardarAc').disabled=true;
+  } else {
+    el('mP2Rec').classList.remove('hide');
+    el('mP2Acepto').classList.add('hide');
+    if(el('mCodRec')) el('mCodRec').textContent=c;
+    if(el('mGuardar')) el('mGuardar').disabled=true;
+  }
+}
+function selMotRec(m) {
+  // For precio: show competitor sub-panel, don't save yet
+  mMot=m; document.querySelectorAll('.motbtn').forEach(b=>{ b.className = b.classList.contains('motbtn-ok') ? 'motbtn motbtn-ok' : 'motbtn'; }); el('mrR1').className='motbtn sel';
+  const sub = el('mPrecioSub');
+  if(sub){ sub.classList.remove('hide'); }
+  // disable save until competitor selected
+  if(el('mGuardar')) el('mGuardar').disabled = true;
+  mCompetencia = '';
+}
+
+function selMotPrecio(comp) {
+  mCompetencia = comp; mPrecioCap = '';
+  ['mpc1','mpc2','mpc3'].forEach(id=>{ const b=el(id); if(b) b.className='motbtn'; });
+  const ids={'Argos':'mpc1','Kobrex':'mpc2','Condulac':'mpc3'};
+  const btn=el(ids[comp]); if(btn) btn.className='motbtn sel';
+  const wrap=el('mPrecioInputWrap'); if(wrap) wrap.classList.remove('hide');
+  const inp=el('mPrecioInput'); if(inp){ inp.value=''; inp.focus(); }
+  if(el('mGuardar')) el('mGuardar').disabled=true;
+}
+function onPrecioInput(v){
+  mPrecioCap=v;
+  if(el('mGuardar')) el('mGuardar').disabled=!(parseFloat(v)>0);
+}
+
+function selMot(m){
+  mMot=m;
+  // Reset todos los botones manteniendo la clase ok donde corresponda
+  document.querySelectorAll('.motbtn').forEach(b=>{
+    const isOk = b.classList.contains('motbtn-ok');
+    b.className = isOk ? 'motbtn motbtn-ok' : 'motbtn';
+  });
+  // Marcar el botón seleccionado con 'sel'
+  // Los botones tienen onclick="selMot('valor')" — buscamos el que coincide
+  document.querySelectorAll('.motbtn').forEach(b=>{
+    const oc = b.getAttribute('onclick') || '';
+    // Extrae el valor del onclick: selMot('precio') -> precio
+    const match = oc.match(/selMot\('([^']+)'\)/);
+    if(match && match[1] === m){
+      b.classList.add('sel');
+    }
+  });
+  // Habilitar botón guardar correcto
+  if(mRes==='acepto'){ if(el('mGuardarAc')) el('mGuardarAc').disabled=false; }
+  else               { if(el('mGuardar'))   el('mGuardar').disabled=false; }
+}
+function mP1Back(){
+  mRes=null; mMot=null;
+  el('mP1').classList.remove('hide');
+  el('mP2Acepto').classList.add('hide');
+  el('mP2Rec').classList.add('hide');
+  document.querySelectorAll('.motbtn').forEach(b=>{ b.className = b.classList.contains('motbtn-ok') ? 'motbtn motbtn-ok' : 'motbtn'; });
+  if(el('mGuardar'))   el('mGuardar').disabled=true;
+  if(el('mGuardarAc')) el('mGuardarAc').disabled=true;
+}
+async function guardarMerch(){
+  const msg = el('mMsg');
+  const c=el('mCod').value.trim().toUpperCase();
+  if(!c){ msg.innerHTML='<div class="al al-w">Ingresa el código.</div>'; return; }
+  const res=mRes||'acepto';
+  if(!mMot){ msg.innerHTML='<div class="al al-w">Selecciona el motivo.</div>'; return; }
+  // Show saving indicator
+  msg.innerHTML='<div class="al al-b"><span class="spin"></span>Guardando...</div>';
+  const n=nowD();
+  try {
+    const body = {codigo:c, familia:sFam||'', resultado:res, motivo:mMot||'',
+      competencia:mCompetencia||'', precio_competencia:mPrecioCap||'',
+      token:CU&&CU.token?CU.token:'',
+      usuario_cel:CU?CU.celular:'', usuario_nom:CU?CU.nombre:'',
+      fecha:n.dt, hora:n.hr, dia:n.d, mes:n.m, anio:n.y, ts:n.ts};
+    const r=await POST('/api/merch', body);
+    if(!r){
+      msg.innerHTML='<div class="al al-r">❌ Sin conexión al servidor</div>';
+      return;
+    }
+    if(!r.ok){
+      msg.innerHTML='<div class="al al-r">❌ Error: '+(r.error||'Respuesta inválida')+'</div>';
+      return;
+    }
+    msg.innerHTML=`<div class="al ${res==='acepto'?'al-g':'al-r'}">${res==='acepto'?'✅ Aceptado — '+mMot:'❌ Rechazado — '+mMot}</div>`;
+    el('mCod').value='';
+    resetMerch();
+    refMerch();
+    setTimeout(()=>{ msg.innerHTML=''; },3000);
+  } catch(e) {
+    msg.innerHTML='<div class="al al-r">❌ Error inesperado: '+e.message+'</div>';
+  }
+}
+let mTab = 'resumen';
+let _mStats = null;
+let mChs = {};
+
+function mkMChart(id,cfg){if(mChs[id])mChs[id].destroy();const c=el(id);if(!c)return;mChs[id]=new Chart(c.getContext('2d'),cfg);}
+
+function setMTab(t){
+  mTab = t;
+  ['resumen','motivos','familia','dias','competencia'].forEach(x=>{
+    const e=el('mch-'+x); if(e) e.className=(x===t?'':'hide');
+    el('mtab-'+x).className='chtab'+(x===t?' on':'');
+  });
+  if(_mStats) buildMerchCharts(_mStats, t);
+}
+
+function buildMerchCharts(sd, t) {
+  if(sd) _mStats = sd;
+  const s = _mStats; if(!s) return;
+  const optsPie={responsive:true,plugins:{legend:{labels:{color:'#f0f0f5',font:{size:11},boxWidth:10}}}};
+  const optsH={responsive:true,plugins:{legend:{display:false}},scales:{x:{ticks:{color:'#8888a0',font:{size:10}},grid:{color:'rgba(255,255,255,.04)'}},y:{ticks:{color:'#8888a0',font:{size:10}},grid:{color:'rgba(255,255,255,.04)'}}}};
+  const optsV={responsive:true,plugins:{legend:{labels:{color:'#f0f0f5',font:{size:11},boxWidth:10}}},scales:{x:{ticks:{color:'#8888a0',font:{size:9}},grid:{color:'rgba(255,255,255,.04)'}},y:{ticks:{color:'#8888a0',font:{size:10},stepSize:1},grid:{color:'rgba(255,255,255,.04)'}}}};
+
+  if(t==='resumen'){
+    mkMChart('cvMRes',{type:'doughnut',data:{labels:['✅ Aceptó','❌ Rechazó'],datasets:[{data:[s.acepto,s.rechazo],backgroundColor:['rgba(48,201,126,.85)','rgba(232,72,85,.85)'],borderColor:['#30c97e','#e84855'],borderWidth:2}]},options:optsPie});
+  }
+  if(t==='motivos'){
+    if(s.motivosAcepto&&s.motivosAcepto.length){
+      const lAc=s.motivosAcepto.map(x=>x[0]), dAc=s.motivosAcepto.map(x=>x[1]);
+      mkMChart('cvMAc',{type:'bar',data:{labels:lAc,datasets:[{label:'Aceptación',data:dAc,backgroundColor:'rgba(48,201,126,.85)',borderColor:'#30c97e',borderWidth:1,borderRadius:4}]},options:{...optsH,indexAxis:'y'}});
+    }
+    if(s.motivosRechazo&&s.motivosRechazo.length){
+      const lRec=s.motivosRechazo.map(x=>x[0]), dRec=s.motivosRechazo.map(x=>x[1]);
+      mkMChart('cvMRec',{type:'bar',data:{labels:lRec,datasets:[{label:'Rechazo',data:dRec,backgroundColor:'rgba(232,72,85,.85)',borderColor:'#e84855',borderWidth:1,borderRadius:4}]},options:{...optsH,indexAxis:'y'}});
+    }
+  }
+  if(t==='familia'&&s.porFamilia&&s.porFamilia.length){
+    const fams=s.porFamilia.map(x=>x[0]);
+    const acArr=s.porFamilia.map(x=>x[1].acepto||0);
+    const reArr=s.porFamilia.map(x=>x[1].rechazo||0);
+    mkMChart('cvMFam',{type:'bar',data:{labels:fams,datasets:[{label:'✅ Aceptó',data:acArr,backgroundColor:'rgba(48,201,126,.85)',borderColor:'#30c97e',borderWidth:1,borderRadius:3,barPercentage:.4},{label:'❌ Rechazó',data:reArr,backgroundColor:'rgba(232,72,85,.85)',borderColor:'#e84855',borderWidth:1,borderRadius:3,barPercentage:.4}]},options:{...optsH,indexAxis:'y',plugins:{legend:{labels:{color:'#f0f0f5',font:{size:11},boxWidth:10}}}}});
+  }
+  if(t==='dias'&&s.dias&&s.dias.length){
+    const lbs=s.dias.map(d=>d.label);
+    const acD=s.dias.map(d=>d.acepto||0);
+    const reD=s.dias.map(d=>d.rechazo||0);
+    mkMChart('cvMDias',{type:'bar',data:{labels:lbs,datasets:[{label:'✅ Aceptó',data:acD,backgroundColor:'rgba(48,201,126,.85)',borderColor:'#30c97e',borderWidth:1,borderRadius:4,barPercentage:.4},{label:'❌ Rechazó',data:reD,backgroundColor:'rgba(232,72,85,.85)',borderColor:'#e84855',borderWidth:1,borderRadius:4,barPercentage:.4}]},options:{...optsV,plugins:{legend:{labels:{color:'#f0f0f5',font:{size:11},boxWidth:10}}}}});
+  }
+  if(t==='competencia'&&s.competencia){
+    const comp=s.competencia;
+    if(comp.length){
+      const lbs=comp.map(x=>x[0]), vals=comp.map(x=>x[1]);
+      const colors=['rgba(232,72,85,.85)','rgba(247,183,49,.85)','rgba(61,155,233,.85)'];
+      const bcolors=['#e84855','#f7b731','#3d9be9'];
+      mkMChart('cvMComp',{type:'bar',data:{labels:lbs,datasets:[{data:vals,backgroundColor:lbs.map((_,i)=>colors[i%colors.length]),borderColor:lbs.map((_,i)=>bcolors[i%bcolors.length]),borderWidth:1,borderRadius:6}]},options:{...optsH,plugins:{legend:{display:false}},indexAxis:'y'}});
+    }
+
+  }
+}
+
+
+
+let mWeekOffset = 0;
+let mSelDay = null;
+
+function buildMerchWeek() {
+  const today = new Date(); today.setHours(0,0,0,0);
+  const todayStr = today.toISOString().slice(0,10);
+  const mon = getMondayOfWeek(mWeekOffset);
+  const sun = new Date(mon); sun.setDate(mon.getDate()+6);
+  const monP = mon.toISOString().slice(0,10).split('-');
+  const sunP = sun.toISOString().slice(0,10).split('-');
+  const lbl = parseInt(monP[2])+' '+MESES_CORTO[parseInt(monP[1])]+' — '+parseInt(sunP[2])+' '+MESES_CORTO[parseInt(sunP[1])];
+  const lblEl = el('merchWeekLabel'); if(lblEl) lblEl.textContent = lbl;
+  const nextBtn = el('merchNextBtn');
+  if(nextBtn){ nextBtn.disabled=mWeekOffset>=0; nextBtn.style.opacity=mWeekOffset>=0?'.3':'1'; nextBtn.style.cursor=mWeekOffset>=0?'default':'pointer'; }
+  let h='';
+  for(let i=0;i<7;i++){
+    const d=new Date(mon); d.setDate(mon.getDate()+i);
+    const ds=d.toISOString().slice(0,10);
+    const isToday=ds===todayStr, isSel=ds===mSelDay, isFut=d>today;
+    h+=`<button onclick="selectMerchDay('${ds}')"
+      style="display:flex;flex-direction:column;align-items:center;padding:5px 2px;border-radius:8px;cursor:${isFut?'default':'pointer'};font-family:inherit;
+        background:${isSel?'#e84855':isToday?'rgba(232,72,85,.2)':'rgba(255,255,255,.04)'};
+        opacity:${isFut?'.3':'1'};
+        border:${isToday&&!isSel?'1px solid #e84855':isSel?'1px solid #e84855':'1px solid transparent'};">
+      <span style="font-size:14px;font-weight:700;color:${isSel?'#fff':isToday?'#ff7a85':'#f0f0f5'};">${d.getDate()}</span>
+    </button>`;
+  }
+  const wr=el('merchWeekRow'); if(wr) wr.innerHTML=h;
+}
+
+function navMerchWeek(dir){
+  mWeekOffset+=dir;
+  if(mWeekOffset>0) mWeekOffset=0;
+  mSelDay=null;
+  buildMerchWeek();
+  refMerch();
+}
+
+function selectMerchDay(ds){
+  const today=new Date(); today.setHours(0,0,0,0);
+  if(new Date(ds)>today) return;
+  if(mSelDay===ds){ mSelDay=null; buildMerchWeek(); poblarMerchVendSel(); refMerch(); return; }
+  mSelDay=ds;
+  buildMerchWeek();
+  poblarMerchVendSel(); // update selector counts for selected day
+  refMerch();
+}
+
+function setMerchVendedor(v){ mVendedor=v; refMerch(); }
+function limpiarFiltroMerch(){
+  mVendedor=''; mSelDay=null; mWeekOffset=0;
+  const sel=el('merchVendSel'); if(sel) sel.value='';
+  buildMerchWeek();
+  refMerch();
+}
+async function poblarMerchVendSel(){
+  if(!ADM) return;
+  const users=await GET('/api/usuarios'+aq());
+  if(!users) return;
+  // Get merch counts per user
+  const allMerch=await GET('/api/merch'+aq()+'&limit=9999');
+  const mCount={};
+  if(allMerch) allMerch.forEach(m=>{ mCount[m.usuario_cel]=(mCount[m.usuario_cel]||0)+1; });
+  const sel=el('merchVendSel'); if(!sel) return;
+  const cur=sel.value;
+  // If a day is selected, filter merch counts for that day
+  let merchFiltered = allMerch || [];
+  if(mSelDay) merchFiltered = merchFiltered.filter(m=>m.fecha===mSelDay);
+  const mCountFil = {};
+  merchFiltered.forEach(m=>{ mCountFil[m.usuario_cel]=(mCountFil[m.usuario_cel]||0)+1; });
+  const MESES_PV=['','Ene','Feb','Mar','Abr','May','Jun','Jul','Ago','Sep','Oct','Nov','Dic'];
+  const fechaPV = mSelDay ? (()=>{ const p=mSelDay.split('-'); return parseInt(p[2])+' '+MESES_PV[parseInt(p[1])]; })() : 'hoy';
+  const totalM=merchFiltered.length;
+  sel.innerHTML='<option value="">Todos los asesores — '+totalM+' merch '+fechaPV+'</option>';
+  users.forEach(u=>{
+    const cnt=mCountFil[u.celular]||0;
+    if((mCount[u.celular]||0)===0) return; // solo mostrar asesores que tienen merch
+    const o=document.createElement('option');
+    o.value=u.celular;
+    o.textContent=u.nombre+' — '+cnt+' merch '+fechaPV;
+    if(u.celular===cur) o.selected=true;
+    sel.appendChild(o);
+  });
+}
+
+async function refMerch(){
+  // Build query with admin filters
+  let mq2=aq()+'&limit=50';
+  if(ADM){
+    if(mVendedor) mq2+='&vendedor='+encodeURIComponent(mVendedor);
+    if(mSelDay){
+      const p=mSelDay.split('-');
+      mq2+='&dia='+parseInt(p[2])+'&mes='+parseInt(p[1])+'&anio='+parseInt(p[0]);
+    }
+  }
+  const rows=await GET('/api/merch'+mq2);
+  const lst=el('mList');
+  if(!rows||!rows.length){ lst.innerHTML='<div class="emp">Sin registros</div>'; return; }
+  lst.innerHTML=rows.map(m=>`
+  <div style="padding:8px 0;border-bottom:1px solid rgba(255,255,255,.05);">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:3px;">
+      <span style="font-family:monospace;font-weight:700;font-size:14px;color:${m.resultado==='acepto'?'#5ddea0':'#ff7a85'};">${m.codigo}</span>
+      <span style="font-size:11px;font-weight:600;color:${m.resultado==='acepto'?'#5ddea0':'#ff7a85'};flex-shrink:0;">${m.resultado==='acepto'?'✅ Aceptó':'❌ Rechazó'}</span>
+    </div>
+    ${m.motivo?`<div style="font-size:11px;font-weight:600;display:inline-block;margin-bottom:2px;${m.resultado==='acepto'?'color:#5ddea0;':'color:#ff7a85;'}">${m.motivo}${m.competencia?' — '+m.competencia:''}${m.precio_competencia?' $'+m.precio_competencia:''}</div>`:''}
+    <div style="font-size:11px;color:#8888a0;margin-top:1px;">${m.familia} · ${m.fecha}</div>
+  </div>`).join('');
+  const ac=rows.filter(m=>m.resultado==='acepto').length;
+  el('mStats').textContent='✅'+ac+' ❌'+(rows.length-ac);
+  // Update admin bar totals
+  const mat=el('merchAdminTotals');
+  if(mat&&ADM){
+    const MESES_MT=['','Ene','Feb','Mar','Abr','May','Jun','Jul','Ago','Sep','Oct','Nov','Dic'];
+    const fechaLbl = mSelDay
+      ? (()=>{ const p=mSelDay.split('-'); return parseInt(p[2])+' '+MESES_MT[parseInt(p[1])]; })()
+      : 'Hoy';
+    mat.textContent=fechaLbl+': '+rows.length+' · ✅'+ac+' ❌'+(rows.length-ac);
+  }
+
+  // Fetch and build merch charts
+  let mq=aq();
+  if(ADM){
+    if(mVendedor) mq+='&vendedor='+encodeURIComponent(mVendedor);
+    if(mSelDay){
+      const p=mSelDay.split('-');
+      mq+='&dia='+parseInt(p[2])+'&mes='+parseInt(p[1])+'&anio='+parseInt(p[0]);
+      mq+='&fecha='+mSelDay;
+    }
+  }
+  // All users: pass fecha when day selected
+  if(mSelDay) {
+    if(!mq.includes('fecha=')) mq+='&fecha='+mSelDay;
+  }
+  const mst=await GET('/api/merch/stats'+mq);
+  if(mst) buildMerchCharts(mst, mTab);
+}
+
+// ════════════════════════════════════════════════════════════
+// REPORTES
+// ════════════════════════════════════════════════════════════
+async function filtrar(){
+  const ti=el('fTipo').value, dist=el('fDist').value;
+  const vend=el('fVend')?el('fVend').value:'';
+  const dia=el('fDia').value, mes=el('fMes').value, anio=el('fAnio').value;
+  let q=aq();
+  if(ti)q+='&tipo='+ti; if(dist)q+='&distribuidor='+dist;
+  if(ADM&&vend)q+='&vendedor='+encodeURIComponent(vend);
+  if(dia)q+='&dia='+dia; if(mes)q+='&mes='+mes; if(anio)q+='&anio='+anio;
+  const rows=await GET('/api/registros'+q);
+  el('repN').textContent=rows?rows.length:0;
+  const lst=el('repList');
+  if(!rows||!rows.length){ lst.innerHTML='<div class="emp">Sin resultados</div>'; return; }
+  lst.innerHTML=rows.slice(0,60).map(r=>`
+    <div style="padding:9px 0;border-bottom:1px solid rgba(255,255,255,.05);">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:3px;">
+        <div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap;">
+          <span style="font-family:monospace;font-weight:700;font-size:13px;">${r.codigo}</span>
+          <span style="font-size:10px;font-weight:700;padding:1px 7px;border-radius:20px;${r.tipo==='negado'?'background:rgba(232,72,85,.2);color:#ff7a85':'background:rgba(61,155,233,.2);color:#6bb8f7'}">${r.tipo==='negado'?'🚫':'📦'}</span>
+          <span style="font-size:10px;font-weight:700;padding:1px 7px;border-radius:20px;${r.distribuidor==='si'?'background:rgba(61,155,233,.15);color:#6bb8f7':'background:rgba(232,72,85,.12);color:#ff7a85'}">${r.distribuidor==='si'?'✅':'❌'}</span>
+        </div>
+        <span style="font-size:11px;font-weight:700;color:${r.distribuidor==='si'?'#6bb8f7':'#ff7a85'};flex-shrink:0;">${r.piezas||1}pz</span>
+      </div>
+      <div style="font-size:11px;color:#c0c0d0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${r.descripcion}</div>
+      <div style="font-size:11px;color:#666;margin-top:1px;">${r.fecha} · ${r.usuario_nom}</div>
+    </div>`).join('');
+}
+
+function exportar(tipo){
+  // Always use current filter state
+  const dist = el('fDist').value;
+  const vend = (el('fVend') ? el('fVend').value : '') || '';
+  const ti   = el('fTipo').value;
+  const dia  = el('fDia').value;
+  const mes  = el('fMes').value;
+  const anio = el('fAnio').value;
+
+  function buildQ(base) {
+    let q = base || aq();
+    if(ti)   q += '&tipo='+ti;
+    if(dist) q += '&distribuidor='+dist;
+    if(ADM && vend) q += '&vendedor='+encodeURIComponent(vend);
+    if(dia)  q += '&dia='+dia;
+    if(mes)  q += '&mes='+mes;
+    if(anio) q += '&anio='+anio;
+    return q;
+  }
+
+  if(tipo==='regs')    window.open('/api/export/registros'+buildQ(),'_blank');
+  else if(tipo==='ventas')  window.open('/api/export/ventas'+buildQ(),'_blank');
+  else if(tipo==='merch')   window.open('/api/export/merch'+buildQ(),'_blank');
+  else if(tipo==='familia') window.open('/api/export/familias'+buildQ(),'_blank');
+  else if(tipo==='codigo')       window.open('/api/export/codigos'+buildQ(),'_blank');
+  else if(tipo==='competencia') window.open('/api/export/competencia'+buildQ(),'_blank');
+}
+
+async function refRep(){
+  filtrar();
+  // Hide admin-only sections for promotors
+  if(!ADM){
+    hide('fVendRow');
+    hide('trkCard');
+    // Show only own user in list
+    const uLst=el('uList');
+    if(uLst&&CU) uLst.innerHTML=`<div style="padding:8px 0;">
+      <div style="font-size:13px;font-weight:600;">${CU.nombre}</div>
+      <div style="font-size:11px;color:#8888a0;">${CU.celular}</div>
+    </div>`;
+    return;
+  }
+  if(ADM){
+    show('trkCard');
+    const rows=await GET('/api/tracking'+aq());
+    const tl=el('trkList');
+    if(!rows||!rows.length){ tl.innerHTML='<div class="emp">Sin actividad</div>'; }
+    else tl.innerHTML=rows.map(t=>`<div style="display:flex;justify-content:space-between;padding:5px 0;border-bottom:1px solid rgba(255,255,255,.05);font-size:11px;"><span style="color:#8888a0;">${t.tipo.replace(/_/g,' ')}</span><span>${t.usuario_nom||''}</span><span style="color:#8888a0;">${t.fecha} ${t.hora}</span></div>`).join('');
+
+    if(ROL==='superadmin'||ROL==='admin') show('fVendRow');
+    const users=await GET('/api/usuarios'+aq());
+    if(users){
+      const sel=el('fVend'); const cur=sel.value;
+      sel.innerHTML='<option value="">Todos los vendedores</option>';
+      users.forEach(u=>{ const o=document.createElement('option'); o.value=u.celular; o.textContent=u.nombre+' ('+u.registros+')'; if(u.celular===cur)o.selected=true; sel.appendChild(o); });
+      el('uList').innerHTML=users.map(u=>{
+        const ADMCELS={'85489705':'👑 Superadmin','6143551':'🔑 Admin'};
+        const rolLbl=ADMCELS[String(u.celular)]||'👤 Promotor';
+        const rolBg=String(u.celular)==='85489705'?'rgba(247,183,49,.2)':String(u.celular)==='6143551'?'rgba(61,155,233,.2)':'rgba(136,136,160,.12)';
+        const rolCol=String(u.celular)==='85489705'?'#ffd060':String(u.celular)==='6143551'?'#6bb8f7':'#8888a0';
+        return `<div style="display:flex;justify-content:space-between;align-items:center;padding:8px 0;border-bottom:1px solid rgba(255,255,255,.05);">
+          <div>
+            <div style="font-size:13px;font-weight:600;">${u.nombre}</div>
+            <div style="font-size:11px;color:#8888a0;">${u.celular}</div>
+            <span style="font-size:10px;font-weight:700;padding:1px 7px;border-radius:20px;background:${rolBg};color:${rolCol};">${rolLbl}</span>
+          </div>
+          <span class="pill pw">${u.registros} reg.</span>
+        </div>`;
+      }).join('');;
+    }
+  }
+}
+
+
+
+// ════════════════════════════════════════════════════════════
+// VENTAS
+// ════════════════════════════════════════════════════════════
+function onVCodInput(v) {
+  const drop = el('vAcDrop');
+  if(!v||v.length<2){drop.style.display='none';return;}
+  const res = acSearch(v,8);
+  if(!res.length){drop.style.display='none';return;}
+  drop.innerHTML = res.map(p=>`<div class="ac-item" onclick="selVAC('${p.c.replace(/'/g,"\'")}')"><div class="ac-cod">${p.c}</div><div class="ac-desc">${p.d} · ${p.f}</div></div>`).join('');
+  drop.style.display='block';
+}
+function selVAC(c){ el('vCodIn').value=c; el('vAcDrop').style.display='none'; validarVenta(); }
+
+function validarVenta() {
+  const v = el('vCodIn').value.trim().toUpperCase();
+  el('vAcDrop').style.display='none';
+  if(!v){ el('vValRes').innerHTML='<div class="al al-w">Ingresa un código.</div>'; return; }
+  el('vCodIn').value=v;
+  const found = MAPA[v];
+  sVCod = found ? {...found} : {c:v,d:'Código no en catálogo',f:'—'};
+  el('vValRes').innerHTML = found
+    ? `<div class="al al-g">✅ ${found.c} — ${found.d}</div>`
+    : `<div class="al al-w">⚠️ Código no está en catálogo — se registrará igual</div>`;
+  el('vCodInfo').innerHTML = `<div style="background:#1e1e28;border-radius:8px;padding:10px;">
+    <div style="font-size:16px;font-weight:700;font-family:monospace;color:#5ddea0;">${v}</div>
+    <div style="font-size:13px;margin-top:4px;">${sVCod.d}</div>
+    ${found?`<div style="margin-top:6px;"><span class="pill pg">${found.f}</span></div>`:''}
+  </div>`;
+  el('vPzas').value='';
+  show('vForm');
+}
+
+async function guardarVenta() {
+  const m = el('vSaveMsg');
+  if(!sVCod){ m.innerHTML='<div class="al al-w">Valida un código primero.</div>'; return; }
+  const pz = parseInt(el('vPzas').value)||0;
+  if(!pz){ m.innerHTML='<div class="al al-w">Ingresa la cantidad vendida.</div>'; return; }
+  const n=nowD();
+  m.innerHTML='<div class="al al-b"><span class="spin"></span>Guardando...</div>';
+  const res=await POST('/api/ventas',{
+    codigo:sVCod.c, descripcion:sVCod.d, familia:sVCod.f||'—',
+    piezas:pz, token:CU.token,
+    usuario_cel:CU.celular, usuario_nom:CU.nombre,
+    fecha:n.dt, hora:n.hr, dia:n.d, mes:n.m, anio:n.y, ts:n.ts
+  });
+  if(!res||!res.ok){ m.innerHTML='<div class="al al-r">Error al guardar.</div>'; return; }
+  m.innerHTML='<div class="al al-g">💰 Venta registrada — '+pz+' piezas</div>';
+  el('vCodIn').value=''; el('vPzas').value=''; el('vValRes').innerHTML='';
+  hide('vForm'); sVCod=null;
+  refVentas();
+  setTimeout(()=>{ m.innerHTML=''; },2500);
+}
+
+async function refVentas() {
+  const nd=new Date();
+  el('dtVLbl').textContent=nd.getDate()+'/'+(nd.getMonth()+1)+'/'+nd.getFullYear();
+  const q=aq()+'&dia='+nd.getDate()+'&mes='+(nd.getMonth()+1)+'&anio='+nd.getFullYear();
+  const rows=await GET('/api/ventas'+q);
+  if(!rows) return;
+  el('vHoyN').textContent=rows.length;
+  const lst=el('vListHoy');
+  if(!rows.length){lst.innerHTML='<div class="emp">Sin ventas hoy</div>';return;}
+  const totalPz=rows.reduce((s,r)=>s+(r.piezas||1),0);
+  lst.innerHTML=`<div style="background:rgba(48,201,126,.1);border:1px solid rgba(48,201,126,.2);border-radius:8px;padding:10px;margin-bottom:10px;text-align:center;">
+    <div style="font-size:22px;font-weight:700;color:#5ddea0;">${totalPz}</div>
+    <div style="font-size:11px;color:#8888a0;">piezas vendidas hoy</div>
+  </div>`+rows.map(r=>`
+    <div style="padding:8px 0;border-bottom:1px solid rgba(255,255,255,.05);">
+      <div style="display:flex;align-items:center;justify-content:space-between;">
+        <span style="font-family:monospace;font-weight:700;font-size:14px;color:#5ddea0;">${r.codigo}</span>
+        <span style="font-size:13px;font-weight:700;color:#5ddea0;">💰 ${r.piezas||1} pz</span>
+      </div>
+      <div style="font-size:11px;color:#8888a0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${r.descripcion} · ${r.hora}</div>
+    </div>`).join('');
+}
+
+// ════════════════════════════════════════════════════════════
+// GESTIÓN DE ACCESOS
+// ════════════════════════════════════════════════════════════
+function setAccRol(r) {
+  sAccRol = r;
+  el('accRolAdmin').className = 'tgl' + (r==='admin' ? ' sb' : '');
+  el('accRolUser').className  = 'tgl' + (r==='usuario' ? ' sg' : '');
+}
+// Default select usuario on load
+setTimeout(()=>{ if(el('accRolUser')) setAccRol('usuario'); }, 500);
+
+async function crearAcceso() {
+  const nom = el('accNom').value.trim();
+  const cel = el('accCel').value.trim();
+  const msg = el('accMsg');
+  if (!nom || nom.length < 2) { msg.innerHTML='<div class="al al-w">Ingresa el nombre.</div>'; return; }
+  if (!cel || cel.length < 8) { msg.innerHTML='<div class="al al-w">Ingresa un celular válido.</div>'; return; }
+  const r = await POST('/api/accesos', { adminCel: CU.celular, adminNom: CU.nombre, nombre: nom, celular: cel, rol: sAccRol });
+  if (!r) { msg.innerHTML='<div class="al al-r">Error de conexión.</div>'; return; }
+  if (!r.ok) { msg.innerHTML='<div class="al al-r">'+r.error+'</div>'; return; }
+  msg.innerHTML='<div class="al al-g">✅ Acceso creado para '+nom+' como '+(sAccRol==='admin'?'🔑 Administrador':'👤 Promotor')+'</div>';
+  el('accNom').value=''; el('accCel').value='';
+  setTimeout(()=>{ msg.innerHTML=''; },3000);
+  refAccesos();
+}
+
+async function toggleAcceso(celular) {
+  const r = await POST('/api/accesos/toggle', { adminCel:CU.celular, adminNom:CU.nombre, celular });
+  if (r && r.ok) refAccesos();
+}
+
+async function eliminarAcceso(celular, nombre) {
+  if (!confirm('¿Eliminar acceso de '+nombre+'? Esta acción también cerrará su sesión activa.')) return;
+  const r = await POST('/api/accesos/eliminar', { adminCel:CU.celular, adminNom:CU.nombre, celular });
+  if (r && r.ok) refAccesos();
+}
+
+async function forzarLogout(celular, nombre) {
+  if (!confirm('¿Cerrar sesión activa de '+nombre+'?')) return;
+  const r = await POST('/api/logout/forzar', { adminCel:CU.celular, adminNom:CU.nombre, celular });
+  if (r && r.ok) { refAccesos(); }
+}
+
+async function refAccesos() {
+  // Show rol badge
+  const badge = el('rolBadge');
+  if (badge) {
+    if (ROL === 'superadmin') { badge.textContent = '👑 Superadmin'; badge.style.background='rgba(247,183,49,.2)'; badge.style.color='#ffd060'; }
+    else { badge.textContent = '🔑 Admin'; badge.style.background='rgba(61,155,233,.2)'; badge.style.color='#6bb8f7'; }
+  }
+  const q = aq();
+  const accesos = await GET('/api/accesos'+q);
+  const usuarios = await GET('/api/usuarios'+q);
+
+  // Count
+  el('accCount').textContent = accesos ? accesos.length : 0;
+
+  // Accesos list
+  const lst = el('accList');
+  if (!accesos || !accesos.length) {
+    lst.innerHTML = '<div class="emp">Sin usuarios registrados aún</div>';
+  } else {
+    lst.innerHTML = accesos.map(a => `
+      <div style="padding:10px 0;border-bottom:1px solid rgba(255,255,255,.06);">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px;">
+          <div style="display:flex;align-items:center;gap:8px;">
+            <div style="width:8px;height:8px;border-radius:50%;background:${a.enLinea?'#30c97e':'#555'};flex-shrink:0;"></div>
+            <div>
+              <div style="font-size:14px;font-weight:600;">${a.nombre}</div>
+              <div style="font-size:11px;color:#8888a0;">${a.celular} ${a.enLinea?'<span style="color:#5ddea0;">● En línea</span>':''}</div>
+              <div style="font-size:10px;margin-top:2px;"><span style="background:rgba(136,136,160,.15);color:#8888a0;padding:1px 7px;border-radius:20px;font-weight:600;">👤 Promotor</span></div>
+            </div>
+          </div>
+          <span class="pill ${a.activo?'pg':'pr'}">${a.activo?'Activo':'Inactivo'}</span>
+        </div>
+        <div style="display:flex;gap:6px;flex-wrap:wrap;">
+          ${ROL==='superadmin' ? `<button onclick="toggleAcceso('${a.celular}')" style="padding:5px 10px;border-radius:6px;border:1px solid rgba(255,255,255,.15);background:transparent;color:#f0f0f5;font-size:12px;cursor:pointer;font-family:inherit;">${a.activo?'⛔ Desactivar':'✅ Activar'}</button>` : ''}
+          ${a.enLinea ? `<button onclick="forzarLogout('${a.celular}','${a.nombre}')" style="padding:5px 10px;border-radius:6px;border:1px solid #f7b731;background:rgba(247,183,49,.15);color:#ffd060;font-size:12px;cursor:pointer;font-family:inherit;">🔌 Cerrar sesión</button>` : ''}
+          ${ROL==='superadmin' ? `<button onclick="eliminarAcceso('${a.celular}','${a.nombre}')" style="padding:5px 10px;border-radius:6px;border:1px solid rgba(232,72,85,.4);background:rgba(232,72,85,.1);color:#ff7a85;font-size:12px;cursor:pointer;font-family:inherit;">🗑 Eliminar</button>` : ''}
+        </div>
+      </div>`).join('');
+  }
+
+  // Sesiones activas
+  const sesLst = el('sesionList');
+  const enLinea = accesos ? accesos.filter(a => a.enLinea) : [];
+  if (!enLinea.length) {
+    sesLst.innerHTML = '<div class="emp">Ningún usuario conectado ahora</div>';
+  } else {
+    sesLst.innerHTML = enLinea.map(a => `
+      <div style="display:flex;align-items:center;justify-content:space-between;padding:8px 0;border-bottom:1px solid rgba(255,255,255,.05);">
+        <div style="display:flex;align-items:center;gap:8px;">
+          <div style="width:8px;height:8px;border-radius:50%;background:#30c97e;"></div>
+          <div>
+            <div style="font-size:13px;font-weight:600;">${a.nombre}</div>
+            <div style="font-size:11px;color:#8888a0;">${a.celular}</div>
+          </div>
+        </div>
+        <button onclick="forzarLogout('${a.celular}','${a.nombre}')" style="padding:5px 10px;border-radius:6px;border:1px solid #f7b731;background:rgba(247,183,49,.1);color:#ffd060;font-size:12px;cursor:pointer;font-family:inherit;">Cerrar</button>
+      </div>`).join('');
+  }
+}
+
+
+// ════════════════════════════════════════════════════════════
+// AUTO-LOGIN desactivado — siempre mostrar pantalla de login
+// ════════════════════════════════════════════════════════════
+localStorage.removeItem('ncu');
+
+// Cerrar sesión automáticamente cuando se cierra la app o el navegador
+window.addEventListener('beforeunload', () => {
+  if (CU && CU.token) {
+    // Usar sendBeacon para asegurar que el request se envíe aunque se cierre
+    const data = JSON.stringify({ celular: CU.celular, token: CU.token });
+    navigator.sendBeacon('/api/logout', new Blob([data], {type:'application/json'}));
+  }
+});
+
+// También cerrar sesión cuando la página se oculta (celular bloquea o cambia de app)
+document.addEventListener('visibilitychange', () => {
+  if (document.visibilityState === 'hidden' && CU && CU.token) {
+    fetch('/api/logout', {
+      method: 'POST',
+      headers: {'Content-Type':'application/json'},
+      body: JSON.stringify({ celular: CU.celular, token: CU.token }),
+      keepalive: true
+    }).catch(()=>{});
+  }
+});
+</script>
+</body>
+</html>
