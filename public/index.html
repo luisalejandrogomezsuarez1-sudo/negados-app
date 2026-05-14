@@ -547,20 +547,7 @@ select option{background:#1e1e28;}
       <div id="repList" class="slist"><div class="emp">Aplica filtros arriba</div></div>
     </div>
     <div id="trkCard" class="card hide">
-      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;flex-wrap:wrap;gap:8px;">
-        <h3 style="margin:0;">🔐 Actividad <span style="font-size:10px;color:#ffd060;">(Admin)</span></h3>
-        <div style="display:flex;gap:6px;align-items:center;flex-wrap:wrap;">
-          <select id="trkUsuSel" onchange="filtrarTracking()"
-            style="background:#1e1e28;border:1px solid rgba(255,255,255,.12);border-radius:7px;color:#f0f0f5;font-size:12px;padding:5px 8px;">
-            <option value="">Todos los usuarios</option>
-          </select>
-          <div style="position:relative;display:flex;align-items:center;">
-            <input type="date" id="trkFecha" onchange="filtrarTracking()"
-              style="background:#1e1e28;border:1px solid rgba(255,255,255,.12);border-radius:7px;color:#f0f0f5;font-size:12px;padding:5px 8px;cursor:pointer;" />
-          </div>
-          <button onclick="limpiarTracking()" style="background:none;border:1px solid rgba(255,255,255,.15);border-radius:7px;color:#8888a0;font-size:11px;cursor:pointer;padding:5px 8px;font-family:inherit;">✕</button>
-        </div>
-      </div>
+      <h3>🔐 Actividad <span style="font-size:10px;color:#ffd060;">(Admin)</span></h3>
       <div id="trkList" class="slist" style="max-height:200px;"><div class="emp">Sin actividad</div></div>
     </div>
     <div class="card hide" id="uListCard"><h3>Usuarios</h3><div id="uList"><div class="emp">Sin datos</div></div></div>
@@ -1927,57 +1914,6 @@ function exportar(tipo){
 }
 
 
-let _trkAllRows = [];
-
-async function cargarTracking() {
-  if(!ADM) return;
-  show('trkCard');
-  // Populate user selector
-  const users = await GET('/api/usuarios'+aq());
-  const sel = el('trkUsuSel');
-  if(sel && users) {
-    const cur = sel.value;
-    sel.innerHTML = '<option value="">Todos los usuarios</option>';
-    users.forEach(u => {
-      const o = document.createElement('option');
-      o.value = u.celular;
-      o.textContent = u.nombre;
-      if(u.celular === cur) o.selected = true;
-      sel.appendChild(o);
-    });
-  }
-  // Load tracking data
-  const rows = await GET('/api/tracking'+aq());
-  _trkAllRows = rows || [];
-  show('uListCard');
-  const ul = el('uList');
-  if(ul && users) ul.innerHTML = users.map(u=>`<div style="padding:6px 0;border-bottom:1px solid rgba(255,255,255,.05);display:flex;justify-content:space-between;"><span style="font-size:13px;">${u.nombre}</span><span style="font-size:11px;color:#8888a0;">${u.celular}</span></div>`).join('');
-  filtrarTracking();
-}
-
-function filtrarTracking() {
-  const tl = el('trkList');
-  const selUsu = el('trkUsuSel') ? el('trkUsuSel').value : '';
-  const selFecha = el('trkFecha') ? el('trkFecha').value : '';
-  let rows = _trkAllRows;
-  if(selUsu) rows = rows.filter(r => String(r.usuario_cel) === String(selUsu));
-  if(selFecha) rows = rows.filter(r => r.fecha === selFecha);
-  if(!rows.length){ tl.innerHTML='<div class="emp">Sin actividad</div>'; return; }
-  tl.innerHTML = rows.map(t=>`<div style="display:flex;justify-content:space-between;padding:5px 0;border-bottom:1px solid rgba(255,255,255,.05);">
-    <div>
-      <span style="font-size:12px;font-weight:600;">${t.usuario_nom}</span>
-      <span style="font-size:10px;color:#8888a0;margin-left:6px;">${t.tipo||'acceso'}</span>
-    </div>
-    <span style="font-size:10px;color:#8888a0;">${t.fecha} ${t.hora}</span>
-  </div>`).join('');
-}
-
-function limpiarTracking() {
-  const s = el('trkUsuSel'); if(s) s.value = '';
-  const f = el('trkFecha'); if(f) f.value = '';
-  filtrarTracking();
-}
-
 async function refRep(){
   filtrar();
   // Hide admin-only sections for promotors
@@ -1994,8 +1930,9 @@ async function refRep(){
     return;
   }
   if(ADM){
-    await cargarTracking();
-    const tl=el('trkList'); const rows=_trkAllRows;
+    show('trkCard');
+    const rows=await GET('/api/tracking'+aq());
+    const tl=el('trkList');
     if(!rows||!rows.length){ tl.innerHTML='<div class="emp">Sin actividad</div>'; }
     else tl.innerHTML=rows.map(t=>`<div style="display:flex;justify-content:space-between;padding:5px 0;border-bottom:1px solid rgba(255,255,255,.05);font-size:11px;"><span style="color:#8888a0;">${t.tipo.replace(/_/g,' ')}</span><span>${t.usuario_nom||''}</span><span style="color:#8888a0;">${t.fecha} ${t.hora}</span></div>`).join('');
 
