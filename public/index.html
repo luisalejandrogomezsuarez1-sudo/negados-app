@@ -547,7 +547,17 @@ select option{background:#1e1e28;}
       <div id="repList" class="slist"><div class="emp">Aplica filtros arriba</div></div>
     </div>
     <div id="trkCard" class="card hide">
-      <h3>🔐 Actividad <span style="font-size:10px;color:#ffd060;">(Admin)</span></h3>
+      <div style="display:flex;align-items:center;gap:6px;margin-bottom:10px;flex-wrap:nowrap;overflow:hidden;">
+        <h3 style="margin:0;white-space:nowrap;flex-shrink:0;font-size:13px;">🔐 Actividad <span style="font-size:9px;color:#ffd060;">(Admin)</span></h3>
+        <select id="trkUsuSel" onchange="filtrarTracking()"
+          style="flex:1;min-width:0;background:#1e1e28;border:1px solid rgba(247,183,49,.25);border-radius:7px;color:#f0f0f5;font-size:11px;padding:4px 6px;max-width:130px;">
+          <option value="">Todos</option>
+        </select>
+        <input type="date" id="trkFecha" onchange="filtrarTracking()"
+          style="flex:1;min-width:0;background:#1e1e28;border:1px solid rgba(247,183,49,.25);border-radius:7px;color:#8888a0;font-size:11px;padding:4px 6px;max-width:110px;cursor:pointer;" />
+        <button onclick="limpiarTracking()" title="Limpiar filtros"
+          style="flex-shrink:0;background:none;border:1px solid rgba(255,255,255,.12);border-radius:7px;color:#8888a0;font-size:12px;cursor:pointer;padding:4px 8px;font-family:inherit;line-height:1;">✕</button>
+      </div>
       <div id="trkList" class="slist" style="max-height:200px;"><div class="emp">Sin actividad</div></div>
     </div>
     <div class="card hide" id="uListCard"><h3>Usuarios</h3><div id="uList"><div class="emp">Sin datos</div></div></div>
@@ -1914,6 +1924,52 @@ function exportar(tipo){
 }
 
 
+
+let _trkAllRows = [];
+
+async function cargarTracking() {
+  if(!ADM) return;
+  show('trkCard');
+  // Populate user selector
+  const users = await GET('/api/usuarios'+aq());
+  const sel = el('trkUsuSel');
+  if(sel && users) {
+    const cur = sel.value;
+    sel.innerHTML = '<option value="">Todos</option>';
+    users.forEach(u => {
+      const o = document.createElement('option');
+      o.value = u.celular;
+      o.textContent = u.nombre.split(' ')[0]; // first name only to save space
+      if(u.celular === cur) o.selected = true;
+      sel.appendChild(o);
+    });
+  }
+  const rows = await GET('/api/tracking'+aq());
+  _trkAllRows = rows || [];
+  filtrarTracking();
+}
+
+function filtrarTracking() {
+  const tl = el('trkList');
+  const selUsu = el('trkUsuSel') ? el('trkUsuSel').value : '';
+  const selFecha = el('trkFecha') ? el('trkFecha').value : '';
+  let rows = _trkAllRows;
+  if(selUsu) rows = rows.filter(r => String(r.usuario_cel) === String(selUsu));
+  if(selFecha) rows = rows.filter(r => r.fecha === selFecha);
+  if(!rows.length){ tl.innerHTML='<div class="emp">Sin actividad</div>'; return; }
+  tl.innerHTML = rows.map(t=>`<div style="display:flex;justify-content:space-between;padding:5px 0;border-bottom:1px solid rgba(255,255,255,.05);font-size:11px;">
+    <span style="color:#8888a0;">${t.tipo?t.tipo.replace(/_/g,' '):''}</span>
+    <span style="color:#ffd060;font-weight:600;">${t.usuario_nom||''}</span>
+    <span style="color:#8888a0;">${t.fecha} ${t.hora}</span>
+  </div>`).join('');
+}
+
+function limpiarTracking() {
+  const s = el('trkUsuSel'); if(s) s.value = '';
+  const f = el('trkFecha'); if(f) f.value = '';
+  filtrarTracking();
+}
+
 async function refRep(){
   filtrar();
   // Hide admin-only sections for promotors
@@ -1930,11 +1986,7 @@ async function refRep(){
     return;
   }
   if(ADM){
-    show('trkCard');
-    const rows=await GET('/api/tracking'+aq());
-    const tl=el('trkList');
-    if(!rows||!rows.length){ tl.innerHTML='<div class="emp">Sin actividad</div>'; }
-    else tl.innerHTML=rows.map(t=>`<div style="display:flex;justify-content:space-between;padding:5px 0;border-bottom:1px solid rgba(255,255,255,.05);font-size:11px;"><span style="color:#8888a0;">${t.tipo.replace(/_/g,' ')}</span><span>${t.usuario_nom||''}</span><span style="color:#8888a0;">${t.fecha} ${t.hora}</span></div>`).join('');
+    await cargarTracking();
 
     if(ROL==='superadmin'||ROL==='admin'){ show('fVendRow'); show('uListCard'); }
     const users=await GET('/api/usuarios'+aq());
