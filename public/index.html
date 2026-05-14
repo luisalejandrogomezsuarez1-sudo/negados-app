@@ -274,12 +274,12 @@ select option{background:#1e1e28;}
     <div class="slbl" style="color:#3d9be9;">✅ Distribuidor SÍ maneja</div>
     <div class="g2">
       <div class="sc" onclick="irRepDist('si','hoy')" style="border-top:2px solid #3d9be9;">
-        <div class="v" id="dSiH" style="color:#3d9be9;">0</div><div class="l">Hoy</div>
+        <div class="v" id="dSiH" style="color:#3d9be9;">0</div><div class="l" id="lblSiH">Hoy</div>
         <div id="dSiHp" style="font-size:12px;color:#6bb8f7;font-weight:600;margin-top:2px;">0 pz</div>
         <div style="font-size:10px;color:#555;margin-top:3px;">Ver →</div>
       </div>
       <div class="sc" onclick="irRepDist('si','mes')" style="border-top:2px solid #3d9be9;">
-        <div class="v" id="dSiM" style="color:#3d9be9;">0</div><div class="l">Este mes</div>
+        <div class="v" id="dSiM" style="color:#3d9be9;">0</div><div class="l" id="lblSiM">Este mes</div>
         <div id="dSiMp" style="font-size:12px;color:#6bb8f7;font-weight:600;margin-top:2px;">0 pz</div>
         <div style="font-size:10px;color:#555;margin-top:3px;">Ver →</div>
       </div>
@@ -288,12 +288,12 @@ select option{background:#1e1e28;}
     <div class="slbl" style="color:#e84855;">❌ Distribuidor NO maneja</div>
     <div class="g2">
       <div class="sc" onclick="irRepDist('no','hoy')" style="border-top:2px solid #e84855;">
-        <div class="v" id="dNoH" style="color:#e84855;">0</div><div class="l">Hoy</div>
+        <div class="v" id="dNoH" style="color:#e84855;">0</div><div class="l" id="lblNoH">Hoy</div>
         <div id="dNoHp" style="font-size:12px;color:#ff7a85;font-weight:600;margin-top:2px;">0 pz</div>
         <div style="font-size:10px;color:#555;margin-top:3px;">Ver →</div>
       </div>
       <div class="sc" onclick="irRepDist('no','mes')" style="border-top:2px solid #e84855;">
-        <div class="v" id="dNoM" style="color:#e84855;">0</div><div class="l">Este mes</div>
+        <div class="v" id="dNoM" style="color:#e84855;">0</div><div class="l" id="lblNoM">Este mes</div>
         <div id="dNoMp" style="font-size:12px;color:#ff7a85;font-weight:600;margin-top:2px;">0 pz</div>
         <div style="font-size:10px;color:#555;margin-top:3px;">Ver →</div>
       </div>
@@ -1250,11 +1250,12 @@ function selectDay(ds) {
     selDay = null;
     buildWeek();
     hide('dayDetailCard');
+    refDash(); // refresh stats back to today
     return;
   }
   selDay = ds;
   buildWeek();
-  showDayDetail(ds);
+  refDash(); // refresh ALL stats and charts for selected day
 }
 
 function cerrarDayDetail() {
@@ -1330,10 +1331,11 @@ async function refDash() {
   el('dNoM').textContent=s.noMes;  el('dNoMp').textContent=s.pzNoMes+' pz';
   // Update card labels based on selected day
   const MESES_L=['','Ene','Feb','Mar','Abr','May','Jun','Jul','Ago','Sep','Oct','Nov','Dic'];
-  const lHoy = selDay ? (()=>{ const p=selDay.split('-'); return parseInt(p[2])+' '+MESES_L[parseInt(p[1])]; })() : 'Hoy';
-  const lMes = selDay ? (()=>{ const p=selDay.split('-'); return MESES_L[parseInt(p[1])]+' '+p[0]; })() : 'Este mes';
-  document.querySelectorAll('.l').forEach(e=>{ if(e.textContent==='Hoy'||e.textContent.match(/^\d+ [A-Z]/)) e.textContent=lHoy; });
-  document.querySelectorAll('.l').forEach(e=>{ if(e.textContent==='Este mes'||e.textContent.match(/^[A-Z][a-z]+ \d{4}/)) e.textContent=lMes; });
+  const MESES_L2=['','Ene','Feb','Mar','Abr','May','Jun','Jul','Ago','Sep','Oct','Nov','Dic'];
+  const lHoy = selDay ? (()=>{ const p=selDay.split('-'); return parseInt(p[2])+' '+MESES_L2[parseInt(p[1])]; })() : 'Hoy';
+  const lMes = selDay ? (()=>{ const p=selDay.split('-'); return MESES_L2[parseInt(p[1])]+' '+p[0]; })() : 'Este mes';
+  ['lblSiH','lblNoH'].forEach(id=>{ const e=el(id); if(e) e.textContent=lHoy; });
+  ['lblSiM','lblNoM'].forEach(id=>{ const e=el(id); if(e) e.textContent=lMes; });
 
   if(ADM) {
     show('adminBar');
