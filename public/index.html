@@ -1976,16 +1976,17 @@ let _trkAllRows = [];
 async function cargarTracking() {
   if(!ADM) return;
   show('trkCard');
-  const users = await GET('/api/usuarios'+aq());
+  // Use accesos to get ALL users (not just those who have logged in)
+  const accesos = await GET('/api/accesos'+aq());
   const sel = el('trkUsuSel');
-  if(sel && users) {
+  if(sel && accesos) {
     const cur = sel.value;
     sel.innerHTML = '<option value="">Todos</option>';
-    users.forEach(u => {
+    accesos.filter(a=>a.activo).forEach(u => {
       const o = document.createElement('option');
       o.value = u.celular;
       o.textContent = u.nombre;
-      if(u.celular === cur) o.selected = true;
+      if(String(u.celular) === String(cur)) o.selected = true;
       sel.appendChild(o);
     });
     rebuildCS('trkUsuSel');
