@@ -107,6 +107,31 @@ select option { font-size:12px !important; }
   font-size:12px !important;
   -webkit-text-size-adjust:none;
 }
+
+/* ── Custom Select ───────────────────────────────────── */
+.cs-wrap { position:relative; user-select:none; }
+.cs-btn {
+  width:100%; background:#1e1e28; border:1px solid rgba(255,255,255,.12);
+  border-radius:8px; color:#f0f0f5; font-size:12px; padding:8px 32px 8px 10px;
+  cursor:pointer; text-align:left; font-family:inherit; display:flex;
+  align-items:center; justify-content:space-between; gap:6px;
+}
+.cs-btn:after { content:'▾'; color:#8888a0; font-size:11px; flex-shrink:0; }
+.cs-btn.open { border-color:rgba(61,155,233,.4); }
+.cs-btn.open:after { content:'▴'; color:#6bb8f7; }
+.cs-drop {
+  display:none; position:absolute; top:calc(100% + 4px); left:0; right:0;
+  background:#22222d; border:1px solid rgba(255,255,255,.15); border-radius:8px;
+  z-index:200; max-height:220px; overflow-y:auto;
+}
+.cs-drop.open { display:block; }
+.cs-opt {
+  padding:9px 13px; font-size:12px; color:#f0f0f5; cursor:pointer;
+  border-bottom:1px solid rgba(255,255,255,.05);
+}
+.cs-opt:last-child { border-bottom:none; }
+.cs-opt:hover { background:rgba(255,255,255,.06); }
+.cs-opt.selected { color:#6bb8f7; background:rgba(61,155,233,.08); }
 </style>
 </head>
 <body>
@@ -875,7 +900,7 @@ function iniciarApp() {
       mab.style.display='none';
     }
   }
-  loadCatalog().then(() => { buildFamGrid(); ir('Captura'); });
+  loadCatalog().then(() => { buildFamGrid(); ir('Captura'); initCustomSelects(); });
 }
 
 // ════════════════════════════════════════════════════════════
@@ -2120,6 +2145,71 @@ async function refVentas() {
       </div>
       <div style="font-size:11px;color:#8888a0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${r.descripcion} · ${r.hora}</div>
     </div>`).join('');
+}
+
+
+// ── Custom Select replacement ─────────────────────────
+function buildCS(sel) {
+  if(!sel || sel.dataset.csBuilt) return;
+  sel.dataset.csBuilt = '1';
+  sel.style.display = 'none';
+
+  const wrap = document.createElement('div');
+  wrap.className = 'cs-wrap';
+  sel.parentNode.insertBefore(wrap, sel);
+  wrap.appendChild(sel);
+
+  const btn = document.createElement('div');
+  btn.className = 'cs-btn';
+  const drop = document.createElement('div');
+  drop.className = 'cs-drop';
+  wrap.appendChild(btn);
+  wrap.appendChild(drop);
+
+  function render() {
+    const opt = sel.options[sel.selectedIndex];
+    btn.textContent = opt ? opt.textContent : '';
+    btn.insertAdjacentHTML('beforeend','<span class="cs-arr"></span>');
+    drop.innerHTML = '';
+    Array.from(sel.options).forEach((o,i) => {
+      const d = document.createElement('div');
+      d.className = 'cs-opt' + (i===sel.selectedIndex?' selected':'');
+      d.textContent = o.textContent;
+      d.addEventListener('click', () => {
+        sel.selectedIndex = i;
+        sel.dispatchEvent(new Event('change', {bubbles:true}));
+        render();
+        btn.classList.remove('open');
+        drop.classList.remove('open');
+      });
+      drop.appendChild(d);
+    });
+  }
+  render();
+
+  btn.addEventListener('click', e => {
+    e.stopPropagation();
+    const isOpen = drop.classList.contains('open');
+    document.querySelectorAll('.cs-drop.open').forEach(d=>d.classList.remove('open'));
+    document.querySelectorAll('.cs-btn.open').forEach(b=>b.classList.remove('open'));
+    if(!isOpen){ btn.classList.add('open'); drop.classList.add('open'); }
+  });
+
+  // Observe for option changes (dynamic repopulation)
+  new MutationObserver(render).observe(sel, {childList:true});
+}
+
+document.addEventListener('click', () => {
+  document.querySelectorAll('.cs-drop.open').forEach(d=>d.classList.remove('open'));
+  document.querySelectorAll('.cs-btn.open').forEach(b=>b.classList.remove('open'));
+});
+
+// Build custom selects after DOM ready
+function initCustomSelects() {
+  ['captAsesorSel','vendSel','merchVendSel','fTipo','fDist','fVend','trkUsuSel'].forEach(id => {
+    const s = document.getElementById(id);
+    if(s) buildCS(s);
+  });
 }
 
 // ════════════════════════════════════════════════════════════
