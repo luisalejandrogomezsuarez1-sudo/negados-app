@@ -1120,6 +1120,7 @@ async function poblarCaptAsesorSel() {
     if(u.celular === cur) o.selected = true;
     sel.appendChild(o);
   });
+  rebuildCS('captAsesorSel');
 }
 
 async function refCaptura() {
@@ -1855,6 +1856,7 @@ async function poblarMerchVendSel(){
     if(u.celular===cur) o.selected=true;
     sel.appendChild(o);
   });
+  rebuildCS('merchVendSel');
 }
 
 async function refMerch(){
@@ -1986,17 +1988,7 @@ async function cargarTracking() {
       if(u.celular === cur) o.selected = true;
       sel.appendChild(o);
     });
-    // Rebuild custom select after populating options
-    const wrap = sel.closest('.cs-wrap');
-    if(wrap) {
-      // Remove old custom UI and rebuild
-      const oldBtn = wrap.querySelector('.cs-btn');
-      const oldDrop = wrap.querySelector('.cs-drop');
-      if(oldBtn) oldBtn.remove();
-      if(oldDrop) oldDrop.remove();
-      delete sel.dataset.csBuilt;
-      buildCS(sel);
-    }
+    rebuildCS('trkUsuSel');
   }
   const rows = await GET('/api/tracking'+aq());
   _trkAllRows = rows || [];
@@ -2043,8 +2035,7 @@ async function refRep(){
     await cargarTracking();
 
     if(ROL==='superadmin'||ROL==='admin'){ show('fVendRow'); show('uListCard'); }
-    // Rebuild all custom selects in reportes
-    ['fTipo','fDist','fVend'].forEach(id=>{ const s=el(id); if(s&&s.dataset.csBuilt){const w=s.closest('.cs-wrap');if(w){const b=w.querySelector('.cs-btn');const d=w.querySelector('.cs-drop');if(b)b.remove();if(d)d.remove();delete s.dataset.csBuilt;buildCS(s);}}});
+    setTimeout(()=>rebuildCS('fVend'), 100);
     const users=await GET('/api/usuarios'+aq());
     if(users){
       const sel=el('fVend'); const cur=sel.value;
@@ -2205,10 +2196,26 @@ document.addEventListener('click', () => {
 
 // Build custom selects after DOM ready
 function initCustomSelects() {
-  ['captAsesorSel','vendSel','merchVendSel','fTipo','fDist','fVend','trkUsuSel'].forEach(id => {
+  // Only build static selects at load (dynamic ones built when populated)
+  ['fTipo','fDist'].forEach(id => {
     const s = document.getElementById(id);
     if(s) buildCS(s);
   });
+}
+
+function rebuildCS(id) {
+  const s = el(id);
+  if(!s) return;
+  // Remove existing custom UI
+  const wrap = s.closest('.cs-wrap');
+  if(wrap) {
+    const btn = wrap.querySelector('.cs-btn');
+    const drop = wrap.querySelector('.cs-drop');
+    if(btn) btn.remove();
+    if(drop) drop.remove();
+    delete s.dataset.csBuilt;
+  }
+  buildCS(s);
 }
 
 // ════════════════════════════════════════════════════════════
