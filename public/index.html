@@ -86,6 +86,22 @@ select option{background:#1e1e28;}
 .offbar{background:#f7b731;color:#000;text-align:center;font-size:12px;font-weight:700;padding:6px;display:none;}
 select { font-size:12px !important; }
 select option { font-size:12px !important; }
+
+/* Custom dropdown wrapper */
+.sel-wrap { position:relative; display:block; }
+.sel-wrap select { 
+  appearance:none; -webkit-appearance:none; 
+  width:100%; cursor:pointer;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%238888a0' d='M6 8L1 3h10z'/%3E%3C/svg%3E");
+  background-repeat:no-repeat;
+  background-position:right 10px center;
+  padding-right:28px !important;
+}
+/* Force font size on mobile */
+.sel-wrap select, .sel-wrap select option {
+  font-size:12px !important;
+  -webkit-text-size-adjust:none;
+}
 </style>
 </head>
 <body>
@@ -137,10 +153,10 @@ select option { font-size:12px !important; }
       <span style="font-size:18px;">👥</span>
       <div style="flex:1;">
         <div style="font-size:10px;font-weight:700;color:#ffd060;margin-bottom:4px;text-transform:uppercase;letter-spacing:.06em;">Ver capturas de:</div>
-        <select id="captAsesorSel" onchange="setCaptAsesor(this.value)"
+        <div class="sel-wrap"><select id="captAsesorSel" onchange="setCaptAsesor(this.value)"
           style="background:#1e1e28;border:1px solid rgba(255,255,255,.12);border-radius:7px;color:#f0f0f5;font-size:13px;padding:6px 10px;width:100%;">
           <option value="">Todos los asesores</option>
-        </select>
+        </select></div>
       </div>
     </div>
 
@@ -238,7 +254,7 @@ select option { font-size:12px !important; }
         <div style="font-size:11px;font-weight:700;color:#ffd060;">👑 Vista administrador</div>
         <div id="merchAdminTotals" style="font-size:12px;color:#8888a0;"></div>
       </div>
-      <select id="vendSel" onchange="setVendedor(this.value)"></select>
+      <div class="sel-wrap"><select id="vendSel" onchange="setVendedor(this.value)"></select></div>
     </div>
 
     <!-- SEMANA -->
@@ -350,9 +366,9 @@ select option { font-size:12px !important; }
         <div style="font-size:11px;font-weight:700;color:#ffd060;">👑 Vista administrador</div>
         <div id="merchAdminTotals" style="font-size:12px;color:#8888a0;"></div>
       </div>
-      <select id="merchVendSel" onchange="setMerchVendedor(this.value)" style="margin-bottom:10px;">
+      <div class="sel-wrap"><select id="merchVendSel" onchange="setMerchVendedor(this.value)" style="margin-bottom:10px;">
         <option value="">Todos los asesores</option>
-      </select>
+      </select></div>
       <!-- Semana Merch -->
       <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px;">
         <button onclick="navMerchWeek(-1)" style="background:none;border:1px solid rgba(255,255,255,.15);border-radius:7px;color:#f0f0f5;font-size:16px;cursor:pointer;padding:3px 10px;font-family:inherit;">‹</button>
@@ -514,18 +530,18 @@ select option { font-size:12px !important; }
   <div class="body">
     <div class="card">
       <h3>Filtros</h3>
-      <select id="fTipo" style="margin-bottom:8px;">
+      <div class="sel-wrap"><select id="fTipo" style="margin-bottom:8px;">
         <option value="">Todos los tipos</option>
         <option value="negado">🚫 Negado</option>
         <option value="fuera">📦 Fuera de catálogo</option>
-      </select>
-      <select id="fDist" style="margin-bottom:8px;">
+      </select></div>
+      <div class="sel-wrap"><select id="fDist" style="margin-bottom:8px;">
         <option value="">Todos</option>
         <option value="si">✅ Distribuidor SÍ maneja</option>
         <option value="no">❌ Distribuidor NO maneja</option>
-      </select>
+      </select></div>
       <div id="fVendRow" class="hide" style="margin-bottom:8px;">
-        <select id="fVend"></select>
+        <div class="sel-wrap"><select id="fVend"></select></div>
       </div>
       <div class="row" style="margin-bottom:8px;gap:6px;">
         <input id="fDia"  type="number" placeholder="Día"  min="1" max="31" style="flex:1;font-size:13px;padding:8px 10px;" />
@@ -551,10 +567,10 @@ select option { font-size:12px !important; }
     <div id="trkCard" class="card hide">
       <div style="display:flex;align-items:center;gap:6px;margin-bottom:10px;flex-wrap:nowrap;overflow:hidden;">
         <h3 style="margin:0;white-space:nowrap;flex-shrink:0;font-size:13px;">🔐 Actividad <span style="font-size:9px;color:#ffd060;">(Admin)</span></h3>
-        <select id="trkUsuSel" onchange="filtrarTracking()"
+        <div class="sel-wrap"><select id="trkUsuSel" onchange="filtrarTracking()"
           style="flex:1;min-width:0;background:#1e1e28;border:1px solid rgba(247,183,49,.25);border-radius:7px;color:#f0f0f5;font-size:11px;padding:4px 6px;max-width:130px;">
           <option value="">Todos</option>
-        </select>
+        </select></div>
         <input type="date" id="trkFecha" onchange="filtrarTracking()"
           style="flex:1;min-width:0;background:#1e1e28;border:1px solid rgba(247,183,49,.25);border-radius:7px;color:#8888a0;font-size:11px;padding:4px 6px;max-width:110px;cursor:pointer;" />
         <button onclick="limpiarTracking()" title="Limpiar filtros"
