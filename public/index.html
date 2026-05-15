@@ -2,7 +2,9 @@
 <html lang="es">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+<meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="theme-color" content="#0f0f13">
 <title>NegadosApp</title>
@@ -670,6 +672,18 @@ select option { font-size:12px !important; }
 </div>
 
 <script>
+// Block pull-to-refresh on Android
+let lastY = 0;
+document.addEventListener('touchstart', e => { lastY = e.touches[0].clientY; }, {passive:true});
+document.addEventListener('touchmove', e => {
+  const y = e.touches[0].clientY;
+  const scrollTop = document.scrollingElement ? document.scrollingElement.scrollTop : 0;
+  if (scrollTop <= 0 && y > lastY) {
+    e.preventDefault();
+  }
+  lastY = y;
+}, {passive:false});
+
 // ════════════════════════════════════════════════════════════
 // ESTADO GLOBAL
 // ════════════════════════════════════════════════════════════
