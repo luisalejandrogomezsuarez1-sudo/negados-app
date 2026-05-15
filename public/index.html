@@ -768,7 +768,7 @@ async function loadCatalog() {
 // LOGIN / LOGOUT
 // ════════════════════════════════════════════════════════════
 async function doLogin() {
-  const nom = el('iNom').value.trim().toLowerCase();
+  const nom = el('iNom').value.trim();
   const cel = el('iCel').value.trim();
   const err = el('lErr');
   err.classList.add('hide');
@@ -1408,11 +1408,12 @@ async function refDash() {
       const totalDia = regRows ? regRows.length : 0;
       const MESES_VS=['','Ene','Feb','Mar','Abr','May','Jun','Jul','Ago','Sep','Oct','Nov','Dic'];
       const diaLbl = selDay ? (()=>{ const p=selDay.split('-'); return parseInt(p[2])+' '+MESES_VS[parseInt(p[1])]; })() : 'hoy';
-      sel.innerHTML='<option value="">Todos los asesores — '+totalDia+' capturas '+diaLbl+'</option>';
+      sel.innerHTML='<option value="">Todos — '+totalDia+' capturas '+diaLbl+'</option>';
       users.forEach(u=>{
         const o=document.createElement('option');
         o.value=u.celular;
         const cnt = regCount[u.celular]||0;
+        if(cnt===0 && selDay) return; // hide users with 0 captures on selected day
         o.textContent=u.nombre+' — '+cnt+' capturas '+diaLbl;
         if(u.celular===cur) o.selected=true;
         sel.appendChild(o);
@@ -1720,19 +1721,7 @@ function buildMerchCharts(sd, t) {
 
   if(t==='resumen'){
     const total=(s.acepto||0)+(s.rechazo||0);
-    const pctAc=total?Math.round((s.acepto||0)/total*100):0;
-    const pctRe=total?Math.round((s.rechazo||0)/total*100):0;
-    const lblAc='✅ Aceptó  '+s.acepto+' ('+pctAc+'%)';
-    const lblRe='❌ Rechazó  '+s.rechazo+' ('+pctRe+'%)';
-    const centerTxt={id:'ct',afterDraw(ch){
-      const {ctx}=ch; const {top,bottom,left,right}=ch.chartArea;
-      const cx=(left+right)/2,cy=(top+bottom)/2;
-      ctx.save(); ctx.textAlign='center'; ctx.textBaseline='middle';
-      ctx.fillStyle='#f0f0f5'; ctx.font='bold 22px sans-serif'; ctx.fillText(total,cx,cy-8);
-      ctx.fillStyle='#8888a0'; ctx.font='11px sans-serif'; ctx.fillText('total',cx,cy+12);
-      ctx.restore();
-    }};
-    // Draw percentages inside chart segments
+    // Plugin: draw % inside each segment
     const pctPlugin={id:'pct',afterDatasetDraw(ch){
       const {ctx,data}=ch;
       ch.getDatasetMeta(0).data.forEach((arc,i)=>{
@@ -1741,21 +1730,41 @@ function buildMerchCharts(sd, t) {
         const pct=Math.round(val/total*100);
         if(pct<5) return;
         const angle=(arc.startAngle+arc.endAngle)/2;
-        const r=arc.outerRadius*0.7;
+        const r=arc.outerRadius*0.68;
         const x=arc.x+Math.cos(angle)*r;
         const y=arc.y+Math.sin(angle)*r;
         ctx.save();
         ctx.textAlign='center'; ctx.textBaseline='middle';
-        ctx.fillStyle='#fff'; ctx.font='bold 14px sans-serif';
+        ctx.fillStyle='#fff'; ctx.font='bold 15px sans-serif';
         ctx.fillText(pct+'%',x,y);
         ctx.restore();
       });
     }};
+    // Plugin: total in center
+    const centerTxt={id:'ct',afterDraw(ch){
+      const {ctx}=ch; const {top,bottom,left,right}=ch.chartArea;
+      const cx=(left+right)/2,cy=(top+bottom)/2;
+      ctx.save(); ctx.textAlign='center'; ctx.textBaseline='middle';
+      ctx.fillStyle='#f0f0f5'; ctx.font='bold 22px sans-serif'; ctx.fillText(total,cx,cy-8);
+      ctx.fillStyle='#8888a0'; ctx.font='11px sans-serif'; ctx.fillText('total',cx,cy+12);
+      ctx.restore();
+    }};
     mkMChart('cvMRes',{
       type:'doughnut',
-      data:{labels:[lblAc,lblRe],datasets:[{data:[s.acepto,s.rechazo],backgroundColor:['rgba(48,201,126,.85)','rgba(232,72,85,.85)'],borderColor:['#30c97e','#e84855'],borderWidth:2}]},
-      options:{responsive:true,cutout:'55%',plugins:{legend:{labels:{color:'#f0f0f5',font:{size:12},boxWidth:10}}}},
-      plugins:[centerTxt,pctPlugin]
+      data:{
+        labels:['Aceptó','Rechazó'],
+        datasets:[{data:[s.acepto,s.rechazo],backgroundColor:['rgba(48,201,126,.85)','rgba(232,72,85,.85)'],borderColor:['#30c97e','#e84855'],borderWidth:2}]
+      },
+      options:{responsive:true,cutout:'52%',plugins:{
+        legend:{labels:{
+          color:'#f0f0f5',font:{size:11},boxWidth:12,
+          generateLabels:()=>[
+            {text:'Aceptó',fillStyle:'rgba(48,201,126,.85)',strokeStyle:'#30c97e',lineWidth:1},
+            {text:'Rechazó',fillStyle:'rgba(232,72,85,.85)',strokeStyle:'#e84855',lineWidth:1}
+          ]
+        }}
+      }},
+      plugins:[pctPlugin,centerTxt]
     });
   }
   if(t==='motivos'){
@@ -1867,10 +1876,11 @@ async function poblarMerchVendSel(){
   const MESES_PV=['','Ene','Feb','Mar','Abr','May','Jun','Jul','Ago','Sep','Oct','Nov','Dic'];
   const fechaPV = mSelDay ? (()=>{ const p=mSelDay.split('-'); return parseInt(p[2])+' '+MESES_PV[parseInt(p[1])]; })() : 'hoy';
   const totalM=merchFiltered.length;
-  sel.innerHTML='<option value="">Todos los asesores — '+totalM+' merch '+fechaPV+'</option>';
+  sel.innerHTML='<option value="">Todos — '+totalM+' merch '+fechaPV+'</option>';
   users.forEach(u=>{
     const cnt=mCountFil[u.celular]||0;
-    if((mCount[u.celular]||0)===0) return; // solo mostrar asesores que tienen merch
+    if(mSelDay && cnt===0) return; // hide users with 0 merch on selected day
+    else if(!mSelDay && (mCount[u.celular]||0)===0) return;
     const o=document.createElement('option');
     o.value=u.celular;
     o.textContent=u.nombre+' — '+cnt+' merch '+fechaPV;
