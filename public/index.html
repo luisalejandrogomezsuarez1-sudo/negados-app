@@ -768,7 +768,7 @@ async function loadCatalog() {
 // LOGIN / LOGOUT
 // ════════════════════════════════════════════════════════════
 async function doLogin() {
-  const nom = el('iNom').value.trim();
+  const nom = el('iNom').value.trim().toLowerCase();
   const cel = el('iCel').value.trim();
   const err = el('lErr');
   err.classList.add('hide');
@@ -1732,11 +1732,30 @@ function buildMerchCharts(sd, t) {
       ctx.fillStyle='#8888a0'; ctx.font='11px sans-serif'; ctx.fillText('total',cx,cy+12);
       ctx.restore();
     }};
+    // Draw percentages inside chart segments
+    const pctPlugin={id:'pct',afterDatasetDraw(ch){
+      const {ctx,data}=ch;
+      ch.getDatasetMeta(0).data.forEach((arc,i)=>{
+        const val=data.datasets[0].data[i];
+        if(!val||!total) return;
+        const pct=Math.round(val/total*100);
+        if(pct<5) return;
+        const angle=(arc.startAngle+arc.endAngle)/2;
+        const r=arc.outerRadius*0.7;
+        const x=arc.x+Math.cos(angle)*r;
+        const y=arc.y+Math.sin(angle)*r;
+        ctx.save();
+        ctx.textAlign='center'; ctx.textBaseline='middle';
+        ctx.fillStyle='#fff'; ctx.font='bold 14px sans-serif';
+        ctx.fillText(pct+'%',x,y);
+        ctx.restore();
+      });
+    }};
     mkMChart('cvMRes',{
       type:'doughnut',
       data:{labels:[lblAc,lblRe],datasets:[{data:[s.acepto,s.rechazo],backgroundColor:['rgba(48,201,126,.85)','rgba(232,72,85,.85)'],borderColor:['#30c97e','#e84855'],borderWidth:2}]},
-      options:{responsive:true,cutout:'60%',plugins:{legend:{labels:{color:'#f0f0f5',font:{size:12},boxWidth:10}}}},
-      plugins:[centerTxt]
+      options:{responsive:true,cutout:'55%',plugins:{legend:{labels:{color:'#f0f0f5',font:{size:12},boxWidth:10}}}},
+      plugins:[centerTxt,pctPlugin]
     });
   }
   if(t==='motivos'){

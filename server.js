@@ -183,7 +183,7 @@ const server = http.createServer(async (req, res) => {
   // ═══════════════════════════════════════════════════════════
   if (req.method === 'POST' && pathname === '/api/login') {
     const b = await readBody(req);
-    const nombre  = String(b.nombre  || '').trim();
+    const nombre  = String(b.nombre  || '').trim().toLowerCase();
     const celular = String(b.celular || '').trim();
 
     if (!nombre || !celular)
@@ -311,14 +311,14 @@ const server = http.createServer(async (req, res) => {
   if (req.method === 'POST' && pathname === '/api/accesos') {
     const b = await readBody(req);
     if (!isAdmin(b.adminCel, b.adminNom)) return sendJSON(res, { error:'Sin acceso' }, 403);
-    const nombre  = String(b.nombre  || '').trim();
+    const nombre  = String(b.nombre  || '').trim().toLowerCase();
     const celular = String(b.celular || '').trim();
     if (!nombre || !celular) return sendJSON(res, { ok:false, error:'Nombre y celular requeridos.' });
     const accesos = readDB('accesos');
     if (accesos.find(a => String(a.celular) === celular))
       return sendJSON(res, { ok:false, error:'Ya existe un acceso con ese celular.' });
     const rolAcc = String(b.rol||'usuario') === 'admin' ? 'admin' : 'usuario';
-    const nuevo = { id:newId(accesos), nombre, celular, activo:true, rol:rolAcc, creado: new Date().toISOString() };
+    const nuevo = { id:newId(accesos), nombre:nombre.toLowerCase(), celular, activo:true, rol:rolAcc, creado: new Date().toISOString() };
     accesos.push(nuevo);
     writeDB('accesos', accesos);
     console.log('[ACCESO CREADO]', nombre, celular);
@@ -424,8 +424,10 @@ const server = http.createServer(async (req, res) => {
     const sum=arr=>arr.reduce((s,r)=>s+(r.piezas||1),0);
     const siH=hoy.filter(r=>r.distribuidor==='si'); const noH=hoy.filter(r=>r.distribuidor!=='si');
     const siM=mesR.filter(r=>r.distribuidor==='si'); const noM=mesR.filter(r=>r.distribuidor!=='si');
-    const famCt=dist=>{const ct={};all.filter(r=>r.distribuidor===dist).forEach(r=>{ct[r.familia]=(ct[r.familia]||0)+1;});return Object.entries(ct).sort((a,b)=>b[1]-a[1]).slice(0,8);};
-    const codCt=dist=>{const ct={},pz={};all.filter(r=>r.distribuidor===dist).forEach(r=>{ct[r.codigo]=(ct[r.codigo]||0)+1;pz[r.codigo]=(pz[r.codigo]||0)+(r.piezas||1);});return Object.entries(ct).sort((a,b)=>b[1]-a[1]).slice(0,10).map(([codigo,count])=>({codigo,count,piezas:pz[codigo]||0}));};
+    // Use date-filtered data for charts when fecha is specified
+    const chartSrc = q.fecha ? hoy : all;
+    const famCt=dist=>{const ct={};chartSrc.filter(r=>r.distribuidor===dist).forEach(r=>{ct[r.familia]=(ct[r.familia]||0)+1;});return Object.entries(ct).sort((a,b)=>b[1]-a[1]).slice(0,8);};
+    const codCt=dist=>{const ct={},pz={};chartSrc.filter(r=>r.distribuidor===dist).forEach(r=>{ct[r.codigo]=(ct[r.codigo]||0)+1;pz[r.codigo]=(pz[r.codigo]||0)+(r.piezas||1);});return Object.entries(ct).sort((a,b)=>b[1]-a[1]).slice(0,10).map(([codigo,count])=>({codigo,count,piezas:pz[codigo]||0}));};
     const dias=[];
     for(let i=13;i>=0;i--){const d=new Date();d.setDate(d.getDate()-i);const ds=d.toISOString().slice(0,10);const p=ds.split('-');const dr=all.filter(r=>r.fecha===ds);dias.push({label:p[2]+'/'+p[1],si:dr.filter(r=>r.distribuidor==='si').length,no:dr.filter(r=>r.distribuidor!=='si').length,pzSi:dr.filter(r=>r.distribuidor==='si').reduce((s,r)=>s+(r.piezas||1),0),pzNo:dr.filter(r=>r.distribuidor!=='si').reduce((s,r)=>s+(r.piezas||1),0)});}
     return sendJSON(res,{stats:{siHoy:siH.length,pzSiHoy:sum(siH),noHoy:noH.length,pzNoHoy:sum(noH),siMes:siM.length,pzSiMes:sum(siM),noMes:noM.length,pzNoMes:sum(noM),codigosUnicos:new Set(all.map(r=>r.codigo)).size,totalRegs:all.length},famSi:famCt('si'),famNo:famCt('no'),codSi:codCt('si'),codNo:codCt('no'),dias});
