@@ -507,7 +507,7 @@ const server = http.createServer(async (req, res) => {
   // ── TRACKING ─────────────────────────────────────────────────
   if (req.method === 'GET' && pathname === '/api/tracking') {
     if(!isAdmin(q.cel,q.nom)) return sendJSON(res,{error:'Sin acceso'},403);
-    return sendJSON(res,readDB('tracking').slice().reverse().slice(0,100));
+    return sendJSON(res,readDB('tracking').slice().reverse().slice(0,500));
   }
 
   // ── EXPORT REGISTROS ─────────────────────────────────────────
