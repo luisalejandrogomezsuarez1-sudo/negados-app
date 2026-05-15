@@ -2206,15 +2206,15 @@ function initCustomSelects() {
 function rebuildCS(id) {
   const s = el(id);
   if(!s) return;
-  // Remove existing custom UI
+  // Fully unwrap from existing cs-wrap if present
   const wrap = s.closest('.cs-wrap');
   if(wrap) {
-    const btn = wrap.querySelector('.cs-btn');
-    const drop = wrap.querySelector('.cs-drop');
-    if(btn) btn.remove();
-    if(drop) drop.remove();
-    delete s.dataset.csBuilt;
+    // Move select back to parent of wrap
+    wrap.parentNode.insertBefore(s, wrap);
+    wrap.remove();
   }
+  delete s.dataset.csBuilt;
+  s.style.display = '';
   buildCS(s);
 }
 
