@@ -14,6 +14,24 @@ const sesFile = path.join(DATA_DIR, 'sesiones.json');
 fs.writeFileSync(sesFile, '{}', 'utf8');
 console.log('  Sesiones limpiadas al iniciar');
 
+// Clean duplicate usuarios on startup
+try {
+  const uDB = readDB('usuarios');
+  const seen = new Map();
+  const cleaned = [];
+  uDB.forEach(u => {
+    const key = String(u.celular).trim();
+    if (!seen.has(key)) {
+      seen.set(key, true);
+      cleaned.push({ ...u, nombre: String(u.nombre||'').toLowerCase() });
+    }
+  });
+  if (cleaned.length < uDB.length) {
+    writeDB('usuarios', cleaned);
+    console.log('  Duplicados removidos:', uDB.length - cleaned.length);
+  }
+} catch(e) {}
+
 // ── Auto-repair corrupt JSON files on startup ─────────────────
 const DB_FILES = ['usuarios','registros','merch','ventas','tracking','accesos'];
 DB_FILES.forEach(name => {
@@ -238,8 +256,9 @@ const server = http.createServer(async (req, res) => {
     // Guardar/actualizar usuario
     const users = readDB('usuarios');
     let user = users.find(u => String(u.celular) === celular);
-    if (!user) { user = { id:newId(users), nombre, celular, registros:0 }; users.push(user); }
-    else user.nombre = nombre;
+    const nombreNorm = nombre.toLowerCase();
+    if (!user) { user = { id:newId(users), nombre:nombreNorm, celular, registros:0 }; users.push(user); }
+    else user.nombre = nombreNorm;
     writeDB('usuarios', users);
 
     // Tracking
