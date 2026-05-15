@@ -582,7 +582,7 @@ select option { font-size:12px !important; }
     <div id="trkCard" class="card hide">
       <div style="display:flex;align-items:center;gap:6px;margin-bottom:10px;flex-wrap:nowrap;overflow:hidden;">
         <h3 style="margin:0;white-space:nowrap;flex-shrink:0;font-size:13px;">🔐 Actividad <span style="font-size:9px;color:#ffd060;">(Admin)</span></h3>
-        <select id="trkUsuSel" onchange="filtrarTracking()" data-no-cs="1"
+        <select id="trkUsuSel" onchange="filtrarTracking()"
           style="flex:1;min-width:0;max-width:140px;background:#1e1e28;border:1px solid rgba(247,183,49,.3);border-radius:7px;color:#f0f0f5;font-size:11px;padding:4px 6px;cursor:pointer;-webkit-text-size-adjust:none;">
           <option value="">Todos</option>
         </select>
@@ -1417,6 +1417,7 @@ async function refDash() {
         if(u.celular===cur) o.selected=true;
         sel.appendChild(o);
       });
+      rebuildCS('vendSel');
     }
   } else {
     hide('adminBar');
@@ -1980,15 +1981,14 @@ async function cargarTracking() {
   const accesos = await GET('/api/accesos'+aq());
   const sel = el('trkUsuSel');
   if(sel && accesos) {
-    const cur = ''; // always reset to Todos
     sel.innerHTML = '<option value="">Todos</option>';
     accesos.filter(a=>a.activo).forEach(u => {
       const o = document.createElement('option');
       o.value = u.celular;
       o.textContent = u.nombre;
-      if(String(u.celular) === String(cur)) o.selected = true;
       sel.appendChild(o);
     });
+    rebuildCS('trkUsuSel');
   }
   const rows = await GET('/api/tracking'+aq());
   _trkAllRows = rows || [];
