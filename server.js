@@ -52,8 +52,7 @@ DB_FILES.forEach(name => {
 // ── Admin ─────────────────────────────────────────────────────
 // ── Administradores ──────────────────────────────────────────
 const ADMINS = [
-  { cel: '85489705', nom: 'luis gomez',       rol: 'superadmin' }, // Luis Gomez — acceso total
-  { cel: '5625585463',  nom: 'yolanda barranco', rol: 'admin' },       // Yolanda — todo menos eliminar/desactivar asesores
+  { cel: '85489705', nom: 'luis gomez', rol: 'superadmin' }, // Luis Gomez — acceso total
 ];
 
 function getAdmin(cel, nom) {
