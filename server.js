@@ -445,8 +445,9 @@ const server = http.createServer(async (req, res) => {
     const sum=arr=>arr.reduce((s,r)=>s+(r.piezas||1),0);
     const siH=hoy.filter(r=>r.distribuidor==='si'); const noH=hoy.filter(r=>r.distribuidor!=='si');
     const siM=mesR.filter(r=>r.distribuidor==='si'); const noM=mesR.filter(r=>r.distribuidor!=='si');
-    // Charts always show data for the selected day (or today if no day selected)
+    // Charts (familia/codigo) usan solo el día seleccionado
     const chartSrc = hoy;
+    // Gráfica de días siempre usa todos los registros (sin filtro de fecha)
     const famCt=dist=>{const ct={};chartSrc.filter(r=>r.distribuidor===dist).forEach(r=>{ct[r.familia]=(ct[r.familia]||0)+1;});return Object.entries(ct).sort((a,b)=>b[1]-a[1]).slice(0,8);};
     const codCt=dist=>{const ct={},pz={},ult={};chartSrc.filter(r=>r.distribuidor===dist).forEach(r=>{ct[r.codigo]=(ct[r.codigo]||0)+1;pz[r.codigo]=(pz[r.codigo]||0)+(r.piezas||1);ult[r.codigo]={nom:r.usuario_nom,fecha:r.fecha};});return Object.entries(ct).sort((a,b)=>b[1]-a[1]).slice(0,10).map(([codigo,count])=>({codigo,count,piezas:pz[codigo]||0,nom:ult[codigo]?ult[codigo].nom:'',fecha:ult[codigo]?ult[codigo].fecha:''}));};
     const dias=[];
@@ -487,15 +488,11 @@ const server = http.createServer(async (req, res) => {
   // ── MERCH STATS ──────────────────────────────────────────────
   if (req.method === 'GET' && pathname === '/api/merch/stats') {
     const admin=isAdmin(q.cel,q.nom);
-    let rows=readDB('merch');
-    if(!admin) rows=rows.filter(r=>String(r.usuario_cel)===String(q.cel));
-    if(q.vendedor&&admin) rows=rows.filter(r=>String(r.usuario_cel)===String(q.vendedor));
-    if(q.fecha) rows=rows.filter(r=>r.fecha===q.fecha);
-    else {
-      if(q.dia)  rows=rows.filter(r=>Number(r.dia) ===Number(q.dia));
-      if(q.mes)  rows=rows.filter(r=>Number(r.mes) ===Number(q.mes));
-      if(q.anio) rows=rows.filter(r=>Number(r.anio)===Number(q.anio));
-    }
+    let allMerch=readDB('merch');
+    if(!admin) allMerch=allMerch.filter(r=>String(r.usuario_cel)===String(q.cel));
+    if(q.vendedor&&admin) allMerch=allMerch.filter(r=>String(r.usuario_cel)===String(q.vendedor));
+    // rows = filtrado por día para resumen/motivos/familia
+    let rows = q.fecha ? allMerch.filter(r=>r.fecha===q.fecha) : allMerch;
     const ac=rows.filter(r=>r.resultado==='acepto').length;
     const re=rows.filter(r=>r.resultado==='rechazo').length;
     const motAc={},motRe={};
@@ -518,7 +515,7 @@ const server = http.createServer(async (req, res) => {
       codxComp[comp]=Object.entries(compCod[comp]).sort((a,b)=>b[1].cnt-a[1].cnt).slice(0,10).map(([cod,d])=>({cod,cnt:d.cnt,avgPrecio:d.precios.length?Math.round(d.precios.reduce((s,v)=>s+v,0)/d.precios.length*100)/100:null}));
     });
     const dias=[];
-    for(let i=13;i>=0;i--){const d=new Date();d.setDate(d.getDate()-i);const ds=d.toISOString().slice(0,10);const p=ds.split('-');const dr=rows.filter(r=>r.fecha===ds);dias.push({label:p[2]+'/'+p[1],acepto:dr.filter(r=>r.resultado==='acepto').length,rechazo:dr.filter(r=>r.resultado==='rechazo').length});}
+    for(let i=13;i>=0;i--){const d=new Date();d.setDate(d.getDate()-i);const ds=d.toISOString().slice(0,10);const p=ds.split('-');const dr=allMerch.filter(r=>r.fecha===ds);dias.push({label:p[2]+'/'+p[1],acepto:dr.filter(r=>r.resultado==='acepto').length,rechazo:dr.filter(r=>r.resultado==='rechazo').length});}
     return sendJSON(res,{total:rows.length,acepto:ac,rechazo:re,motivosAcepto:Object.entries(motAc).sort((a,b)=>b[1]-a[1]),motivosRechazo:Object.entries(motRe).sort((a,b)=>b[1]-a[1]),porFamilia:Object.entries(porFam).sort((a,b)=>(b[1].acepto+b[1].rechazo)-(a[1].acepto+a[1].rechazo)).slice(0,10),competencia,codxComp,dias});
   }
 
