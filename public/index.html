@@ -1162,7 +1162,31 @@ async function refCaptura() {
 // ════════════════════════════════════════════════════════════
 // DASHBOARD
 // ════════════════════════════════════════════════════════════
-function setVendedor(v){ vendedor=v; refDash(); }
+function setVendedor(v){ vendedor=v; refDashSinRebuildSel(); }
+
+async function refDashSinRebuildSel(){
+  // Igual que refDash pero sin reconstruir el vendSel
+  let q=aq();
+  if(ADM&&vendedor) q+='&vendedor='+encodeURIComponent(vendedor);
+  if(selDay) q+='&fecha='+selDay;
+  const data=await GET('/api/stats'+q);
+  if(!data) return;
+  const s=data.stats;
+  el('dSiH').textContent=s.siHoy;  el('dSiHp').textContent=s.pzSiHoy+' pz';
+  el('dSiM').textContent=s.siMes;  el('dSiMp').textContent=s.pzSiMes+' pz';
+  el('dNoH').textContent=s.noHoy;  el('dNoHp').textContent=s.pzNoHoy+' pz';
+  el('dNoM').textContent=s.noMes;  el('dNoMp').textContent=s.pzNoMes+' pz';
+  const MESES_L=['','Ene','Feb','Mar','Abr','May','Jun','Jul','Ago','Sep','Oct','Nov','Dic'];
+  const lHoy = selDay ? (()=>{ const p=selDay.split('-'); return parseInt(p[2])+' '+MESES_L[parseInt(p[1])]; })() : 'Hoy';
+  const lMes = selDay ? (()=>{ const p=selDay.split('-'); return MESES_L[parseInt(p[1])]+' '+p[0]; })() : 'Este mes';
+  ['lblSiH','lblNoH'].forEach(id=>{ const e=el(id); if(e) e.textContent=lHoy; });
+  ['lblSiM','lblNoM'].forEach(id=>{ const e=el(id); if(e) e.textContent=lMes; });
+  buildBars(data.famSi,'famSi','#3d9be9');
+  buildBars(data.famNo,'famNo','#e84855');
+  buildTop(data.codSi,'topSi','#6bb8f7','#3d9be9');
+  buildTop(data.codNo,'topNo','#ff7a85','#e84855');
+  buildCharts(data.dias, tab, data);
+}
 
 async function refreshVendSelCounts(){
   if(!ADM) return;
