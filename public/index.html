@@ -1375,8 +1375,9 @@ function showDayDetail(ds) {
 async function refDash() {
   let q=aq();
   if(ADM&&vendedor) q+='&vendedor='+encodeURIComponent(vendedor);
-  // Pass selected day to stats so cards show data for that day
-  if(selDay) q+='&fecha='+selDay;
+  // Siempre mandar fecha desde el cliente para evitar problemas de zona horaria en servidor
+  const _hoy = selDay ? selDay : new Date().toLocaleDateString('en-CA');
+  q+='&fecha='+_hoy;
   const data=await GET('/api/stats'+q);
   if(!data) return;
   const s=data.stats;

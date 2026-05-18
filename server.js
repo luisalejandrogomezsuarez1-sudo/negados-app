@@ -437,12 +437,9 @@ const server = http.createServer(async (req, res) => {
     if (!admin) all = all.filter(r => String(r.usuario_cel) === String(q.cel));
     else if (q.vendedor) all = all.filter(r => String(r.usuario_cel) === String(q.vendedor));
     const nd=new Date();
-    // Zona horaria México UTC-6: restar 6 horas al UTC
-    const mxDate = new Date(nd.getTime() - 6 * 60 * 60 * 1000);
-    const todayMx = mxDate.toISOString().slice(0,10);
-    const today = q.fecha ? q.fecha : todayMx;
-    const mesActual = q.fecha ? parseInt(q.fecha.split('-')[1]) : parseInt(todayMx.split('-')[1]);
-    const anioActual = q.fecha ? parseInt(q.fecha.split('-')[0]) : parseInt(todayMx.split('-')[0]);
+    const today = q.fecha ? q.fecha : nd.toISOString().slice(0,10);
+    const mesActual = today.split('-')[1] ? parseInt(today.split('-')[1]) : nd.getMonth()+1;
+    const anioActual = today.split('-')[0] ? parseInt(today.split('-')[0]) : nd.getFullYear();
     const hoy=all.filter(r=>r.fecha===today);
     const mesR=all.filter(r=>Number(r.mes)===mesActual&&Number(r.anio)===anioActual);
     const sum=arr=>arr.reduce((s,r)=>s+(r.piezas||1),0);
