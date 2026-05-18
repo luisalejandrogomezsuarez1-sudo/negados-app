@@ -273,7 +273,7 @@ select option { font-size:12px !important; }
     </div>
 
     <!-- SEMANA -->
-    <div id="weekCard" class="card" style="padding:10px 8px;">
+    <div class="card" style="padding:10px 8px;">
       <!-- Header: arrows + week label -->
       <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;">
         <button onclick="navWeek(-1)" style="background:none;border:1px solid rgba(255,255,255,.15);border-radius:7px;color:#f0f0f5;font-size:16px;cursor:pointer;padding:3px 10px;font-family:inherit;">‹</button>
@@ -345,8 +345,10 @@ select option { font-size:12px !important; }
       <div id="ch-piezas"  class="hide"><canvas id="cvPz"  height="180"></canvas></div>
     </div>
 
-    <div id="famSi" style="display:none;"></div>
-    <div id="famNo" style="display:none;"></div>
+    <div class="slbl" style="color:#3d9be9;">✅ Top familias — SÍ maneja</div>
+    <div class="card" style="border-top:2px solid #3d9be9;"><div id="famSi"><div class="emp">Sin datos</div></div></div>
+    <div class="slbl" style="color:#e84855;">❌ Top familias — NO maneja</div>
+    <div class="card" style="border-top:2px solid #e84855;"><div id="famNo"><div class="emp">Sin datos</div></div></div>
     <div class="slbl" style="color:#3d9be9;">✅ Top códigos — SÍ maneja</div>
     <div class="card" style="border-top:2px solid #3d9be9;"><div id="topSi" class="slist"><div class="emp">Sin datos</div></div></div>
     <div class="slbl" style="color:#e84855;">❌ Top códigos — NO maneja</div>
@@ -743,11 +745,9 @@ function hide(id){ const e=document.getElementById(id); if(e) e.classList.add('h
 function el(id){ return document.getElementById(id); }
 function nowD(){
   const d=new Date();
-  const dt=d.toLocaleDateString('en-CA'); // YYYY-MM-DD en zona horaria local
-  const hr=d.toTimeString().slice(0,8);
-  return {dt,hr,d:d.getDate(),m:d.getMonth()+1,y:d.getFullYear(),ts:d.toISOString()};
+  return {dt:d.toISOString().slice(0,10),hr:d.toTimeString().slice(0,8),d:d.getDate(),m:d.getMonth()+1,y:d.getFullYear(),ts:d.toISOString()};
 }
-function today(){ return new Date().toLocaleDateString('en-CA'); }
+function today(){ return new Date().toISOString().slice(0,10); }
 
 // Load catalog async
 async function loadCatalog() {
@@ -1155,8 +1155,7 @@ async function refCaptura() {
         </div>
         <span style="font-size:12px;font-weight:700;color:${r.distribuidor==='si'?'#6bb8f7':'#ff7a85'};flex-shrink:0;">${r.piezas||1}pz</span>
       </div>
-      <div style="font-size:11px;color:#8888a0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${r.descripcion} · <span style=\"color:#6bb8f7;\">${r.usuario_nom}</span> · ${r.fecha}</div>
-    </div>`
+      <div style="font-size:11px;color:#8888a0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${r.descripcion} · <span style="color:#6bb8f7;">${r.usuario_nom}</span> · ${r.fecha}</div>
     </div>`).join('');
 }
 
@@ -1255,13 +1254,13 @@ function navWeek(dir) {
 
 function buildWeek() {
   const today = new Date(); today.setHours(0,0,0,0);
-  const todayStr = today.toLocaleDateString('en-CA');
+  const todayStr = today.toISOString().slice(0,10);
   const mon = getMondayOfWeek(weekOffset);
 
   // Week label: "L 28 Abr – D 4 May"
   const sun = new Date(mon); sun.setDate(mon.getDate() + 6);
-  const monP = mon.toLocaleDateString('en-CA').split('-');
-  const sunP = sun.toLocaleDateString('en-CA').split('-');
+  const monP = mon.toISOString().slice(0,10).split('-');
+  const sunP = sun.toISOString().slice(0,10).split('-');
   const lbl = parseInt(monP[2])+' '+MESES_CORTO[parseInt(monP[1])]+' — '+parseInt(sunP[2])+' '+MESES_CORTO[parseInt(sunP[1])];
   const lblEl = el('weekLabel');
   if (lblEl) lblEl.textContent = lbl;
@@ -1278,7 +1277,7 @@ function buildWeek() {
   let html2 = '';
   for (let i = 0; i < 7; i++) {
     const d  = new Date(mon); d.setDate(mon.getDate() + i);
-    const ds = d.toLocaleDateString('en-CA');
+    const ds = d.toISOString().slice(0,10);
     const isToday = ds === todayStr;
     const isSel   = ds === selDay;
     const isFut   = d > today;
@@ -1378,9 +1377,8 @@ function showDayDetail(ds) {
 async function refDash() {
   let q=aq();
   if(ADM&&vendedor) q+='&vendedor='+encodeURIComponent(vendedor);
-  // Siempre mandar fecha desde el cliente para evitar problemas de zona horaria en servidor
-  const _hoy = selDay ? selDay : new Date().toLocaleDateString('en-CA');
-  q+='&fecha='+_hoy;
+  // Pass selected day to stats so cards show data for that day
+  if(selDay) q+='&fecha='+selDay;
   const data=await GET('/api/stats'+q);
   if(!data) return;
   const s=data.stats;
@@ -1423,7 +1421,6 @@ async function refDash() {
     hide('adminBar');
   }
 
-  const wc=el('weekCard'); if(wc) wc.style.display=(ROL==='vendedor')?'none':'';
   buildBars(data.famSi,'famSi','#3d9be9');
   buildBars(data.famNo,'famNo','#e84855');
   buildTop(data.codSi,'topSi','#6bb8f7','#3d9be9');
@@ -1809,11 +1806,11 @@ let mSelDay = null;
 
 function buildMerchWeek() {
   const today = new Date(); today.setHours(0,0,0,0);
-  const todayStr = today.toLocaleDateString('en-CA');
+  const todayStr = today.toISOString().slice(0,10);
   const mon = getMondayOfWeek(mWeekOffset);
   const sun = new Date(mon); sun.setDate(mon.getDate()+6);
-  const monP = mon.toLocaleDateString('en-CA').split('-');
-  const sunP = sun.toLocaleDateString('en-CA').split('-');
+  const monP = mon.toISOString().slice(0,10).split('-');
+  const sunP = sun.toISOString().slice(0,10).split('-');
   const lbl = parseInt(monP[2])+' '+MESES_CORTO[parseInt(monP[1])]+' — '+parseInt(sunP[2])+' '+MESES_CORTO[parseInt(sunP[1])];
   const lblEl = el('merchWeekLabel'); if(lblEl) lblEl.textContent = lbl;
   const nextBtn = el('merchNextBtn');
@@ -1821,7 +1818,7 @@ function buildMerchWeek() {
   let h='';
   for(let i=0;i<7;i++){
     const d=new Date(mon); d.setDate(mon.getDate()+i);
-    const ds=d.toLocaleDateString('en-CA');
+    const ds=d.toISOString().slice(0,10);
     const isToday=ds===todayStr, isSel=ds===mSelDay, isFut=d>today;
     h+=`<button onclick="selectMerchDay('${ds}')"
       style="display:flex;flex-direction:column;align-items:center;padding:5px 2px;border-radius:8px;cursor:${isFut?'default':'pointer'};font-family:inherit;
