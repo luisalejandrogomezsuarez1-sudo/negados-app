@@ -1162,7 +1162,7 @@ async function refCaptura() {
 // ════════════════════════════════════════════════════════════
 // DASHBOARD
 // ════════════════════════════════════════════════════════════
-function setVendedor(v){ vendedor=v; refDashSinRebuildSel(); }
+function setVendedor(v){ vendedor=v; refDashSinRebuildSel(); refreshVendSelCounts(); }
 
 async function refDashSinRebuildSel(){
   // Igual que refDash pero sin reconstruir el vendSel
@@ -1215,7 +1215,7 @@ async function refreshVendSelCounts(){
     if(u.celular===cur) o.selected=true;
     sel.appendChild(o);
   });
-  rebuildCS('vendSel');
+  if(!sel.dataset.csBuilt) buildCS(sel);
 }
 function irRepDist(dist,periodo){
   const nd=new Date();
@@ -1469,12 +1469,12 @@ async function refDash() {
         const o=document.createElement('option');
         o.value=u.celular;
         const cnt = regCount[u.celular]||0;
-        if(cnt===0 && selDay) return; // hide users with 0 captures on selected day
+        if(cnt===0 && selDay) return;
         o.textContent=u.nombre+' — '+cnt+' capturas '+diaLbl;
         if(u.celular===cur) o.selected=true;
         sel.appendChild(o);
       });
-      rebuildCS('vendSel');
+      if(!sel.dataset.csBuilt) buildCS(sel);
     }
   } else {
     hide('adminBar');
