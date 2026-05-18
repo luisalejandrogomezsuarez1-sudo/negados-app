@@ -508,6 +508,7 @@ select option { font-size:12px !important; }
       <div id="mch-resumen">
         <div style="font-size:11px;color:#8888a0;margin-bottom:8px;font-weight:600;">ACEPTO vs RECHAZO TOTAL</div>
         <canvas id="cvMRes" height="180"></canvas>
+        <div id="mResTotal" style="display:flex;justify-content:center;gap:20px;margin-top:8px;font-size:13px;font-weight:600;"></div>
       </div>
       <div id="mch-motivos" class="hide">
         <div style="font-size:11px;color:#8888a0;margin-bottom:4px;font-weight:600;">MOTIVOS DE ACEPTACIÓN</div>
@@ -745,9 +746,10 @@ function hide(id){ const e=document.getElementById(id); if(e) e.classList.add('h
 function el(id){ return document.getElementById(id); }
 function nowD(){
   const d=new Date();
-  return {dt:d.toISOString().slice(0,10),hr:d.toTimeString().slice(0,8),d:d.getDate(),m:d.getMonth()+1,y:d.getFullYear(),ts:d.toISOString()};
+  const dt=d.toLocaleDateString('en-CA');const hr=d.toTimeString().slice(0,8);
+  return {dt,hr,d:d.getDate(),m:d.getMonth()+1,y:d.getFullYear(),ts:d.toISOString()};
 }
-function today(){ return new Date().toISOString().slice(0,10); }
+function today(){ return new Date().toLocaleDateString('en-CA'); }
 
 // Load catalog async
 async function loadCatalog() {
@@ -1254,13 +1256,13 @@ function navWeek(dir) {
 
 function buildWeek() {
   const today = new Date(); today.setHours(0,0,0,0);
-  const todayStr = today.toISOString().slice(0,10);
+  const todayStr = today.toLocaleDateString('en-CA');
   const mon = getMondayOfWeek(weekOffset);
 
   // Week label: "L 28 Abr – D 4 May"
   const sun = new Date(mon); sun.setDate(mon.getDate() + 6);
-  const monP = mon.toISOString().slice(0,10).split('-');
-  const sunP = sun.toISOString().slice(0,10).split('-');
+  const monP = mon.toLocaleDateString('en-CA').split('-');
+  const sunP = sun.toLocaleDateString('en-CA').split('-');
   const lbl = parseInt(monP[2])+' '+MESES_CORTO[parseInt(monP[1])]+' — '+parseInt(sunP[2])+' '+MESES_CORTO[parseInt(sunP[1])];
   const lblEl = el('weekLabel');
   if (lblEl) lblEl.textContent = lbl;
@@ -1277,7 +1279,7 @@ function buildWeek() {
   let html2 = '';
   for (let i = 0; i < 7; i++) {
     const d  = new Date(mon); d.setDate(mon.getDate() + i);
-    const ds = d.toISOString().slice(0,10);
+    const ds = d.toLocaleDateString('en-CA');
     const isToday = ds === todayStr;
     const isSel   = ds === selDay;
     const isFut   = d > today;
@@ -1747,6 +1749,8 @@ function buildMerchCharts(sd, t) {
       ctx.fillStyle='#8888a0'; ctx.font='11px sans-serif'; ctx.fillText('total',cx,cy+12);
       ctx.restore();
     }};
+    const mrt=el('mResTotal');
+    if(mrt) mrt.innerHTML='<span style="color:#30c97e;">✅ Aceptó: '+(s.acepto||0)+'</span><span style="color:#8888a0;">·</span><span style="color:#e84855;">❌ Rechazó: '+(s.rechazo||0)+'</span>';
     mkMChart('cvMRes',{
       type:'doughnut',
       data:{
@@ -1806,11 +1810,11 @@ let mSelDay = null;
 
 function buildMerchWeek() {
   const today = new Date(); today.setHours(0,0,0,0);
-  const todayStr = today.toISOString().slice(0,10);
+  const todayStr = today.toLocaleDateString('en-CA');
   const mon = getMondayOfWeek(mWeekOffset);
   const sun = new Date(mon); sun.setDate(mon.getDate()+6);
-  const monP = mon.toISOString().slice(0,10).split('-');
-  const sunP = sun.toISOString().slice(0,10).split('-');
+  const monP = mon.toLocaleDateString('en-CA').split('-');
+  const sunP = sun.toLocaleDateString('en-CA').split('-');
   const lbl = parseInt(monP[2])+' '+MESES_CORTO[parseInt(monP[1])]+' — '+parseInt(sunP[2])+' '+MESES_CORTO[parseInt(sunP[1])];
   const lblEl = el('merchWeekLabel'); if(lblEl) lblEl.textContent = lbl;
   const nextBtn = el('merchNextBtn');
@@ -1818,7 +1822,7 @@ function buildMerchWeek() {
   let h='';
   for(let i=0;i<7;i++){
     const d=new Date(mon); d.setDate(mon.getDate()+i);
-    const ds=d.toISOString().slice(0,10);
+    const ds=d.toLocaleDateString('en-CA');
     const isToday=ds===todayStr, isSel=ds===mSelDay, isFut=d>today;
     h+=`<button onclick="selectMerchDay('${ds}')"
       style="display:flex;flex-direction:column;align-items:center;padding:5px 2px;border-radius:8px;cursor:${isFut?'default':'pointer'};font-family:inherit;
