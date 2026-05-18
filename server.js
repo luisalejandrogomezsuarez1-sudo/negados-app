@@ -397,7 +397,10 @@ const server = http.createServer(async (req, res) => {
   if (req.method === 'POST' && pathname === '/api/registros') {
     const b = await readBody(req);
     // Validar sesión activa
-    if (!isAdmin(b.usuario_cel, b.usuario_nom) && !validarSesion(b.usuario_cel, b.token))
+    const esAdmin = isAdmin(b.usuario_cel, b.usuario_nom);
+    const sesOk = validarSesion(b.usuario_cel, b.token);
+    console.log('[REGISTRO] cel:', b.usuario_cel, 'admin:', esAdmin, 'sesOk:', sesOk, 'token:', b.token ? b.token.slice(0,8) : 'none');
+    if (!esAdmin && !sesOk)
       return sendJSON(res, { ok:false, error:'Sesión no válida.' });
 
     const regs = readDB('registros');
