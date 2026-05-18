@@ -130,11 +130,7 @@ function limpiarSesiones() {
 // Valida que el token coincide con la sesión activa
 function validarSesion(cel, token) {
   const s = getSesiones();
-  if (s[cel] && s[cel].token === token) return true;
-  // If no active session (e.g. server restarted), check if user is in accesos as active
-  // This prevents locking out users after server restart
-  const accesos = readDB('accesos');
-  return accesos.some(a => String(a.celular) === String(cel) && a.activo === true);
+  return s[cel] && s[cel].token === token;
 }
 
 // ── MIME ──────────────────────────────────────────────────────
