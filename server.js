@@ -430,6 +430,15 @@ const server = http.createServer(async (req, res) => {
     return sendJSON(res, rows);
   }
 
+  // ── UPLOAD DATA (temporal) ──────────────────────────────────
+  if (req.method === 'POST' && pathname === '/api/upload-data') {
+    const b = await readBody(req);
+    if (b.secret !== 'negados2026') return sendJSON(res, { ok: false, error: 'No autorizado' });
+    if (!b.archivo || !b.datos) return sendJSON(res, { ok: false, error: 'Faltan datos' });
+    writeDB(b.archivo, b.datos);
+    return sendJSON(res, { ok: true, total: b.datos.length });
+  }
+
   // ── STATS ────────────────────────────────────────────────────
   if (req.method === 'GET' && pathname === '/api/stats') {
     const admin = isAdmin(q.cel, q.nom);
@@ -437,7 +446,7 @@ const server = http.createServer(async (req, res) => {
     if (!admin) all = all.filter(r => String(r.usuario_cel) === String(q.cel));
     else if (q.vendedor) all = all.filter(r => String(r.usuario_cel) === String(q.vendedor));
     const nd=new Date();
-    const today = q.fecha ? q.fecha : nd.toISOString().slice(0,10);
+    const today = q.fecha ? q.fecha : new Date(nd.getTime() - 6*60*60*1000).toISOString().slice(0,10);
     const mesActual = today.split('-')[1] ? parseInt(today.split('-')[1]) : nd.getMonth()+1;
     const anioActual = today.split('-')[0] ? parseInt(today.split('-')[0]) : nd.getFullYear();
     const hoy=all.filter(r=>r.fecha===today);
