@@ -1090,7 +1090,8 @@ async function guardarReg() {
     token:CU.token, usuario_cel:CU.celular, usuario_nom:CU.nombre,
     fecha:n.dt, hora:n.hr, dia:n.d, mes:n.m, anio:n.y, ts:n.ts
   });
-  if(!res||!res.ok){ m.innerHTML='<div class="al al-r">Error al guardar. Verifica la conexión.</div>'; return; }
+  if(!res){ m.innerHTML='<div class="al al-r">❌ Sin conexión al servidor.</div>'; return; }
+  if(!res.ok){ m.innerHTML='<div class="al al-r">❌ '+(res.error||'Error al guardar')+'</div>'; return; }
   m.innerHTML='<div class="al al-g">✅ Registro guardado correctamente</div>';
   el('codIn').value='';
   ['pzNeg','pzFue','pzVen','fDesc'].forEach(id=>{ const e=el(id); if(e) e.value=''; });
