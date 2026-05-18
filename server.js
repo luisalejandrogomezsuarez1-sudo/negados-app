@@ -396,12 +396,12 @@ const server = http.createServer(async (req, res) => {
   // ═══════════════════════════════════════════════════════════
   if (req.method === 'POST' && pathname === '/api/registros') {
     const b = await readBody(req);
-    // Validar: admin, sesión activa, o usuario en accesos activo
     const esAdmin = isAdmin(b.usuario_cel, b.usuario_nom);
     const sesOk = validarSesion(b.usuario_cel, b.token);
     const enAccesos = readDB('accesos').some(a => String(a.celular) === String(b.usuario_cel) && a.activo === true);
+    console.log('[REG POST] cel:', b.usuario_cel, 'nom:', b.usuario_nom, 'admin:', esAdmin, 'ses:', sesOk, 'accesos:', enAccesos, 'token:', b.token?b.token.slice(0,6):'none');
     if (!esAdmin && !sesOk && !enAccesos)
-      return sendJSON(res, { ok:false, error:'Usuario no autorizado.' });
+      return sendJSON(res, { ok:false, error:'Usuario no autorizado. admin:'+esAdmin+' ses:'+sesOk+' acc:'+enAccesos });
 
     const regs = readDB('registros');
     const reg = {
