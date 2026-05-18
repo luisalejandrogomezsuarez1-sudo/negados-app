@@ -1163,6 +1163,35 @@ async function refCaptura() {
 // DASHBOARD
 // ════════════════════════════════════════════════════════════
 function setVendedor(v){ vendedor=v; refDash(); }
+
+async function refreshVendSelCounts(){
+  if(!ADM) return;
+  const users = await GET('/api/usuarios'+aq());
+  if(!users) return;
+  const sel = el('vendSel');
+  if(!sel) return;
+  let regQ = aq();
+  if(selDay){ regQ+='&fecha='+selDay; }
+  else { const nd2=new Date(); regQ+='&dia='+nd2.getDate()+'&mes='+(nd2.getMonth()+1)+'&anio='+nd2.getFullYear(); }
+  const regRows = await GET('/api/registros'+regQ+'&limit=9999');
+  const regCount = {};
+  if(regRows) regRows.forEach(r=>{ regCount[r.usuario_cel]=(regCount[r.usuario_cel]||0)+1; });
+  const totalDia = regRows ? regRows.length : 0;
+  const MESES_VS=['','Ene','Feb','Mar','Abr','May','Jun','Jul','Ago','Sep','Oct','Nov','Dic'];
+  const diaLbl = selDay ? (()=>{ const p=selDay.split('-'); return parseInt(p[2])+' '+MESES_VS[parseInt(p[1])]; })() : 'hoy';
+  const cur = sel.value;
+  sel.innerHTML='<option value="">Todos — '+totalDia+' capturas '+diaLbl+'</option>';
+  users.forEach(u=>{
+    const o=document.createElement('option');
+    o.value=u.celular;
+    const cnt = regCount[u.celular]||0;
+    if(cnt===0 && selDay) return;
+    o.textContent=u.nombre+' — '+cnt+' capturas '+diaLbl;
+    if(u.celular===cur) o.selected=true;
+    sel.appendChild(o);
+  });
+  rebuildCS('vendSel');
+}
 function irRepDist(dist,periodo){
   const nd=new Date();
   if(periodo==='hoy'){
@@ -1311,6 +1340,7 @@ function selectDay(ds) {
   selDay = ds;
   buildWeek();
   refDash(); // refresh ALL stats and charts for selected day
+  refreshVendSelCounts(); // actualizar conteos por asesor para el día seleccionado
 }
 
 function cerrarDayDetail() {
@@ -1318,6 +1348,7 @@ function cerrarDayDetail() {
   buildWeek();
   hide('dayDetailCard');
   refDash(); // refresh stats back to today
+  refreshVendSelCounts(); // resetear conteos al día de hoy
 }
 
 function showDayDetail(ds) {
