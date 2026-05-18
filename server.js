@@ -430,15 +430,6 @@ const server = http.createServer(async (req, res) => {
     return sendJSON(res, rows);
   }
 
-  // ── UPLOAD DATA (temporal) ──────────────────────────────────
-  if (req.method === 'POST' && pathname === '/api/upload-data') {
-    const b = await readBody(req);
-    if (b.secret !== 'negados2026') return sendJSON(res, { ok: false, error: 'No autorizado' });
-    if (!b.archivo || !b.datos) return sendJSON(res, { ok: false, error: 'Faltan datos' });
-    writeDB(b.archivo, b.datos);
-    return sendJSON(res, { ok: true, total: b.datos.length });
-  }
-
   // ── STATS ────────────────────────────────────────────────────
   if (req.method === 'GET' && pathname === '/api/stats') {
     const admin = isAdmin(q.cel, q.nom);
