@@ -403,7 +403,8 @@ const server = http.createServer(async (req, res) => {
     if (!esAdmin && !sesOk && !enAccesos)
       return sendJSON(res, { ok:false, error:'Usuario no autorizado. admin:'+esAdmin+' ses:'+sesOk+' acc:'+enAccesos });
 
-    const regs = readDB('registros');
+    let regs = readDB('registros');
+    if (!Array.isArray(regs)) regs = [];
     const reg = {
       id:newId(regs), codigo:b.codigo, descripcion:b.descripcion||'', familia:b.familia||'',
       tipo:b.tipo, distribuidor:b.distribuidor, piezas:b.piezas||1, desc_cliente:b.desc_cliente||'',
