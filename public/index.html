@@ -1544,12 +1544,8 @@ function setTab(t){
     if(e) e.className = (x===t ? '' : 'hide');
     el('tab-'+x).className = 'chtab'+(x===t?' on':'');
   });
-  // If we already have stats data, just rebuild the chart without a full API call
-  if(_lastStats && (t==='familia'||t==='codigo')){
-    buildCharts(_lastStats.dias, t, _lastStats);
-  } else {
-    refDash();
-  }
+  // Siempre refrescar desde API para respetar día y asesor seleccionado
+  refDash();
 }
 
 // ════════════════════════════════════════════════════════════
