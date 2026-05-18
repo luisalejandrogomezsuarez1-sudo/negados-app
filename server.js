@@ -482,9 +482,12 @@ const server = http.createServer(async (req, res) => {
     let rows=readDB('merch');
     if(!admin) rows=rows.filter(r=>String(r.usuario_cel)===String(q.cel));
     else if(q.vendedor) rows=rows.filter(r=>String(r.usuario_cel)===String(q.vendedor));
-    if(q.dia)  rows=rows.filter(r=>Number(r.dia) ===Number(q.dia));
-    if(q.mes)  rows=rows.filter(r=>Number(r.mes) ===Number(q.mes));
-    if(q.anio) rows=rows.filter(r=>Number(r.anio)===Number(q.anio));
+    if(q.fecha) rows=rows.filter(r=>r.fecha===q.fecha);
+    else {
+      if(q.dia)  rows=rows.filter(r=>Number(r.dia) ===Number(q.dia));
+      if(q.mes)  rows=rows.filter(r=>Number(r.mes) ===Number(q.mes));
+      if(q.anio) rows=rows.filter(r=>Number(r.anio)===Number(q.anio));
+    }
     rows=rows.slice().reverse();
     if(q.limit) rows=rows.slice(0,Number(q.limit));
     return sendJSON(res,rows);
