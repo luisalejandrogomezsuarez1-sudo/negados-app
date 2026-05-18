@@ -1202,16 +1202,12 @@ async function refreshVendSelCounts(){
   const regCount = {};
   if(regRows) regRows.forEach(r=>{ regCount[r.usuario_cel]=(regCount[r.usuario_cel]||0)+1; });
   const totalDia = regRows ? regRows.length : 0;
-  const MESES_VS=['','Ene','Feb','Mar','Abr','May','Jun','Jul','Ago','Sep','Oct','Nov','Dic'];
-  const diaLbl = selDay ? (()=>{ const p=selDay.split('-'); return parseInt(p[2])+' '+MESES_VS[parseInt(p[1])]; })() : 'hoy';
   const cur = sel.value;
-  sel.innerHTML='<option value="">Todos — '+totalDia+' capturas '+diaLbl+'</option>';
+  sel.innerHTML='<option value="">Todos</option>';
   users.forEach(u=>{
     const o=document.createElement('option');
     o.value=u.celular;
-    const cnt = regCount[u.celular]||0;
-    if(cnt===0 && selDay) return;
-    o.textContent=u.nombre+' — '+cnt+' capturas '+diaLbl;
+    o.textContent=u.nombre;
     if(u.celular===cur) o.selected=true;
     sel.appendChild(o);
   });
@@ -1462,15 +1458,11 @@ async function refDash() {
       const regCount = {};
       if(regRows) regRows.forEach(r=>{ regCount[r.usuario_cel]=(regCount[r.usuario_cel]||0)+1; });
       const totalDia = regRows ? regRows.length : 0;
-      const MESES_VS=['','Ene','Feb','Mar','Abr','May','Jun','Jul','Ago','Sep','Oct','Nov','Dic'];
-      const diaLbl = selDay ? (()=>{ const p=selDay.split('-'); return parseInt(p[2])+' '+MESES_VS[parseInt(p[1])]; })() : 'hoy';
-      sel.innerHTML='<option value="">Todos — '+totalDia+' capturas '+diaLbl+'</option>';
+      sel.innerHTML='<option value="">Todos</option>';
       users.forEach(u=>{
         const o=document.createElement('option');
         o.value=u.celular;
-        const cnt = regCount[u.celular]||0;
-        if(cnt===0 && selDay) return;
-        o.textContent=u.nombre+' — '+cnt+' capturas '+diaLbl;
+        o.textContent=u.nombre;
         if(u.celular===cur) o.selected=true;
         sel.appendChild(o);
       });
