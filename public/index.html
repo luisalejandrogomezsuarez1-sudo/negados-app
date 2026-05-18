@@ -743,9 +743,11 @@ function hide(id){ const e=document.getElementById(id); if(e) e.classList.add('h
 function el(id){ return document.getElementById(id); }
 function nowD(){
   const d=new Date();
-  return {dt:d.toISOString().slice(0,10),hr:d.toTimeString().slice(0,8),d:d.getDate(),m:d.getMonth()+1,y:d.getFullYear(),ts:d.toISOString()};
+  const dt=d.toLocaleDateString('en-CA'); // YYYY-MM-DD en zona horaria local
+  const hr=d.toTimeString().slice(0,8);
+  return {dt,hr,d:d.getDate(),m:d.getMonth()+1,y:d.getFullYear(),ts:d.toISOString()};
 }
-function today(){ return new Date().toISOString().slice(0,10); }
+function today(){ return new Date().toLocaleDateString('en-CA'); }
 
 // Load catalog async
 async function loadCatalog() {
@@ -1252,13 +1254,13 @@ function navWeek(dir) {
 
 function buildWeek() {
   const today = new Date(); today.setHours(0,0,0,0);
-  const todayStr = today.toISOString().slice(0,10);
+  const todayStr = today.toLocaleDateString('en-CA');
   const mon = getMondayOfWeek(weekOffset);
 
   // Week label: "L 28 Abr – D 4 May"
   const sun = new Date(mon); sun.setDate(mon.getDate() + 6);
-  const monP = mon.toISOString().slice(0,10).split('-');
-  const sunP = sun.toISOString().slice(0,10).split('-');
+  const monP = mon.toLocaleDateString('en-CA').split('-');
+  const sunP = sun.toLocaleDateString('en-CA').split('-');
   const lbl = parseInt(monP[2])+' '+MESES_CORTO[parseInt(monP[1])]+' — '+parseInt(sunP[2])+' '+MESES_CORTO[parseInt(sunP[1])];
   const lblEl = el('weekLabel');
   if (lblEl) lblEl.textContent = lbl;
@@ -1275,7 +1277,7 @@ function buildWeek() {
   let html2 = '';
   for (let i = 0; i < 7; i++) {
     const d  = new Date(mon); d.setDate(mon.getDate() + i);
-    const ds = d.toISOString().slice(0,10);
+    const ds = d.toLocaleDateString('en-CA');
     const isToday = ds === todayStr;
     const isSel   = ds === selDay;
     const isFut   = d > today;
@@ -1806,11 +1808,11 @@ let mSelDay = null;
 
 function buildMerchWeek() {
   const today = new Date(); today.setHours(0,0,0,0);
-  const todayStr = today.toISOString().slice(0,10);
+  const todayStr = today.toLocaleDateString('en-CA');
   const mon = getMondayOfWeek(mWeekOffset);
   const sun = new Date(mon); sun.setDate(mon.getDate()+6);
-  const monP = mon.toISOString().slice(0,10).split('-');
-  const sunP = sun.toISOString().slice(0,10).split('-');
+  const monP = mon.toLocaleDateString('en-CA').split('-');
+  const sunP = sun.toLocaleDateString('en-CA').split('-');
   const lbl = parseInt(monP[2])+' '+MESES_CORTO[parseInt(monP[1])]+' — '+parseInt(sunP[2])+' '+MESES_CORTO[parseInt(sunP[1])];
   const lblEl = el('merchWeekLabel'); if(lblEl) lblEl.textContent = lbl;
   const nextBtn = el('merchNextBtn');
@@ -1818,7 +1820,7 @@ function buildMerchWeek() {
   let h='';
   for(let i=0;i<7;i++){
     const d=new Date(mon); d.setDate(mon.getDate()+i);
-    const ds=d.toISOString().slice(0,10);
+    const ds=d.toLocaleDateString('en-CA');
     const isToday=ds===todayStr, isSel=ds===mSelDay, isFut=d>today;
     h+=`<button onclick="selectMerchDay('${ds}')"
       style="display:flex;flex-direction:column;align-items:center;padding:5px 2px;border-radius:8px;cursor:${isFut?'default':'pointer'};font-family:inherit;
