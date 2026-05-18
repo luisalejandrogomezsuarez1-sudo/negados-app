@@ -430,14 +430,6 @@ const server = http.createServer(async (req, res) => {
     return sendJSON(res, rows);
   }
 
-  // ── DEBUG ───────────────────────────────────────────────────
-  if (req.method === 'GET' && pathname === '/api/debug') {
-    const regs = readDB('registros');
-    const fechas = {};
-    regs.forEach(r => { fechas[r.fecha] = (fechas[r.fecha]||0)+1; });
-    return sendJSON(res, { total: regs.length, fechas, serverTime: new Date().toISOString() });
-  }
-
   // ── STATS ────────────────────────────────────────────────────
   if (req.method === 'GET' && pathname === '/api/stats') {
     const admin = isAdmin(q.cel, q.nom);

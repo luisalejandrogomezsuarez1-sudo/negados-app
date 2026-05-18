@@ -273,7 +273,7 @@ select option { font-size:12px !important; }
     </div>
 
     <!-- SEMANA -->
-    <div class="card" style="padding:10px 8px;">
+    <div id="weekCard" class="card" style="padding:10px 8px;">
       <!-- Header: arrows + week label -->
       <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;">
         <button onclick="navWeek(-1)" style="background:none;border:1px solid rgba(255,255,255,.15);border-radius:7px;color:#f0f0f5;font-size:16px;cursor:pointer;padding:3px 10px;font-family:inherit;">‹</button>
@@ -1377,8 +1377,9 @@ function showDayDetail(ds) {
 async function refDash() {
   let q=aq();
   if(ADM&&vendedor) q+='&vendedor='+encodeURIComponent(vendedor);
-  // Pass selected day to stats so cards show data for that day
-  if(selDay) q+='&fecha='+selDay;
+  // Siempre mandar fecha desde cliente (local) para evitar problemas de zona horaria
+  const _fechaDash = selDay ? selDay : new Date().toLocaleDateString('en-CA');
+  q+='&fecha='+_fechaDash;
   const data=await GET('/api/stats'+q);
   if(!data) return;
   const s=data.stats;
@@ -1401,8 +1402,8 @@ async function refDash() {
       const sel=el('vendSel'); const cur=sel.value;
       // Get counts for selected day (or today if no day selected)
       let regQ = aq();
-      if(selDay){ regQ+='&fecha='+selDay; }
-      else { const nd2=new Date(); regQ+='&dia='+nd2.getDate()+'&mes='+(nd2.getMonth()+1)+'&anio='+nd2.getFullYear(); }
+      const _fechaVend = selDay ? selDay : new Date().toLocaleDateString('en-CA');
+      regQ+='&fecha='+_fechaVend;
       const regRows = await GET('/api/registros'+regQ+'&limit=9999');
       const regCount = {};
       if(regRows) regRows.forEach(r=>{ regCount[r.usuario_cel]=(regCount[r.usuario_cel]||0)+1; });
@@ -1421,6 +1422,7 @@ async function refDash() {
     hide('adminBar');
   }
 
+  const wc=el('weekCard'); if(wc) wc.style.display=(ROL==='vendedor')?'none':'';
   buildBars(data.famSi,'famSi','#3d9be9');
   buildBars(data.famNo,'famNo','#e84855');
   buildTop(data.codSi,'topSi','#6bb8f7','#3d9be9');
@@ -1547,12 +1549,7 @@ function setTab(t){
     if(e) e.className = (x===t ? '' : 'hide');
     el('tab-'+x).className = 'chtab'+(x===t?' on':'');
   });
-  // If we already have stats data, just rebuild the chart without a full API call
-  if(_lastStats && (t==='familia'||t==='codigo')){
-    buildCharts(_lastStats.dias, t, _lastStats);
-  } else {
-    refDash();
-  }
+  refDash();
 }
 
 // ════════════════════════════════════════════════════════════
@@ -1894,13 +1891,9 @@ async function poblarMerchVendSel(){
 async function refMerch(){
   // Build query with admin filters
   let mq2=aq()+'&limit=50';
-  if(ADM){
-    if(mVendedor) mq2+='&vendedor='+encodeURIComponent(mVendedor);
-    if(mSelDay){
-      const p=mSelDay.split('-');
-      mq2+='&dia='+parseInt(p[2])+'&mes='+parseInt(p[1])+'&anio='+parseInt(p[0]);
-    }
-  }
+  if(ADM && mVendedor) mq2+='&vendedor='+encodeURIComponent(mVendedor);
+  const _fechaMerchList = mSelDay ? mSelDay : new Date().toLocaleDateString('en-CA');
+  mq2+='&fecha='+_fechaMerchList;
   const rows=await GET('/api/merch'+mq2);
   const lst=el('mList');
   if(!rows||!rows.length){ lst.innerHTML='<div class="emp">Sin registros</div>'; return; }
@@ -1925,20 +1918,11 @@ async function refMerch(){
     mat.textContent=fechaLbl+': '+rows.length+' · ✅'+ac+' ❌'+(rows.length-ac);
   }
 
-  // Fetch and build merch charts
+  // Fetch and build merch charts — siempre filtrar por día seleccionado o hoy
   let mq=aq();
-  if(ADM){
-    if(mVendedor) mq+='&vendedor='+encodeURIComponent(mVendedor);
-    if(mSelDay){
-      const p=mSelDay.split('-');
-      mq+='&dia='+parseInt(p[2])+'&mes='+parseInt(p[1])+'&anio='+parseInt(p[0]);
-      mq+='&fecha='+mSelDay;
-    }
-  }
-  // All users: pass fecha when day selected
-  if(mSelDay) {
-    if(!mq.includes('fecha=')) mq+='&fecha='+mSelDay;
-  }
+  if(ADM && mVendedor) mq+='&vendedor='+encodeURIComponent(mVendedor);
+  const _fechaMerch = mSelDay ? mSelDay : new Date().toLocaleDateString('en-CA');
+  mq+='&fecha='+_fechaMerch;
   const mst=await GET('/api/merch/stats'+mq);
   if(mst) buildMerchCharts(mst, mTab);
 }
