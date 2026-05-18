@@ -1736,7 +1736,9 @@ function buildMerchCharts(sd, t) {
         ctx.save();
         ctx.textAlign='center'; ctx.textBaseline='middle';
         ctx.fillStyle='#fff'; ctx.font='bold 15px sans-serif';
-        ctx.fillText(pct+'%',x,y);
+        ctx.fillText(pct+'%',x,y-8);
+        ctx.font='bold 13px sans-serif';
+        ctx.fillText(val,x,y+10);
         ctx.restore();
       });
     }};
