@@ -430,6 +430,13 @@ const server = http.createServer(async (req, res) => {
     return sendJSON(res, rows);
   }
 
+  if (req.method === 'GET' && pathname === '/api/debug-merch') {
+    const merch = readDB('merch');
+    const fechas = {};
+    merch.forEach(r => { fechas[r.fecha] = (fechas[r.fecha]||0)+1; });
+    return sendJSON(res, { total: merch.length, fechas, serverTime: new Date().toISOString(), ultimos: merch.slice(-3) });
+  }
+
   // ── STATS ────────────────────────────────────────────────────
   if (req.method === 'GET' && pathname === '/api/stats') {
     const admin = isAdmin(q.cel, q.nom);
