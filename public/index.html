@@ -1471,9 +1471,11 @@ let _lastStats = null;
 
 function buildCharts(dias, t, statsData){
   if(statsData) _lastStats = statsData;
-  const sd = _lastStats;
-  // Si no hay datos para el día seleccionado, limpiar gráficas
-  const sinDatos = statsData && (!statsData.dias||!statsData.dias.length) && (!statsData.famSi||!statsData.famSi.length) && (!statsData.famNo||!statsData.famNo.length) && (!statsData.codSi||!statsData.codSi.length) && (!statsData.codNo||!statsData.codNo.length);
+  // Cuando llegan datos nuevos (statsData), siempre usamos esos, no el caché
+  const sd = statsData || _lastStats;
+  if(!sd) return;
+  // Si no hay datos, limpiar gráficas
+  const sinDatos = statsData && (!statsData.famSi||!statsData.famSi.length) && (!statsData.famNo||!statsData.famNo.length) && (!statsData.codSi||!statsData.codSi.length) && (!statsData.codNo||!statsData.codNo.length) && (!dias||!dias.length);
   if(sinDatos){
     ['cvDia','cvPz','cvFam','cvCod'].forEach(id=>{ if(chs[id]){ chs[id].destroy(); delete chs[id]; } });
     return;
