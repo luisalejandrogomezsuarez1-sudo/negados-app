@@ -396,12 +396,12 @@ const server = http.createServer(async (req, res) => {
   // ═══════════════════════════════════════════════════════════
   if (req.method === 'POST' && pathname === '/api/registros') {
     const b = await readBody(req);
-    // Validar sesión activa
+    // Validar: admin, sesión activa, o usuario en accesos activo
     const esAdmin = isAdmin(b.usuario_cel, b.usuario_nom);
     const sesOk = validarSesion(b.usuario_cel, b.token);
-    console.log('[REGISTRO] cel:', b.usuario_cel, 'admin:', esAdmin, 'sesOk:', sesOk, 'token:', b.token ? b.token.slice(0,8) : 'none');
-    if (!esAdmin && !sesOk)
-      return sendJSON(res, { ok:false, error:'Sesión no válida.' });
+    const enAccesos = readDB('accesos').some(a => String(a.celular) === String(b.usuario_cel) && a.activo === true);
+    if (!esAdmin && !sesOk && !enAccesos)
+      return sendJSON(res, { ok:false, error:'Usuario no autorizado.' });
 
     const regs = readDB('registros');
     const reg = {
@@ -473,8 +473,11 @@ const server = http.createServer(async (req, res) => {
   // ── MERCH POST ───────────────────────────────────────────────
   if (req.method === 'POST' && pathname === '/api/merch') {
     const b = await readBody(req);
-    if (!isAdmin(b.usuario_cel, b.usuario_nom) && !validarSesion(b.usuario_cel, b.token))
-      return sendJSON(res, { ok:false, error:'Sesión no válida.' });
+    const esAdminM = isAdmin(b.usuario_cel, b.usuario_nom);
+    const sesOkM = validarSesion(b.usuario_cel, b.token);
+    const enAccesosM = readDB('accesos').some(a => String(a.celular) === String(b.usuario_cel) && a.activo === true);
+    if (!esAdminM && !sesOkM && !enAccesosM)
+      return sendJSON(res, { ok:false, error:'Usuario no autorizado.' });
     const merch=readDB('merch');
     const reg={id:newId(merch),codigo:b.codigo,familia:b.familia||'',resultado:b.resultado,motivo:b.motivo||'',competencia:b.competencia||'',precio_competencia:b.precio_competencia||'',usuario_cel:String(b.usuario_cel),usuario_nom:b.usuario_nom||'',fecha:b.fecha,hora:b.hora,dia:b.dia,mes:b.mes,anio:b.anio,ts:b.ts||new Date().toISOString()};
     merch.push(reg); writeDB('merch',merch);
