@@ -412,7 +412,6 @@ const server = http.createServer(async (req, res) => {
   }
 
   if (req.method === 'GET' && pathname === '/api/registros') {
-    if (!isAdmin(q.cel,q.nom) && !validarSesion(q.cel,q.token)) return sendJSON(res,{ok:false,error:'Sesión no válida.'});
     const admin = isAdmin(q.cel, q.nom);
     let rows = readDB('registros');
     if (!admin) rows = rows.filter(r => String(r.usuario_cel) === String(q.cel));
@@ -430,7 +429,6 @@ const server = http.createServer(async (req, res) => {
   // ── FIX CELULAR ─────────────────────────────────────────────
   // ── STATS ────────────────────────────────────────────────────
   if (req.method === 'GET' && pathname === '/api/stats') {
-    if (!isAdmin(q.cel,q.nom) && !validarSesion(q.cel,q.token)) return sendJSON(res,{ok:false,error:'Sesión no válida.'});
     const admin = isAdmin(q.cel, q.nom);
     let all = readDB('registros');
     if (!admin) all = all.filter(r => String(r.usuario_cel) === String(q.cel));
@@ -469,7 +467,6 @@ const server = http.createServer(async (req, res) => {
   }
 
   if (req.method === 'GET' && pathname === '/api/merch') {
-    if (!isAdmin(q.cel,q.nom) && !validarSesion(q.cel,q.token)) return sendJSON(res,{ok:false,error:'Sesión no válida.'});
     const admin=isAdmin(q.cel,q.nom);
     let rows=readDB('merch');
     if(!admin) rows=rows.filter(r=>String(r.usuario_cel)===String(q.cel));
