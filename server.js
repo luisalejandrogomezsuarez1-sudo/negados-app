@@ -100,8 +100,12 @@ function newId(arr) {
 }
 function nowData() {
   const d = new Date();
-  return { dt: d.toISOString().slice(0,10), hr: d.toTimeString().slice(0,8),
-    day: d.getDate(), mon: d.getMonth()+1, yr: d.getFullYear(), ts: d.toISOString() };
+  // Zona horaria México (UTC-6)
+  const mxOff = -6 * 60;
+  const mxD = new Date(d.getTime() + (mxOff - d.getTimezoneOffset()) * 60000);
+  const dt = mxD.toISOString().slice(0,10);
+  const hr = mxD.toISOString().slice(11,19);
+  return { dt, hr, day: mxD.getUTCDate(), mon: mxD.getUTCMonth()+1, yr: mxD.getUTCFullYear(), ts: d.toISOString() };
 }
 
 // ── Sesiones activas { celular: { token, ts, nombre } } ───────
@@ -434,10 +438,13 @@ const server = http.createServer(async (req, res) => {
     if (!admin) all = all.filter(r => String(r.usuario_cel) === String(q.cel));
     else if (q.vendedor) all = all.filter(r => String(r.usuario_cel) === String(q.vendedor));
     const nd=new Date();
-    // If a specific date is requested, use it; otherwise use today
-    const today = q.fecha ? q.fecha : nd.toISOString().slice(0,10);
-    const mesActual = q.fecha ? parseInt(q.fecha.split('-')[1]) : nd.getMonth()+1;
-    const anioActual = q.fecha ? parseInt(q.fecha.split('-')[0]) : nd.getFullYear();
+    // Usar zona horaria de México (UTC-6) para calcular "hoy"
+    const mxOffset = -6 * 60;
+    const mxDate = new Date(nd.getTime() + (mxOffset - nd.getTimezoneOffset()) * 60000);
+    const todayMx = mxDate.toISOString().slice(0,10);
+    const today = q.fecha ? q.fecha : todayMx;
+    const mesActual = q.fecha ? parseInt(q.fecha.split('-')[1]) : mxDate.getMonth()+1;
+    const anioActual = q.fecha ? parseInt(q.fecha.split('-')[0]) : mxDate.getFullYear();
     const hoy=all.filter(r=>r.fecha===today);
     const mesR=all.filter(r=>Number(r.mes)===mesActual&&Number(r.anio)===anioActual);
     const sum=arr=>arr.reduce((s,r)=>s+(r.piezas||1),0);
