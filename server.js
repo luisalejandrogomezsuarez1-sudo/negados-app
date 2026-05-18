@@ -437,12 +437,13 @@ const server = http.createServer(async (req, res) => {
     const resultado = {};
     archivos.forEach(arch => {
       let data = readDB(arch);
+      if (!Array.isArray(data)) return;
       let count = 0;
       data = data.map(r => {
         if (String(r.usuario_cel) === '3329457624' || String(r.celular) === '3329457624') {
           count++;
-          if (r.usuario_cel) r.usuario_cel = '3329457621';
-          if (r.celular) r.celular = '3329457621';
+          if (r.usuario_cel !== undefined) r.usuario_cel = '3329457621';
+          if (r.celular !== undefined) r.celular = '3329457621';
         }
         return r;
       });
