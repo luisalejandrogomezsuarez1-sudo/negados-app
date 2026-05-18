@@ -9,10 +9,25 @@ const PUBLIC   = path.join(__dirname, 'public');
 const DATA_DIR = process.env.RAILWAY_VOLUME_MOUNT_PATH || path.join(__dirname, 'data');
 if (!fs.existsSync(DATA_DIR)) fs.mkdirSync(DATA_DIR, { recursive: true });
 
-// ── Limpiar sesiones al iniciar (evita sesiones fantasma) ────
+// ── Limpiar solo sesiones expiradas al iniciar ───────────────
 const sesFile = path.join(DATA_DIR, 'sesiones.json');
-fs.writeFileSync(sesFile, '{}', 'utf8');
-console.log('  Sesiones limpiadas al iniciar');
+try {
+  if (fs.existsSync(sesFile)) {
+    const ses = JSON.parse(fs.readFileSync(sesFile, 'utf8') || '{}');
+    const ahora = Date.now();
+    let changed = false;
+    Object.keys(ses).forEach(cel => {
+      if (ahora - ses[cel].ts > 24 * 60 * 60 * 1000) { delete ses[cel]; changed = true; }
+    });
+    if (changed) fs.writeFileSync(sesFile, JSON.stringify(ses), 'utf8');
+    console.log('  Sesiones activas al iniciar:', Object.keys(ses).length);
+  } else {
+    fs.writeFileSync(sesFile, '{}', 'utf8');
+    console.log('  Sesiones inicializadas');
+  }
+} catch(e) {
+  fs.writeFileSync(sesFile, '{}', 'utf8');
+}
 
 // Clean duplicate usuarios on startup
 try {
