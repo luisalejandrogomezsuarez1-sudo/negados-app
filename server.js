@@ -429,12 +429,15 @@ const server = http.createServer(async (req, res) => {
     if (q.limit) rows = rows.slice(0, Number(q.limit));
     return sendJSON(res, rows);
   }
-if (req.method === 'GET' && pathname === '/api/debug') {
+
+  // ── DEBUG ───────────────────────────────────────────────────
+  if (req.method === 'GET' && pathname === '/api/debug') {
     const regs = readDB('registros');
     const fechas = {};
     regs.forEach(r => { fechas[r.fecha] = (fechas[r.fecha]||0)+1; });
     return sendJSON(res, { total: regs.length, fechas, serverTime: new Date().toISOString() });
   }
+
   // ── STATS ────────────────────────────────────────────────────
   if (req.method === 'GET' && pathname === '/api/stats') {
     const admin = isAdmin(q.cel, q.nom);
@@ -453,7 +456,7 @@ if (req.method === 'GET' && pathname === '/api/debug') {
     // Charts always show data for the selected day (or today if no day selected)
     const chartSrc = hoy;
     const famCt=dist=>{const ct={};chartSrc.filter(r=>r.distribuidor===dist).forEach(r=>{ct[r.familia]=(ct[r.familia]||0)+1;});return Object.entries(ct).sort((a,b)=>b[1]-a[1]).slice(0,8);};
-    const codCt=dist=>{const ct={},pz={};chartSrc.filter(r=>r.distribuidor===dist).forEach(r=>{ct[r.codigo]=(ct[r.codigo]||0)+1;pz[r.codigo]=(pz[r.codigo]||0)+(r.piezas||1);});return Object.entries(ct).sort((a,b)=>b[1]-a[1]).slice(0,10).map(([codigo,count])=>({codigo,count,piezas:pz[codigo]||0}));};
+    const codCt=dist=>{const ct={},pz={},ult={};chartSrc.filter(r=>r.distribuidor===dist).forEach(r=>{ct[r.codigo]=(ct[r.codigo]||0)+1;pz[r.codigo]=(pz[r.codigo]||0)+(r.piezas||1);ult[r.codigo]={nom:r.usuario_nom,fecha:r.fecha};});return Object.entries(ct).sort((a,b)=>b[1]-a[1]).slice(0,10).map(([codigo,count])=>({codigo,count,piezas:pz[codigo]||0,nom:ult[codigo]?ult[codigo].nom:'',fecha:ult[codigo]?ult[codigo].fecha:''}));};
     const dias=[];
     for(let i=13;i>=0;i--){const d=new Date();d.setDate(d.getDate()-i);const ds=d.toISOString().slice(0,10);const p=ds.split('-');const dr=all.filter(r=>r.fecha===ds);dias.push({label:p[2]+'/'+p[1],si:dr.filter(r=>r.distribuidor==='si').length,no:dr.filter(r=>r.distribuidor!=='si').length,pzSi:dr.filter(r=>r.distribuidor==='si').reduce((s,r)=>s+(r.piezas||1),0),pzNo:dr.filter(r=>r.distribuidor!=='si').reduce((s,r)=>s+(r.piezas||1),0)});}
     return sendJSON(res,{stats:{siHoy:siH.length,pzSiHoy:sum(siH),noHoy:noH.length,pzNoHoy:sum(noH),siMes:siM.length,pzSiMes:sum(siM),noMes:noM.length,pzNoMes:sum(noM),codigosUnicos:new Set(all.map(r=>r.codigo)).size,totalRegs:all.length},famSi:famCt('si'),famNo:famCt('no'),codSi:codCt('si'),codNo:codCt('no'),dias});
