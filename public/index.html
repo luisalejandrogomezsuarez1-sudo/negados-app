@@ -725,7 +725,12 @@ async function api(method, path, body) {
       body: body ? JSON.stringify(body) : undefined
     });
     document.getElementById('offBar').style.display = 'none';
-    return await r.json();
+    const data = await r.json();
+    // Si el servidor dice sesión inválida, mandar al login
+    if (data && data.ok === false && data.error && (data.error.includes('Sesi') || data.error.includes('token') || r.status === 401)) {
+      if (typeof doLogout === 'function') doLogout();
+    }
+    return data;
   } catch(e) {
     document.getElementById('offBar').style.display = 'block';
     console.error('API error:', path, e.message);
