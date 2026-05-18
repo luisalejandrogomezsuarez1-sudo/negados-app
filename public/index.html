@@ -1162,57 +1162,7 @@ async function refCaptura() {
 // ════════════════════════════════════════════════════════════
 // DASHBOARD
 // ════════════════════════════════════════════════════════════
-function setVendedor(v){ vendedor=v; refDashSinRebuildSel(); refreshVendSelCounts(); }
-
-async function refDashSinRebuildSel(){
-  // Igual que refDash pero sin reconstruir el vendSel
-  let q=aq();
-  if(ADM&&vendedor) q+='&vendedor='+encodeURIComponent(vendedor);
-  if(selDay) q+='&fecha='+selDay;
-  const data=await GET('/api/stats'+q);
-  if(!data) return;
-  const s=data.stats;
-  el('dSiH').textContent=s.siHoy;  el('dSiHp').textContent=s.pzSiHoy+' pz';
-  el('dSiM').textContent=s.siMes;  el('dSiMp').textContent=s.pzSiMes+' pz';
-  el('dNoH').textContent=s.noHoy;  el('dNoHp').textContent=s.pzNoHoy+' pz';
-  el('dNoM').textContent=s.noMes;  el('dNoMp').textContent=s.pzNoMes+' pz';
-  const MESES_CORTO2=['','Ene','Feb','Mar','Abr','May','Jun','Jul','Ago','Sep','Oct','Nov','Dic'];
-  const MESES_LARGO=['','Enero','Febrero','Marzo','Abril','Mayo','Junio','Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre'];
-  const lHoy = selDay ? (()=>{ const p=selDay.split('-'); return parseInt(p[2])+' '+MESES_CORTO2[parseInt(p[1])]; })() : 'Hoy';
-  const lMes = selDay ? (()=>{ const p=selDay.split('-'); return MESES_LARGO[parseInt(p[1])]+' '+p[0]; })() : 'Este mes';
-  ['lblSiH','lblNoH'].forEach(id=>{ const e=el(id); if(e) e.textContent=lHoy; });
-  ['lblSiM','lblNoM'].forEach(id=>{ const e=el(id); if(e) e.textContent=lMes; });
-  buildBars(data.famSi,'famSi','#3d9be9');
-  buildBars(data.famNo,'famNo','#e84855');
-  buildTop(data.codSi,'topSi','#6bb8f7','#3d9be9');
-  buildTop(data.codNo,'topNo','#ff7a85','#e84855');
-  buildCharts(data.dias, tab, data);
-}
-
-async function refreshVendSelCounts(){
-  if(!ADM) return;
-  const users = await GET('/api/usuarios'+aq());
-  if(!users) return;
-  const sel = el('vendSel');
-  if(!sel) return;
-  let regQ = aq();
-  if(selDay){ regQ+='&fecha='+selDay; }
-  else { const nd2=new Date(); regQ+='&dia='+nd2.getDate()+'&mes='+(nd2.getMonth()+1)+'&anio='+nd2.getFullYear(); }
-  const regRows = await GET('/api/registros'+regQ+'&limit=9999');
-  const regCount = {};
-  if(regRows) regRows.forEach(r=>{ regCount[r.usuario_cel]=(regCount[r.usuario_cel]||0)+1; });
-  const totalDia = regRows ? regRows.length : 0;
-  const cur = sel.value;
-  sel.innerHTML='<option value="">Todos</option>';
-  users.forEach(u=>{
-    const o=document.createElement('option');
-    o.value=u.celular;
-    o.textContent=u.nombre;
-    if(u.celular===cur) o.selected=true;
-    sel.appendChild(o);
-  });
-  if(!sel.dataset.csBuilt) buildCS(sel);
-}
+function setVendedor(v){ vendedor=v; refDash(); }
 function irRepDist(dist,periodo){
   const nd=new Date();
   if(periodo==='hoy'){
@@ -1359,17 +1309,17 @@ function selectDay(ds) {
     return;
   }
   selDay = ds;
+  vendedor='';
   buildWeek();
-  refDash(); // refresh ALL stats and charts for selected day
-  refreshVendSelCounts(); // actualizar conteos por asesor para el día seleccionado
+  refDash();
 }
 
 function cerrarDayDetail() {
   selDay = null;
+  vendedor = '';
   buildWeek();
   hide('dayDetailCard');
-  refDash(); // refresh stats back to today
-  refreshVendSelCounts(); // resetear conteos al día de hoy
+  refDash();
 }
 
 function showDayDetail(ds) {
@@ -1437,11 +1387,10 @@ async function refDash() {
   el('dNoH').textContent=s.noHoy;  el('dNoHp').textContent=s.pzNoHoy+' pz';
   el('dNoM').textContent=s.noMes;  el('dNoMp').textContent=s.pzNoMes+' pz';
   // Update card labels based on selected day
-  const MESES_L=['','Ene','Feb','Mar','Abr','May','Jun','Jul','Ago','Sep','Oct','Nov','Dic'];
-  const MESES_CORTO3=['','Ene','Feb','Mar','Abr','May','Jun','Jul','Ago','Sep','Oct','Nov','Dic'];
-  const MESES_LARGO2=['','Enero','Febrero','Marzo','Abril','Mayo','Junio','Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre'];
-  const lHoy = selDay ? (()=>{ const p=selDay.split('-'); return parseInt(p[2])+' '+MESES_CORTO3[parseInt(p[1])]; })() : 'Hoy';
-  const lMes = selDay ? (()=>{ const p=selDay.split('-'); return MESES_LARGO2[parseInt(p[1])]+' '+p[0]; })() : 'Este mes';
+  const MESES_CORTO=['','Ene','Feb','Mar','Abr','May','Jun','Jul','Ago','Sep','Oct','Nov','Dic'];
+  const MESES_LARGO=['','Enero','Febrero','Marzo','Abril','Mayo','Junio','Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre'];
+  const lHoy = selDay ? (()=>{ const p=selDay.split('-'); return parseInt(p[2])+' '+MESES_CORTO[parseInt(p[1])]; })() : 'Hoy';
+  const lMes = selDay ? (()=>{ const p=selDay.split('-'); return MESES_LARGO[parseInt(p[1])]+' '+p[0]; })() : 'Este mes';
   ['lblSiH','lblNoH'].forEach(id=>{ const e=el(id); if(e) e.textContent=lHoy; });
   ['lblSiM','lblNoM'].forEach(id=>{ const e=el(id); if(e) e.textContent=lMes; });
 
@@ -1466,7 +1415,7 @@ async function refDash() {
         if(u.celular===cur) o.selected=true;
         sel.appendChild(o);
       });
-      if(!sel.dataset.csBuilt) buildCS(sel);
+      rebuildCS('vendSel');
     }
   } else {
     hide('adminBar');
@@ -1520,15 +1469,8 @@ let _lastStats = null;
 
 function buildCharts(dias, t, statsData){
   if(statsData) _lastStats = statsData;
-  // Cuando llegan datos nuevos (statsData), siempre usamos esos, no el caché
   const sd = statsData || _lastStats;
   if(!sd) return;
-  // Si no hay datos, limpiar gráficas
-  const sinDatos = statsData && (!statsData.famSi||!statsData.famSi.length) && (!statsData.famNo||!statsData.famNo.length) && (!statsData.codSi||!statsData.codSi.length) && (!statsData.codNo||!statsData.codNo.length) && (!dias||!dias.length);
-  if(sinDatos){
-    ['cvDia','cvPz','cvFam','cvCod'].forEach(id=>{ if(chs[id]){ chs[id].destroy(); delete chs[id]; } });
-    return;
-  }
 
   const dsSi=(data,lbl)=>({label:'✅ SÍ maneja',data,backgroundColor:'rgba(61,155,233,.85)',borderColor:'#3d9be9',borderWidth:1,borderRadius:4,barPercentage:.38});
   const dsNo=(data,lbl)=>({label:'❌ NO maneja',data,backgroundColor:'rgba(232,72,85,.85)',borderColor:'#e84855',borderWidth:1,borderRadius:4,barPercentage:.38});
@@ -1770,13 +1712,7 @@ function setMTab(t){
 
 function buildMerchCharts(sd, t) {
   if(sd) _mStats = sd;
-  const s = _mStats;
-  if(!s || (sd && sd.acepto===0 && sd.rechazo===0 && (!sd.porFamilia||!sd.porFamilia.length) && (!sd.dias||!sd.dias.length) && (!sd.competencia||!sd.competencia.length))) {
-    // Sin datos para este día — limpiar todas las gráficas
-    ['cvMRes','cvMAc','cvMRec','cvMFam','cvMDias','cvMComp'].forEach(id=>{ if(mChs[id]){ mChs[id].destroy(); delete mChs[id]; } });
-    return;
-  }
-  if(!s) return;
+  const s = _mStats; if(!s) return;
   const optsPie={responsive:true,plugins:{legend:{labels:{color:'#f0f0f5',font:{size:11},boxWidth:10}}}};
   const optsH={responsive:true,plugins:{legend:{display:false}},scales:{x:{ticks:{color:'#8888a0',font:{size:10}},grid:{color:'rgba(255,255,255,.04)'}},y:{ticks:{color:'#8888a0',font:{size:10}},grid:{color:'rgba(255,255,255,.04)'}}}};
   const optsV={responsive:true,plugins:{legend:{labels:{color:'#f0f0f5',font:{size:11},boxWidth:10}}},scales:{x:{ticks:{color:'#8888a0',font:{size:9}},grid:{color:'rgba(255,255,255,.04)'}},y:{ticks:{color:'#8888a0',font:{size:10},stepSize:1},grid:{color:'rgba(255,255,255,.04)'}}}};
