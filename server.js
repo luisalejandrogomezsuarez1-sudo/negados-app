@@ -450,8 +450,8 @@ const server = http.createServer(async (req, res) => {
     const sum=arr=>arr.reduce((s,r)=>s+(r.piezas||1),0);
     const siH=hoy.filter(r=>r.distribuidor==='si'); const noH=hoy.filter(r=>r.distribuidor!=='si');
     const siM=mesR.filter(r=>r.distribuidor==='si'); const noM=mesR.filter(r=>r.distribuidor!=='si');
-    // Use date-filtered data for charts when fecha is specified
-    const chartSrc = q.fecha ? hoy : all;
+    // Charts always show data for the selected day (or today if no day selected)
+    const chartSrc = hoy;
     const famCt=dist=>{const ct={};chartSrc.filter(r=>r.distribuidor===dist).forEach(r=>{ct[r.familia]=(ct[r.familia]||0)+1;});return Object.entries(ct).sort((a,b)=>b[1]-a[1]).slice(0,8);};
     const codCt=dist=>{const ct={},pz={};chartSrc.filter(r=>r.distribuidor===dist).forEach(r=>{ct[r.codigo]=(ct[r.codigo]||0)+1;pz[r.codigo]=(pz[r.codigo]||0)+(r.piezas||1);});return Object.entries(ct).sort((a,b)=>b[1]-a[1]).slice(0,10).map(([codigo,count])=>({codigo,count,piezas:pz[codigo]||0}));};
     const dias=[];
