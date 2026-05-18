@@ -913,7 +913,7 @@ function ir(nm) {
   }
   const n = el(NIDS[nm]); if(n) n.classList.add('on');
   if(nm==='Captura')  refCaptura();
-  if(nm==='Dash')     { buildWeek(); refDash(); }
+  if(nm==='Dash')     { selDay=null; vendedor=''; weekOffset=0; buildWeek(); refDash(); }
   if(nm==='Ventas')   refVentas();
   if(nm==='Merch')    { if(ROL==='superadmin'||ROL==='admin'){ poblarMerchVendSel(); buildMerchWeek(); } refMerch(); }
   if(nm==='Rep')      refRep();
@@ -1176,9 +1176,10 @@ async function refDashSinRebuildSel(){
   el('dSiM').textContent=s.siMes;  el('dSiMp').textContent=s.pzSiMes+' pz';
   el('dNoH').textContent=s.noHoy;  el('dNoHp').textContent=s.pzNoHoy+' pz';
   el('dNoM').textContent=s.noMes;  el('dNoMp').textContent=s.pzNoMes+' pz';
-  const MESES_L=['','Ene','Feb','Mar','Abr','May','Jun','Jul','Ago','Sep','Oct','Nov','Dic'];
-  const lHoy = selDay ? (()=>{ const p=selDay.split('-'); return parseInt(p[2])+' '+MESES_L[parseInt(p[1])]; })() : 'Hoy';
-  const lMes = selDay ? (()=>{ const p=selDay.split('-'); return MESES_L[parseInt(p[1])]+' '+p[0]; })() : 'Este mes';
+  const MESES_CORTO2=['','Ene','Feb','Mar','Abr','May','Jun','Jul','Ago','Sep','Oct','Nov','Dic'];
+  const MESES_LARGO=['','Enero','Febrero','Marzo','Abril','Mayo','Junio','Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre'];
+  const lHoy = selDay ? (()=>{ const p=selDay.split('-'); return parseInt(p[2])+' '+MESES_CORTO2[parseInt(p[1])]; })() : 'Hoy';
+  const lMes = selDay ? (()=>{ const p=selDay.split('-'); return MESES_LARGO[parseInt(p[1])]+' '+p[0]; })() : 'Este mes';
   ['lblSiH','lblNoH'].forEach(id=>{ const e=el(id); if(e) e.textContent=lHoy; });
   ['lblSiM','lblNoM'].forEach(id=>{ const e=el(id); if(e) e.textContent=lMes; });
   buildBars(data.famSi,'famSi','#3d9be9');
@@ -1441,9 +1442,10 @@ async function refDash() {
   el('dNoM').textContent=s.noMes;  el('dNoMp').textContent=s.pzNoMes+' pz';
   // Update card labels based on selected day
   const MESES_L=['','Ene','Feb','Mar','Abr','May','Jun','Jul','Ago','Sep','Oct','Nov','Dic'];
-  const MESES_L2=['','Ene','Feb','Mar','Abr','May','Jun','Jul','Ago','Sep','Oct','Nov','Dic'];
-  const lHoy = selDay ? (()=>{ const p=selDay.split('-'); return parseInt(p[2])+' '+MESES_L2[parseInt(p[1])]; })() : 'Hoy';
-  const lMes = selDay ? (()=>{ const p=selDay.split('-'); return MESES_L2[parseInt(p[1])]+' '+p[0]; })() : 'Este mes';
+  const MESES_CORTO3=['','Ene','Feb','Mar','Abr','May','Jun','Jul','Ago','Sep','Oct','Nov','Dic'];
+  const MESES_LARGO2=['','Enero','Febrero','Marzo','Abril','Mayo','Junio','Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre'];
+  const lHoy = selDay ? (()=>{ const p=selDay.split('-'); return parseInt(p[2])+' '+MESES_CORTO3[parseInt(p[1])]; })() : 'Hoy';
+  const lMes = selDay ? (()=>{ const p=selDay.split('-'); return MESES_LARGO2[parseInt(p[1])]+' '+p[0]; })() : 'Este mes';
   ['lblSiH','lblNoH'].forEach(id=>{ const e=el(id); if(e) e.textContent=lHoy; });
   ['lblSiM','lblNoM'].forEach(id=>{ const e=el(id); if(e) e.textContent=lMes; });
 
