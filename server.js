@@ -446,6 +446,17 @@ const server = http.createServer(async (req, res) => {
   }
 
   // ── FIX CELULAR ─────────────────────────────────────────────
+  if (req.method === 'POST' && pathname === '/api/fix-data') {
+    const b = await readBody(req);
+    if (b.secret !== 'negados2026') return sendJSON(res, { ok: false });
+    // Reparar registros.json si no es array
+    let regs = readDB('registros');
+    if (!Array.isArray(regs)) { writeDB('registros', []); regs = []; }
+    let merch = readDB('merch');
+    if (!Array.isArray(merch)) { writeDB('merch', []); merch = []; }
+    return sendJSON(res, { ok: true, registros: regs.length, merch: merch.length });
+  }
+
   // ── STATS ────────────────────────────────────────────────────
   if (req.method === 'GET' && pathname === '/api/stats') {
     const admin = isAdmin(q.cel, q.nom);
