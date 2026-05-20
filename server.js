@@ -446,6 +446,18 @@ const server = http.createServer(async (req, res) => {
   }
 
   // ── FIX CELULAR ─────────────────────────────────────────────
+  if (req.method === 'GET' && pathname === '/api/clear-sessions') {
+    if (q.secret !== 'negados2026') return sendJSON(res, { ok: false });
+    const s = getSesiones();
+    if (q.cel) {
+      delete s[q.cel];
+      saveSesiones(s);
+      return sendJSON(res, { ok: true, msg: 'Sesion cerrada para '+q.cel });
+    }
+    writeObj('sesiones', {});
+    return sendJSON(res, { ok: true, msg: 'Todas las sesiones limpiadas' });
+  }
+
   // ── STATS ────────────────────────────────────────────────────
   if (req.method === 'GET' && pathname === '/api/stats') {
     const admin = isAdmin(q.cel, q.nom);
