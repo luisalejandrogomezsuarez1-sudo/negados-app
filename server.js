@@ -407,7 +407,7 @@ const server = http.createServer(async (req, res) => {
     if (!Array.isArray(regs)) regs = [];
     const reg = {
       id:newId(regs), codigo:b.codigo, descripcion:b.descripcion||'', familia:b.familia||'',
-      tipo:b.tipo, distribuidor:b.distribuidor, piezas:b.piezas||1, desc_cliente:b.desc_cliente||'',
+      tipo:b.tipo, distribuidor:b.distribuidor, piezas:b.piezas||1, desc_cliente:b.desc_cliente||'', cliente:b.cliente||'',
       usuario_cel:String(b.usuario_cel), usuario_nom:b.usuario_nom||'',
       fecha:b.fecha, hora:b.hora, dia:b.dia, mes:b.mes, anio:b.anio, ts:b.ts||new Date().toISOString()
     };
@@ -478,9 +478,12 @@ const server = http.createServer(async (req, res) => {
     // Gráfica de días siempre usa todos los registros (sin filtro de fecha)
     const famCt=dist=>{const ct={};chartSrc.filter(r=>r.distribuidor===dist).forEach(r=>{ct[r.familia]=(ct[r.familia]||0)+1;});return Object.entries(ct).sort((a,b)=>b[1]-a[1]).slice(0,8);};
     const codCt=dist=>{const ct={},pz={},ult={};chartSrc.filter(r=>r.distribuidor===dist).forEach(r=>{ct[r.codigo]=(ct[r.codigo]||0)+1;pz[r.codigo]=(pz[r.codigo]||0)+(r.piezas||1);ult[r.codigo]={nom:r.usuario_nom,fecha:r.fecha};});return Object.entries(ct).sort((a,b)=>b[1]-a[1]).slice(0,10).map(([codigo,count])=>({codigo,count,piezas:pz[codigo]||0,nom:ult[codigo]?ult[codigo].nom:'',fecha:ult[codigo]?ult[codigo].fecha:''}));};
+    const cliData={};
+    chartSrc.forEach(r=>{ const k=(r.cliente&&String(r.cliente).trim())?String(r.cliente).trim():'(sin cliente)'; if(!cliData[k])cliData[k]={pzSi:0,pzNo:0,codSi:0,codNo:0}; if(r.distribuidor==='si'){cliData[k].pzSi+=(r.piezas||1);cliData[k].codSi++;}else{cliData[k].pzNo+=(r.piezas||1);cliData[k].codNo++;} });
+    const clientes = Object.entries(cliData).map(([k,v])=>[k,v.pzSi,v.pzNo,v.codSi,v.codNo]).sort((a,b)=>(b[1]+b[2])-(a[1]+a[2])).slice(0,15);
     const dias=[];
     for(let i=13;i>=0;i--){const d=new Date();d.setDate(d.getDate()-i);const ds=d.toISOString().slice(0,10);const p=ds.split('-');const dr=all.filter(r=>r.fecha===ds);dias.push({label:p[2]+'/'+p[1],si:dr.filter(r=>r.distribuidor==='si').length,no:dr.filter(r=>r.distribuidor!=='si').length,pzSi:dr.filter(r=>r.distribuidor==='si').reduce((s,r)=>s+(r.piezas||1),0),pzNo:dr.filter(r=>r.distribuidor!=='si').reduce((s,r)=>s+(r.piezas||1),0)});}
-    return sendJSON(res,{stats:{siHoy:siH.length,pzSiHoy:sum(siH),noHoy:noH.length,pzNoHoy:sum(noH),siMes:siM.length,pzSiMes:sum(siM),noMes:noM.length,pzNoMes:sum(noM),codigosUnicos:new Set(all.map(r=>r.codigo)).size,totalRegs:all.length},famSi:famCt('si'),famNo:famCt('no'),codSi:codCt('si'),codNo:codCt('no'),dias});
+    return sendJSON(res,{stats:{siHoy:siH.length,pzSiHoy:sum(siH),noHoy:noH.length,pzNoHoy:sum(noH),siMes:siM.length,pzSiMes:sum(siM),noMes:noM.length,pzNoMes:sum(noM),codigosUnicos:new Set(all.map(r=>r.codigo)).size,totalRegs:all.length},famSi:famCt('si'),famNo:famCt('no'),codSi:codCt('si'),codNo:codCt('no'),clientes,dias});
   }
 
   // ── MERCH POST ───────────────────────────────────────────────
@@ -575,8 +578,8 @@ const server = http.createServer(async (req, res) => {
     if(q.dia) rows=rows.filter(r=>Number(r.dia)===Number(q.dia));
     if(q.mes) rows=rows.filter(r=>Number(r.mes)===Number(q.mes));
     if(q.anio) rows=rows.filter(r=>Number(r.anio)===Number(q.anio));
-    const lines=['ID,Codigo,Descripcion,Familia,Tipo,Distribuidor,Piezas,Usuario,Celular,Fecha,Hora'];
-    rows.forEach(r=>lines.push([r.id,r.codigo,'"'+(r.descripcion||'').replace(/"/g,'""')+'"',r.familia,r.tipo,r.distribuidor,r.piezas||1,r.usuario_nom,r.usuario_cel,r.fecha,r.hora].join(',')));
+    const lines=['ID,Cliente,Codigo,Descripcion,Familia,Tipo,Distribuidor,Piezas,Usuario,Celular,Fecha,Hora'];
+    rows.forEach(r=>lines.push([r.id,'"'+(r.cliente||'').replace(/"/g,'""')+'"',r.codigo,'"'+(r.descripcion||'').replace(/"/g,'""')+'"',r.familia,r.tipo,r.distribuidor,r.piezas||1,r.usuario_nom,r.usuario_cel,r.fecha,r.hora].join(',')));
     return sendCSV(res,lines.join('\r\n'),'registros.csv');
   }
 

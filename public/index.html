@@ -178,11 +178,12 @@ select option { font-size:12px !important; }
     <div class="card" style="margin-bottom:0;">
       <h3>Buscar código</h3>
       <div class="ac-wrap">
-        <input id="codIn" type="text" placeholder="Código o descripción del producto..." oninput="onCodInput(this.value)" autocomplete="off" />
+        <input id="codIn" type="text" placeholder="Código o descripción del producto..." oninput="onCodInput(this.value)" onkeydown="if(event.key==='Enter'){event.preventDefault();validarCod();}" autocomplete="off" />
         <div id="acDrop" class="ac-drop"></div>
       </div>
-      <button class="btn btn-b" style="margin-top:10px;" onclick="validarCod()">🔍 Validar código</button>
-      <div id="valRes"></div>
+      <div id="valRes" style="margin-top:10px;"></div>
+      <h3>Nombre o número de cliente</h3>
+      <input id="cliIn" type="text" maxlength="50" placeholder="Nombre o número del cliente..." autocomplete="off" />
     </div>
   </div>
 
@@ -338,11 +339,13 @@ select option { font-size:12px !important; }
         <button class="chtab"    id="tab-familia" onclick="setTab('familia')">Familia</button>
         <button class="chtab"    id="tab-codigo"  onclick="setTab('codigo')">Código</button>
         <button class="chtab"    id="tab-piezas"  onclick="setTab('piezas')">Piezas</button>
+        <button class="chtab"    id="tab-cliente" onclick="setTab('cliente')">Cliente</button>
       </div>
       <div id="ch-dia"><canvas id="cvDia" height="180"></canvas></div>
       <div id="ch-familia" class="hide"><canvas id="cvFam" height="260"></canvas></div>
       <div id="ch-codigo"  class="hide"><canvas id="cvCod" height="260"></canvas></div>
       <div id="ch-piezas"  class="hide"><canvas id="cvPz"  height="180"></canvas></div>
+      <div id="ch-cliente" class="hide"><div id="cliTotal" style="font-size:12px;color:#ffd060;font-weight:700;margin-bottom:8px;text-align:center;"></div><canvas id="cvCli" height="260"></canvas></div>
     </div>
 
     <div class="slbl" style="color:#3d9be9;">✅ Top familias — SÍ maneja</div>
@@ -1083,10 +1086,11 @@ async function guardarReg() {
     descExtra=el('fDesc').value.trim();
   }
   const n=nowD();
+  const cliente = (el('cliIn') && el('cliIn').value.trim()) || '';
   m.innerHTML='<div class="al al-b"><span class="spin"></span>Guardando...</div>';
   const res=await POST('/api/registros',{
     codigo:sCod.c, descripcion:descExtra||sCod.d, familia:sCod.f,
-    tipo:sTipo, distribuidor:diVal, piezas:pz, desc_cliente:descExtra,
+    tipo:sTipo, distribuidor:diVal, piezas:pz, desc_cliente:descExtra, cliente:cliente,
     token:CU.token, usuario_cel:CU.celular, usuario_nom:CU.nombre,
     fecha:n.dt, hora:n.hr, dia:n.d, mes:n.m, anio:n.y, ts:n.ts
   });
@@ -1094,7 +1098,7 @@ async function guardarReg() {
   if(!res.ok){ m.innerHTML='<div class="al al-r">❌ '+(res.error||'Error al guardar')+'</div>'; return; }
   m.innerHTML='<div class="al al-g">✅ Registro guardado correctamente</div>';
   el('codIn').value='';
-  ['pzNeg','pzFue','pzVen','fDesc'].forEach(id=>{ const e=el(id); if(e) e.value=''; });
+  ['pzNeg','pzFue','pzVen','fDesc','cliIn'].forEach(id=>{ const e=el(id); if(e) e.value=''; });
   el('valRes').innerHTML='';
   hide('regForm');
   resetForm();
@@ -1317,14 +1321,12 @@ function selectDay(ds) {
     return;
   }
   selDay = ds;
-  vendedor='';
   buildWeek();
   refDash();
 }
 
 function cerrarDayDetail() {
   selDay = null;
-  vendedor = '';
   buildWeek();
   hide('dayDetailCard');
   refDash();
@@ -1548,11 +1550,47 @@ function buildCharts(dias, t, statsData){
       }
     });
   }
+
+  if(t==='cliente' && sd){
+    const cli = sd.clientes || [];
+    const totPzSi = cli.reduce((s,x)=>s+(x[1]||0),0);
+    const totPzNo = cli.reduce((s,x)=>s+(x[2]||0),0);
+    const totCodSi = cli.reduce((s,x)=>s+(x[3]||0),0);
+    const totCodNo = cli.reduce((s,x)=>s+(x[4]||0),0);
+    const ctEl = el('cliTotal');
+    if(ctEl) ctEl.innerHTML = '<span style="color:#6bb8f7;">✅ Maneja: '+totCodSi+' cód · '+totPzSi+' pz</span> &nbsp;·&nbsp; <span style="color:#ff7a85;">❌ No maneja: '+totCodNo+' cód · '+totPzNo+' pz</span>';
+    const cliValLabels={id:'cliVal',afterDraw(ch){
+      const ctx=ch.ctx; ctx.save(); ctx.font='bold 10px sans-serif'; ctx.textBaseline='middle'; ctx.textAlign='left';
+      ch.data.datasets.forEach((dsx,di)=>{ const meta=ch.getDatasetMeta(di); if(!meta||!meta.data) return;
+        ctx.fillStyle = di===0 ? '#6bb8f7' : '#ff7a85';
+        meta.data.forEach((bar,i)=>{ const v=dsx.data[i]; if(!v) return; ctx.fillText(String(v), bar.x+4, bar.y); }); });
+      ctx.restore();
+    }};
+    if(cli.length){
+      const labels  = cli.map(x=>x[0]);
+      const pzSiArr = cli.map(x=>x[1]);
+      const pzNoArr = cli.map(x=>x[2]);
+      const maxV = Math.max(...pzSiArr, ...pzNoArr, 1);
+      mkChart('cvCli',{
+        type:'bar',
+        data:{labels,datasets:[ {...dsSi(pzSiArr)}, {...dsNo(pzNoArr)} ]},
+        options:{...optsH, indexAxis:'y', layout:{padding:{right:34}},
+          scales:{
+            x:{suggestedMax:maxV+1,ticks:{color:'#8888a0',font:{size:10}},grid:{color:'rgba(255,255,255,.04)'}},
+            y:{ticks:{color:'#8888a0',font:{size:10}},grid:{color:'rgba(255,255,255,.04)'}}
+          }
+        },
+        plugins:[cliValLabels]
+      });
+    } else {
+      mkChart('cvCli',{type:'bar',data:{labels:['Sin clientes'],datasets:[{data:[0],backgroundColor:'rgba(136,136,160,.3)'}]},options:{...optsH,indexAxis:'y',plugins:{legend:{display:false}}}});
+    }
+  }
 }
 
 function setTab(t){
   tab=t;
-  ['dia','familia','codigo','piezas'].forEach(x=>{
+  ['dia','familia','codigo','piezas','cliente'].forEach(x=>{
     const e=el('ch-'+x);
     if(e) e.className = (x===t ? '' : 'hide');
     el('tab-'+x).className = 'chtab'+(x===t?' on':'');
