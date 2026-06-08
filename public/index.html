@@ -163,32 +163,45 @@ select option { font-size:12px !important; }
   <!-- Sticky search area — never scrolls away -->
   <div style="position:sticky;top:56px;z-index:9;background:#0f0f13;padding:12px 14px 0;">
 
-    <!-- Filtro por asesor — solo admins -->
-    <div id="captAsesorBar" class="hide" style="background:#22222d;border:1px solid rgba(247,183,49,.2);border-radius:10px;padding:10px 12px;margin-bottom:8px;display:flex;align-items:center;gap:10px;">
-      <span style="font-size:18px;">👥</span>
-      <div style="flex:1;">
-        <div style="font-size:10px;font-weight:700;color:#ffd060;margin-bottom:4px;text-transform:uppercase;letter-spacing:.06em;">Ver capturas de:</div>
-        <select id="captAsesorSel" onchange="setCaptAsesor(this.value)"
-          style="background:#1e1e28;border:1px solid rgba(255,255,255,.12);border-radius:7px;color:#f0f0f5;font-size:13px;padding:6px 10px;width:100%;">
-          <option value="">Todos los asesores</option>
-        </select>
-      </div>
+    <!-- PASO 1: Nombre o número de cliente -->
+    <div id="cliStep" class="card" style="margin-bottom:0;">
+      <h3>Nombre o número de cliente</h3>
+      <input id="cliIn" type="text" maxlength="50" placeholder="Nombre o número del cliente..." oninput="this.value=this.value.toUpperCase()" onkeydown="if(event.key==='Enter'){event.preventDefault();entrarCliente();}" autocomplete="off" style="text-transform:uppercase;" />
+      <button class="btn btn-b" style="margin-top:12px;" onclick="entrarCliente()">Continuar →</button>
     </div>
 
-    <div class="card" style="margin-bottom:0;">
-      <h3>Nombre o número de cliente</h3>
-      <input id="cliIn" type="text" maxlength="50" placeholder="Nombre o número del cliente..." oninput="this.value=this.value.toUpperCase()" autocomplete="off" style="text-transform:uppercase;" />
-      <h3 style="margin-top:14px;">Buscar código</h3>
-      <div class="ac-wrap">
-        <input id="codIn" type="text" placeholder="Código o descripción del producto..." oninput="onCodInput(this.value)" onkeydown="if(event.key==='Enter'){event.preventDefault();validarCod();}" autocomplete="off" />
-        <div id="acDrop" class="ac-drop"></div>
+    <!-- PASO 2: cliente activo + buscar código -->
+    <div id="capStep" class="hide">
+      <div id="captAsesorBar" class="hide" style="background:#22222d;border:1px solid rgba(247,183,49,.2);border-radius:10px;padding:10px 12px;margin-bottom:8px;display:flex;align-items:center;gap:10px;">
+        <span style="font-size:18px;">👥</span>
+        <div style="flex:1;">
+          <div style="font-size:10px;font-weight:700;color:#ffd060;margin-bottom:4px;text-transform:uppercase;letter-spacing:.06em;">Ver capturas de:</div>
+          <select id="captAsesorSel" onchange="setCaptAsesor(this.value)" style="background:#1e1e28;border:1px solid rgba(255,255,255,.12);border-radius:7px;color:#f0f0f5;font-size:13px;padding:6px 10px;width:100%;">
+            <option value="">Todos los asesores</option>
+          </select>
+        </div>
       </div>
-      <div id="valRes" style="margin-top:10px;"></div>
+      <div class="card" style="margin-bottom:8px;display:flex;align-items:center;justify-content:space-between;gap:10px;">
+        <div style="min-width:0;">
+          <div style="font-size:10px;font-weight:700;color:#8888a0;text-transform:uppercase;letter-spacing:.05em;">Cliente</div>
+          <div id="cliActivo" style="font-size:17px;font-weight:700;color:#ffd060;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;"></div>
+        </div>
+        <button onclick="salirCliente()" style="flex-shrink:0;background:#2a2a36;border:1px solid rgba(232,72,85,.4);border-radius:8px;color:#ff7a85;font-size:12px;font-weight:700;padding:9px 13px;cursor:pointer;">✕ Salir del cliente</button>
+      </div>
+      <div class="card" style="margin-bottom:0;">
+        <h3>Buscar código</h3>
+        <div class="ac-wrap">
+          <input id="codIn" type="text" placeholder="Código o descripción del producto..." oninput="onCodInput(this.value)" onkeydown="if(event.key==='Enter'){event.preventDefault();validarCod();}" autocomplete="off" />
+          <div id="acDrop" class="ac-drop"></div>
+        </div>
+        <div id="valRes" style="margin-top:10px;"></div>
+      </div>
     </div>
   </div>
 
   <!-- Scrollable area below -->
   <div class="body" style="padding-top:8px;">
+    <div id="capBody" style="display:none;">
 
     <div id="regForm" class="card hide">
       <div id="formTitle" style="font-size:12px;font-weight:700;text-transform:uppercase;color:#8888a0;margin-bottom:10px;letter-spacing:.05em;">Registrar</div>
@@ -250,6 +263,7 @@ select option { font-size:12px !important; }
         <span id="hoyN" class="pill pr">0</span>
       </div>
       <div id="listHoy"><div class="emp">Sin registros hoy</div></div>
+    </div>
     </div>
     </div>
 </div>
@@ -922,7 +936,7 @@ function ir(nm) {
     if(body) body.scrollTop = 0;
   }
   const n = el(NIDS[nm]); if(n) n.classList.add('on');
-  if(nm==='Captura')  refCaptura();
+  if(nm==='Captura')  { salirCliente(); refCaptura(); }
   if(nm==='Dash')     { selDay=null; vendedor=''; weekOffset=0; buildWeek(); refDash(); }
   if(nm==='Ventas')   refVentas();
   if(nm==='Merch')    { if(ROL==='superadmin'||ROL==='admin'){ poblarMerchVendSel(); buildMerchWeek(); } refMerch(); }
@@ -1068,8 +1082,8 @@ function setDistF(d){ sDistF=d; el('dSiF').className='tgl'+(d==='si'?' sg':''); 
 
 async function guardarReg() {
   const m = el('saveMsg');
-  const cliente = ((el('cliIn') && el('cliIn').value.trim()) || '').toUpperCase();
-  if(!cliente){ m.innerHTML='<div class="al al-w">Captura primero el nombre o número del cliente.</div>'; if(el('cliIn')) el('cliIn').focus(); return; }
+  const cliente = (clienteActivo||'').toUpperCase();
+  if(!cliente){ m.innerHTML='<div class="al al-w">Captura primero el nombre o número del cliente.</div>'; salirCliente(); return; }
   if(!sTipo){ m.innerHTML='<div class="al al-w">Selecciona el tipo de registro.</div>'; return; }
   let pz, diVal, descExtra='';
   if(sTipo==='negado') {
@@ -1099,7 +1113,7 @@ async function guardarReg() {
   if(!res.ok){ m.innerHTML='<div class="al al-r">❌ '+(res.error||'Error al guardar')+'</div>'; return; }
   m.innerHTML='<div class="al al-g">✅ Registro guardado correctamente</div>';
   el('codIn').value='';
-  ['pzNeg','pzFue','pzVen','fDesc','cliIn'].forEach(id=>{ const e=el(id); if(e) e.value=''; });
+  ['pzNeg','pzFue','pzVen','fDesc'].forEach(id=>{ const e=el(id); if(e) e.value=''; });
   el('valRes').innerHTML='';
   hide('regForm');
   resetForm();
@@ -1110,6 +1124,30 @@ async function guardarReg() {
 function setCaptAsesor(v) {
   captAsesorFil = v;
   refCaptura();
+}
+
+let clienteActivo = '';
+function entrarCliente(){
+  const v = ((el('cliIn') && el('cliIn').value.trim()) || '').toUpperCase();
+  if(!v){ if(el('cliIn')){ el('cliIn').focus(); el('cliIn').style.borderColor='#e84855'; } return; }
+  if(el('cliIn')) el('cliIn').style.borderColor='';
+  clienteActivo = v;
+  if(el('cliActivo')) el('cliActivo').textContent = v;
+  hide('cliStep'); show('capStep');
+  if(el('capBody')) el('capBody').style.display='';
+  refCaptura();
+  setTimeout(()=>{ if(el('codIn')) el('codIn').focus(); }, 60);
+}
+function salirCliente(){
+  clienteActivo = '';
+  if(el('cliIn')) el('cliIn').value='';
+  if(el('codIn')) el('codIn').value='';
+  if(el('valRes')) el('valRes').innerHTML='';
+  if(el('saveMsg')) el('saveMsg').innerHTML='';
+  hide('regForm'); resetForm();
+  show('cliStep'); hide('capStep');
+  if(el('capBody')) el('capBody').style.display='none';
+  setTimeout(()=>{ if(el('cliIn')) el('cliIn').focus(); }, 60);
 }
 
 async function poblarCaptAsesorSel() {
