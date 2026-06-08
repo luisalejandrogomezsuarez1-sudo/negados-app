@@ -1224,6 +1224,7 @@ async function refCaptura() {
         </div>
         <span style="font-size:12px;font-weight:700;color:${r.distribuidor==='si'?'#6bb8f7':'#ff7a85'};flex-shrink:0;">${r.piezas||1}pz</span>
       </div>
+      ${r.cliente?`<div style="font-size:11px;font-weight:700;color:#ffd060;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;margin-bottom:2px;">👤 ${r.cliente}</div>`:''}
       <div style="font-size:11px;color:#8888a0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${r.descripcion} · <span style="color:#6bb8f7;">${r.usuario_nom}</span> · ${r.fecha}</div>
     </div>`).join('');
 }
@@ -2012,6 +2013,7 @@ async function refMerch(){
       <span style="font-size:11px;font-weight:600;color:${m.resultado==='acepto'?'#5ddea0':'#ff7a85'};flex-shrink:0;">${m.resultado==='acepto'?'✅ Aceptó':'❌ Rechazó'}</span>
     </div>
     ${m.motivo?`<div style="font-size:11px;font-weight:600;display:inline-block;margin-bottom:2px;${m.resultado==='acepto'?'color:#5ddea0;':'color:#ff7a85;'}">${m.motivo}${m.competencia?' — '+m.competencia:''}${m.precio_competencia?' $'+m.precio_competencia:''}</div>`:''}
+    ${m.cliente?`<div style="font-size:11px;font-weight:700;color:#ffd060;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;margin-bottom:2px;">👤 ${m.cliente}</div>`:''}
     <div style="font-size:11px;color:#8888a0;margin-top:1px;">${m.familia} · ${m.fecha} · <span style="color:#6bb8f7;">${m.usuario_nom}</span></div>
   </div>`).join('');
   const ac=rows.filter(m=>m.resultado==='acepto').length;
