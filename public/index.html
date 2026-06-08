@@ -1222,9 +1222,11 @@ async function refCaptura() {
           <span style="font-size:10px;font-weight:700;padding:1px 7px;border-radius:20px;${r.tipo==='negado'?'background:rgba(232,72,85,.2);color:#ff7a85':'background:rgba(61,155,233,.2);color:#6bb8f7'}">${r.tipo==='negado'?'🚫 Neg':'📦 Fuera'}</span>
           <span style="font-size:10px;font-weight:700;padding:1px 7px;border-radius:20px;${r.distribuidor==='si'?'background:rgba(61,155,233,.15);color:#6bb8f7':'background:rgba(232,72,85,.12);color:#ff7a85'}">${r.distribuidor==='si'?'✅':'❌'}</span>
         </div>
-        <span style="font-size:12px;font-weight:700;color:${r.distribuidor==='si'?'#6bb8f7':'#ff7a85'};flex-shrink:0;">${r.piezas||1}pz</span>
+        <div style="display:flex;align-items:center;gap:8px;min-width:0;">
+          ${r.cliente?`<span style="font-size:11px;font-weight:700;color:#ffd060;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:120px;">👤 ${r.cliente}</span>`:''}
+          <span style="font-size:12px;font-weight:700;color:${r.distribuidor==='si'?'#6bb8f7':'#ff7a85'};flex-shrink:0;">${r.piezas||1}pz</span>
+        </div>
       </div>
-      ${r.cliente?`<div style="font-size:11px;font-weight:700;color:#ffd060;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;margin-bottom:2px;">👤 ${r.cliente}</div>`:''}
       <div style="font-size:11px;color:#8888a0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${r.descripcion} · <span style="color:#6bb8f7;">${r.usuario_nom}</span> · ${r.fecha}</div>
     </div>`).join('');
 }
@@ -2008,12 +2010,14 @@ async function refMerch(){
   if(!rows||!rows.length){ lst.innerHTML='<div class="emp">Sin registros</div>'; return; }
   lst.innerHTML=rows.map(m=>`
   <div style="padding:8px 0;border-bottom:1px solid rgba(255,255,255,.05);">
-    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:3px;">
-      <span style="font-family:monospace;font-weight:700;font-size:14px;color:${m.resultado==='acepto'?'#5ddea0':'#ff7a85'};">${m.codigo}</span>
-      <span style="font-size:11px;font-weight:600;color:${m.resultado==='acepto'?'#5ddea0':'#ff7a85'};flex-shrink:0;">${m.resultado==='acepto'?'✅ Aceptó':'❌ Rechazó'}</span>
+    <div style="display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:3px;">
+      <span style="font-family:monospace;font-weight:700;font-size:14px;color:${m.resultado==='acepto'?'#5ddea0':'#ff7a85'};flex-shrink:0;">${m.codigo}</span>
+      <div style="display:flex;align-items:center;gap:8px;min-width:0;">
+        ${m.cliente?`<span style="font-size:11px;font-weight:700;color:#ffd060;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:120px;">👤 ${m.cliente}</span>`:''}
+        <span style="font-size:11px;font-weight:600;color:${m.resultado==='acepto'?'#5ddea0':'#ff7a85'};flex-shrink:0;">${m.resultado==='acepto'?'✅ Aceptó':'❌ Rechazó'}</span>
+      </div>
     </div>
     ${m.motivo?`<div style="font-size:11px;font-weight:600;display:inline-block;margin-bottom:2px;${m.resultado==='acepto'?'color:#5ddea0;':'color:#ff7a85;'}">${m.motivo}${m.competencia?' — '+m.competencia:''}${m.precio_competencia?' $'+m.precio_competencia:''}</div>`:''}
-    ${m.cliente?`<div style="font-size:11px;font-weight:700;color:#ffd060;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;margin-bottom:2px;">👤 ${m.cliente}</div>`:''}
     <div style="font-size:11px;color:#8888a0;margin-top:1px;">${m.familia} · ${m.fecha} · <span style="color:#6bb8f7;">${m.usuario_nom}</span></div>
   </div>`).join('');
   const ac=rows.filter(m=>m.resultado==='acepto').length;
