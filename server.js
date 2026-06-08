@@ -495,7 +495,7 @@ const server = http.createServer(async (req, res) => {
     if (!esAdminM && !sesOkM && !enAccesosM)
       return sendJSON(res, { ok:false, error:'Usuario no autorizado.' });
     const merch=readDB('merch');
-    const reg={id:newId(merch),codigo:b.codigo,familia:b.familia||'',resultado:b.resultado,motivo:b.motivo||'',competencia:b.competencia||'',precio_competencia:b.precio_competencia||'',usuario_cel:String(b.usuario_cel),usuario_nom:b.usuario_nom||'',fecha:b.fecha,hora:b.hora,dia:b.dia,mes:b.mes,anio:b.anio,ts:b.ts||new Date().toISOString()};
+    const reg={id:newId(merch),codigo:b.codigo,familia:b.familia||'',resultado:b.resultado,motivo:b.motivo||'',competencia:b.competencia||'',precio_competencia:b.precio_competencia||'',cliente:b.cliente||'',usuario_cel:String(b.usuario_cel),usuario_nom:b.usuario_nom||'',fecha:b.fecha,hora:b.hora,dia:b.dia,mes:b.mes,anio:b.anio,ts:b.ts||new Date().toISOString()};
     merch.push(reg); writeDB('merch',merch);
     const n=nowData(); const track=readDB('tracking');
     track.push({id:newId(track),tipo:'merch_'+b.resultado,usuario_nom:b.usuario_nom,usuario_cel:String(b.usuario_cel),fecha:b.fecha,hora:b.hora});
@@ -592,8 +592,8 @@ const server = http.createServer(async (req, res) => {
     if(q.dia) rows=rows.filter(r=>Number(r.dia)===Number(q.dia));
     if(q.mes) rows=rows.filter(r=>Number(r.mes)===Number(q.mes));
     if(q.anio) rows=rows.filter(r=>Number(r.anio)===Number(q.anio));
-    const lines=['ID,Codigo,Familia,Resultado,Motivo,Competencia,Usuario,Celular,Fecha,Hora'];
-    rows.forEach(r=>lines.push([r.id,r.codigo,'"'+(r.familia||'')+'"',r.resultado,r.motivo||'',r.competencia||'',r.usuario_nom,r.usuario_cel,r.fecha,r.hora].join(',')));
+    const lines=['ID,Cliente,Codigo,Familia,Resultado,Motivo,Competencia,Usuario,Celular,Fecha,Hora'];
+    rows.forEach(r=>lines.push([r.id,'"'+(r.cliente||'').replace(/"/g,'""')+'"',r.codigo,'"'+(r.familia||'')+'"',r.resultado,r.motivo||'',r.competencia||'',r.usuario_nom,r.usuario_cel,r.fecha,r.hora].join(',')));
     return sendCSV(res,lines.join('\r\n'),'merch.csv');
   }
 

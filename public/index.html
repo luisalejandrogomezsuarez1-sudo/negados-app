@@ -68,6 +68,11 @@ select option{background:#1e1e28;}
 .slist{display:flex;flex-direction:column;max-height:320px;overflow-y:auto;}
 .emp{text-align:center;color:#8888a0;font-size:13px;padding:24px 0;}
 .nav{position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:100%;max-width:480px;background:#17171e;border-top:1px solid rgba(255,255,255,.08);display:flex;z-index:20;}
+#cliBanner{position:fixed;top:0;left:50%;transform:translateX(-50%);width:100%;max-width:480px;height:42px;background:#ffd060;display:none;align-items:center;justify-content:space-between;gap:10px;padding:0 14px;z-index:30;box-shadow:0 2px 8px rgba(0,0,0,.35);}
+body.cli-on{padding-top:42px;}
+body.cli-on #cliBanner{display:flex;}
+body.cli-on .topbar{top:42px;}
+body.cli-on #captSticky{top:98px;}
 .ni{flex:1;display:flex;flex-direction:column;align-items:center;padding:9px 0 6px;cursor:pointer;color:#8888a0;font-size:10px;gap:3px;border:none;background:none;font-family:inherit;}
 .ni.on{color:#e84855;}
 .ni span:first-child{font-size:20px;}
@@ -161,7 +166,7 @@ select option { font-size:12px !important; }
     <button onclick="doLogout()" style="background:none;border:1px solid rgba(255,255,255,.15);border-radius:6px;color:#8888a0;font-size:12px;cursor:pointer;padding:4px 8px;font-family:inherit;">Salir</button>
   </div>
   <!-- Sticky search area — never scrolls away -->
-  <div style="position:sticky;top:56px;z-index:9;background:#0f0f13;padding:12px 14px 0;">
+  <div id="captSticky" style="position:sticky;top:56px;z-index:9;background:#0f0f13;padding:12px 14px 0;">
 
     <!-- PASO 1: Nombre o número de cliente -->
     <div id="cliStep" class="card" style="margin-bottom:0;">
@@ -180,13 +185,6 @@ select option { font-size:12px !important; }
             <option value="">Todos los asesores</option>
           </select>
         </div>
-      </div>
-      <div class="card" style="margin-bottom:8px;display:flex;align-items:center;justify-content:space-between;gap:10px;">
-        <div style="min-width:0;">
-          <div style="font-size:10px;font-weight:700;color:#8888a0;text-transform:uppercase;letter-spacing:.05em;">Cliente</div>
-          <div id="cliActivo" style="font-size:17px;font-weight:700;color:#ffd060;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;"></div>
-        </div>
-        <button onclick="salirCliente()" style="flex-shrink:0;background:#2a2a36;border:1px solid rgba(232,72,85,.4);border-radius:8px;color:#ff7a85;font-size:12px;font-weight:700;padding:9px 13px;cursor:pointer;">✕ Salir del cliente</button>
       </div>
       <div class="card" style="margin-bottom:0;">
         <h3>Buscar código</h3>
@@ -614,6 +612,17 @@ select option { font-size:12px !important; }
   </div>
 </div>
 
+<div id="cliBanner">
+  <div style="min-width:0;display:flex;align-items:center;gap:8px;">
+    <span style="font-size:16px;">👤</span>
+    <div style="min-width:0;">
+      <div style="font-size:9px;font-weight:700;color:#0f0f13;opacity:.65;text-transform:uppercase;letter-spacing:.05em;line-height:1;">Cliente</div>
+      <div id="cliActivo" style="font-size:15px;font-weight:800;color:#0f0f13;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;line-height:1.25;"></div>
+    </div>
+  </div>
+  <button onclick="salirCliente()" style="flex-shrink:0;background:rgba(15,15,19,.12);border:1px solid rgba(15,15,19,.35);border-radius:7px;color:#0f0f13;font-size:12px;font-weight:800;padding:7px 12px;cursor:pointer;font-family:inherit;">✕ Cerrar</button>
+</div>
+
 <nav class="nav hide" id="mainNav">
   <button class="ni on" id="navC" onclick="ir('Captura')"><span>📝</span>Captura</button>
   <button class="ni" id="navD" onclick="ir('Dash')"><span>📊</span>Dashboard</button>
@@ -835,6 +844,7 @@ function doLogout() {
     fetch('/api/logout', {method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({celular:CU.celular, token:CU.token})}).catch(()=>{});
   }
   CU = null; ADM = false; ROL = 'vendedor'; vendedor = '';
+  clienteActivo = ''; document.body.classList.remove('cli-on');
   localStorage.removeItem('ncu');
   hide('mainNav');
   ['Captura','Dash','Merch','Rep'].forEach(s => { const e=el('scr'+s); if(e){e.classList.remove('on');e.style.display='';} });
@@ -936,7 +946,11 @@ function ir(nm) {
     if(body) body.scrollTop = 0;
   }
   const n = el(NIDS[nm]); if(n) n.classList.add('on');
-  if(nm==='Captura')  { salirCliente(); refCaptura(); }
+  if(nm==='Captura')  {
+    if(clienteActivo){ hide('cliStep'); show('capStep'); if(el('capBody')) el('capBody').style.display=''; }
+    else { show('cliStep'); hide('capStep'); if(el('capBody')) el('capBody').style.display='none'; }
+    refCaptura();
+  }
   if(nm==='Dash')     { selDay=null; vendedor=''; weekOffset=0; buildWeek(); refDash(); }
   if(nm==='Ventas')   refVentas();
   if(nm==='Merch')    { if(ROL==='superadmin'||ROL==='admin'){ poblarMerchVendSel(); buildMerchWeek(); } refMerch(); }
@@ -1133,6 +1147,7 @@ function entrarCliente(){
   if(el('cliIn')) el('cliIn').style.borderColor='';
   clienteActivo = v;
   if(el('cliActivo')) el('cliActivo').textContent = v;
+  document.body.classList.add('cli-on');
   hide('cliStep'); show('capStep');
   if(el('capBody')) el('capBody').style.display='';
   refCaptura();
@@ -1140,13 +1155,16 @@ function entrarCliente(){
 }
 function salirCliente(){
   clienteActivo = '';
+  document.body.classList.remove('cli-on');
   if(el('cliIn')) el('cliIn').value='';
   if(el('codIn')) el('codIn').value='';
   if(el('valRes')) el('valRes').innerHTML='';
   if(el('saveMsg')) el('saveMsg').innerHTML='';
+  if(el('mMsg')) el('mMsg').innerHTML='';
   hide('regForm'); resetForm();
   show('cliStep'); hide('capStep');
   if(el('capBody')) el('capBody').style.display='none';
+  ir('Captura');
   setTimeout(()=>{ if(el('cliIn')) el('cliIn').focus(); }, 60);
 }
 
@@ -1749,6 +1767,7 @@ function mP1Back(){
 }
 async function guardarMerch(){
   const msg = el('mMsg');
+  if(!clienteActivo){ msg.innerHTML='<div class="al al-w">Captura primero un cliente en la pantalla de inicio.</div>'; return; }
   const c=el('mCod').value.trim().toUpperCase();
   if(!c){ msg.innerHTML='<div class="al al-w">Ingresa el código.</div>'; return; }
   const res=mRes||'acepto';
@@ -1758,7 +1777,7 @@ async function guardarMerch(){
   const n=nowD();
   try {
     const body = {codigo:c, familia:sFam||'', resultado:res, motivo:mMot||'',
-      competencia:mCompetencia||'', precio_competencia:mPrecioCap||'',
+      competencia:mCompetencia||'', precio_competencia:mPrecioCap||'', cliente:clienteActivo,
       token:CU&&CU.token?CU.token:'',
       usuario_cel:CU?CU.celular:'', usuario_nom:CU?CU.nombre:'',
       fecha:n.dt, hora:n.hr, dia:n.d, mes:n.m, anio:n.y, ts:n.ts};
