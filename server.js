@@ -592,8 +592,8 @@ const server = http.createServer(async (req, res) => {
     if(q.dia) rows=rows.filter(r=>Number(r.dia)===Number(q.dia));
     if(q.mes) rows=rows.filter(r=>Number(r.mes)===Number(q.mes));
     if(q.anio) rows=rows.filter(r=>Number(r.anio)===Number(q.anio));
-    const lines=['ID,Cliente,Codigo,Familia,Resultado,Motivo,Competencia,Usuario,Celular,Fecha,Hora'];
-    rows.forEach(r=>lines.push([r.id,'"'+(r.cliente||'').replace(/"/g,'""')+'"',r.codigo,'"'+(r.familia||'')+'"',r.resultado,r.motivo||'',r.competencia||'',r.usuario_nom,r.usuario_cel,r.fecha,r.hora].join(',')));
+    const lines=['ID,Cliente,Codigo,Familia,Resultado,Motivo,Competencia,Precio competencia,Usuario,Celular,Fecha,Hora'];
+    rows.forEach(r=>lines.push([r.id,'"'+(r.cliente||'').replace(/"/g,'""')+'"',r.codigo,'"'+(r.familia||'')+'"',r.resultado,r.motivo||'','"'+(r.competencia||'').replace(/"/g,'""')+'"','"'+(r.precio_competencia||'')+'"',r.usuario_nom,r.usuario_cel,r.fecha,r.hora].join(',')));
     return sendCSV(res,lines.join('\r\n'),'merch.csv');
   }
 
