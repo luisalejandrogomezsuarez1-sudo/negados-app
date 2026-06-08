@@ -613,14 +613,14 @@ select option { font-size:12px !important; }
 </div>
 
 <div id="cliBanner">
-  <div style="min-width:0;display:flex;align-items:center;gap:8px;">
-    <span style="font-size:16px;">👤</span>
+  <button onclick="salirCliente()" style="flex-shrink:0;background:rgba(15,15,19,.12);border:1px solid rgba(15,15,19,.35);border-radius:7px;color:#0f0f13;font-size:12px;font-weight:800;padding:7px 12px;cursor:pointer;font-family:inherit;">✕ Cerrar</button>
+  <div style="min-width:0;display:flex;align-items:center;gap:8px;justify-content:flex-end;text-align:right;">
     <div style="min-width:0;">
       <div style="font-size:9px;font-weight:700;color:#0f0f13;opacity:.65;text-transform:uppercase;letter-spacing:.05em;line-height:1;">Cliente</div>
       <div id="cliActivo" style="font-size:15px;font-weight:800;color:#0f0f13;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;line-height:1.25;"></div>
     </div>
+    <span style="font-size:16px;">👤</span>
   </div>
-  <button onclick="salirCliente()" style="flex-shrink:0;background:rgba(15,15,19,.12);border:1px solid rgba(15,15,19,.35);border-radius:7px;color:#0f0f13;font-size:12px;font-weight:800;padding:7px 12px;cursor:pointer;font-family:inherit;">✕ Cerrar</button>
 </div>
 
 <nav class="nav hide" id="mainNav">
