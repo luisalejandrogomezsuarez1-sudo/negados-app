@@ -158,12 +158,18 @@ select option { font-size:12px !important; }
 
 <!-- ════════ CAPTURA ════════ -->
 <div id="scrCaptura" class="scr">
-  <div class="topbar">
-    <div id="avt" class="av">U</div>
-    <span id="usrLbl" style="font-size:13px;max-width:130px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;"></span>
-    <span id="dtLbl" class="dt-badge" style="margin-left:auto;margin-right:4px;">--/--/----</span>
-    <span id="rolTopBadge" style="font-size:10px;font-weight:700;padding:2px 8px;border-radius:20px;margin-right:4px;"></span>
-    <button onclick="doLogout()" style="background:none;border:1px solid rgba(255,255,255,.15);border-radius:6px;color:#8888a0;font-size:12px;cursor:pointer;padding:4px 8px;font-family:inherit;">Salir</button>
+  <div class="topbar" style="flex-direction:column;align-items:stretch;gap:6px;padding:10px 14px;">
+    <div style="display:flex;align-items:center;gap:10px;">
+      <div id="avt" class="av">U</div>
+      <span id="usrLbl" style="font-size:13px;max-width:110px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;"></span>
+      <span id="dtLbl" class="dt-badge" style="margin-left:auto;margin-right:4px;">--/--/----</span>
+      <span id="rolTopBadge" style="font-size:10px;font-weight:700;padding:2px 8px;border-radius:20px;margin-right:4px;"></span>
+      <button onclick="doLogout()" style="background:none;border:1px solid rgba(255,255,255,.15);border-radius:6px;color:#8888a0;font-size:12px;cursor:pointer;padding:4px 8px;font-family:inherit;">Salir</button>
+    </div>
+    <div style="display:flex;align-items:center;justify-content:space-between;gap:8px;background:rgba(48,201,126,.08);border:1px solid rgba(48,201,126,.18);border-radius:8px;padding:5px 10px;">
+      <span style="font-size:13px;font-weight:700;color:#5ddea0;"><span id="tvBarHoy">$0</span> <span style="font-size:10px;color:#8888a0;font-weight:600;">Hoy</span></span>
+      <span style="font-size:13px;font-weight:700;color:#5ddea0;"><span id="tvBarMes">$0</span> <span style="font-size:10px;color:#8888a0;font-weight:600;">Mes Act</span></span>
+    </div>
   </div>
   <!-- Sticky search area — never scrolls away -->
   <div id="captSticky" style="position:sticky;top:56px;z-index:9;background:#0f0f13;padding:12px 14px 0;">
@@ -585,6 +591,7 @@ select option { font-size:12px !important; }
         <button class="btn btn-o" style="margin:0;padding:10px;font-size:13px;" onclick="exportar('merch')">⬇ Merch</button>
         <button class="btn btn-o" style="margin:0;padding:10px;font-size:13px;grid-column:span 2;" onclick="exportar('codigo')">⬇ Códigos</button>
         <button class="btn btn-o" style="margin:0;padding:10px;font-size:13px;grid-column:span 2;" onclick="exportar('competencia')">⬇ Competencia &amp; Precio</button>
+        <button class="btn btn-o" style="margin:0;padding:10px;font-size:13px;grid-column:span 2;border-color:#5ddea0;color:#5ddea0;" onclick="exportar('totalventa')">⬇ Total Venta Cliente</button>
       </div>
     </div>
     <div class="card">
@@ -629,8 +636,54 @@ select option { font-size:12px !important; }
   <button class="ni" id="navM" onclick="ir('Merch')"><span>🛒</span>Merch</button>
   <button class="ni" id="navR" onclick="ir('Rep')"><span>📁</span>Reportes</button>
   <button class="ni hide" id="navA" onclick="ir('Accesos')"><span>👥</span>Accesos</button>
+  <button class="ni" id="navTV" onclick="ir('TotalVenta')"><span>💲</span>$ Venta</button>
 </nav>
 
+
+<!-- ════════ TOTAL VENTA ════════ -->
+<div id="scrTotalVenta" class="scr">
+  <div class="topbar">
+    <div id="avt5" class="av" style="flex-shrink:0;">U</div>
+    <span id="usrLbl5" style="font-size:13px;max-width:100px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;"></span>
+    <span style="font-size:18px;margin-left:4px;">💲</span><span style="font-size:15px;font-weight:700;">Total Venta</span>
+    <span id="dtLbl5" class="dt-badge" style="margin-left:auto;margin-right:4px;">--/--/----</span>
+    <span id="rolTopBadge5" style="font-size:10px;font-weight:700;padding:2px 8px;border-radius:20px;"></span>
+  </div>
+  <div class="body">
+    <div class="card" id="tvClienteInfo" style="background:rgba(247,183,49,.08);border:1px solid rgba(247,183,49,.3);">
+      <div style="font-size:10px;font-weight:700;color:#ffd060;text-transform:uppercase;letter-spacing:.06em;margin-bottom:4px;">Cliente activo</div>
+      <div id="tvCliNom" style="font-size:18px;font-weight:800;color:#ffd060;">—</div>
+    </div>
+
+    <div class="card">
+      <h3>Total Compra Cliente</h3>
+      <div style="position:relative;margin-bottom:14px;">
+        <span style="position:absolute;left:13px;top:50%;transform:translateY(-50%);font-size:18px;font-weight:700;color:#5ddea0;">$</span>
+        <input id="tvMonto" type="number" min="0" step="0.01" placeholder="0.00"
+          style="text-align:right;font-size:28px;font-weight:700;color:#5ddea0;padding-left:32px;padding-right:13px;"
+          oninput="onTVInput(this.value)" />
+      </div>
+      <button class="btn btn-g" id="tvGuardarBtn" onclick="guardarTotalVenta()">💾 Guardar total de venta</button>
+      <div id="tvMsg" style="margin-top:10px;"></div>
+    </div>
+
+    <div class="card">
+      <div class="row jb" style="margin-bottom:10px;">
+        <h3 style="margin:0;">Mis ventas del día</h3>
+        <span id="tvHoyN" class="pill pg">$0</span>
+      </div>
+      <div id="tvHoyTotal" style="font-size:22px;font-weight:700;color:#5ddea0;text-align:center;padding:8px 0;display:none;"></div>
+      <div id="tvListHoy"><div class="emp">Sin registros hoy</div></div>
+    </div>
+
+    <div class="card">
+      <div class="row jb" style="margin-bottom:8px;">
+        <h3 style="margin:0;">Este mes</h3>
+        <span id="tvMesTotal" class="pill pg">$0</span>
+      </div>
+    </div>
+  </div>
+</div>
 
 <!-- ════════ VENTAS ════════ -->
 <div id="scrVentas" class="scr">
@@ -899,7 +952,7 @@ function iniciarApp() {
   else { rolTxt='👤 Promotor'; rolBg='rgba(136,136,160,.15)'; rolCol='#8888a0'; }
   const nombre1 = CU.nombre.split(' ')[0];
   // Apply to all screens
-  [1,2,3,4].forEach(n=>{
+  [1,2,3,4,5].forEach(n=>{
     const avtEl=el('avt'+(n===1?'':''+n));
     const lblEl=el('usrLbl'+(n===1?'':''+n));
     const dtEl =el('dtLbl'+(n===1?'':''+n));
@@ -927,8 +980,8 @@ function iniciarApp() {
 // ════════════════════════════════════════════════════════════
 // NAVEGACIÓN
 // ════════════════════════════════════════════════════════════
-const SCRS = ['Captura','Dash','Merch','Rep','Accesos','Ventas'];
-const NIDS = {Captura:'navC',Dash:'navD',Merch:'navM',Rep:'navR',Accesos:'navA',Ventas:''};
+const SCRS = ['Captura','Dash','Merch','Rep','Accesos','Ventas','TotalVenta'];
+const NIDS = {Captura:'navC',Dash:'navD',Merch:'navM',Rep:'navR',Accesos:'navA',Ventas:'',TotalVenta:'navTV'};
 function ir(nm) {
   SCRS.forEach(s => {
     const e = el('scr'+s); if(e){e.classList.remove('on');e.style.display='';}
@@ -955,7 +1008,8 @@ function ir(nm) {
   if(nm==='Ventas')   refVentas();
   if(nm==='Merch')    { if(ROL==='superadmin'||ROL==='admin'){ poblarMerchVendSel(); buildMerchWeek(); } refMerch(); }
   if(nm==='Rep')      refRep();
-  if(nm==='Accesos')  refAccesos();
+  if(nm==='Accesos')    refAccesos();
+  if(nm==='TotalVenta') refTotalVenta();
 }
 
 // ════════════════════════════════════════════════════════════
@@ -1154,6 +1208,15 @@ function entrarCliente(){
   setTimeout(()=>{ if(el('codIn')) el('codIn').focus(); }, 60);
 }
 function salirCliente(){
+  // Verificar si ya se guardó total de venta para este cliente hoy
+  if(clienteActivo && !_tvGuardadoHoy) {
+    // Redirigir a pantalla de total venta
+    ir('TotalVenta');
+    const msg = el('tvMsg');
+    if(msg) { msg.innerHTML='<div class="al al-w">⚠️ Debes capturar el Total de Compra antes de cerrar el cliente.</div>'; setTimeout(()=>{ msg.innerHTML=''; },3500); }
+    return;
+  }
+  _tvGuardadoHoy = false;
   clienteActivo = '';
   document.body.classList.remove('cli-on');
   if(el('cliIn')) el('cliIn').value='';
@@ -1229,6 +1292,7 @@ async function refCaptura() {
       </div>
       <div style="font-size:11px;color:#8888a0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${r.descripcion} · <span style="color:#6bb8f7;">${r.usuario_nom}</span> · ${r.fecha}</div>
     </div>`).join('');
+  actualizarTVResumen();
 }
 
 // ════════════════════════════════════════════════════════════
@@ -2097,6 +2161,7 @@ function exportar(tipo){
   else if(tipo==='familia') window.open('/api/export/familias'+buildQ(),'_blank');
   else if(tipo==='codigo')       window.open('/api/export/codigos'+buildQ(),'_blank');
   else if(tipo==='competencia') window.open('/api/export/competencia'+buildQ(),'_blank');
+  else if(tipo==='totalventa')  window.open('/api/export/totalventa'+buildQ(),'_blank');
 }
 
 
@@ -2351,6 +2416,106 @@ function rebuildCS(id) {
   delete s.dataset.csBuilt;
   s.style.display = '';
   buildCS(s);
+}
+
+// ════════════════════════════════════════════════════════════
+// TOTAL VENTA
+// ════════════════════════════════════════════════════════════
+let _tvGuardadoHoy = false; // flag: ya guardó total para el cliente activo
+
+function onTVInput(v) {
+  // Solo permite números con hasta 2 decimales
+  const btn = el('tvGuardarBtn');
+  const num = parseFloat(v);
+  if(btn) btn.disabled = !(num > 0);
+}
+
+async function refTotalVenta() {
+  const nd = new Date();
+  if(el('dtLbl5')) el('dtLbl5').textContent = nd.getDate()+'/'+(nd.getMonth()+1)+'/'+nd.getFullYear();
+
+  // Mostrar cliente activo
+  const tvCli = el('tvCliNom');
+  if(tvCli) tvCli.textContent = clienteActivo || '(ninguno activo)';
+
+  // Habilitar/deshabilitar botón
+  const btn = el('tvGuardarBtn');
+  const inp = el('tvMonto');
+  if(btn) btn.disabled = true;
+  if(inp) inp.value = '';
+
+  // Cargar registros del día
+  const q = aq()+'&dia='+nd.getDate()+'&mes='+(nd.getMonth()+1)+'&anio='+nd.getFullYear();
+  const rows = await GET('/api/totalventa'+q);
+
+  // Totales del día
+  const totalHoy = rows ? rows.reduce((s,r)=>s+(parseFloat(r.total)||0),0) : 0;
+  if(el('tvHoyN')) el('tvHoyN').textContent = '$'+totalHoy.toLocaleString('es-MX',{minimumFractionDigits:2,maximumFractionDigits:2});
+
+  const lst = el('tvListHoy');
+  if(!rows||!rows.length){ if(lst) lst.innerHTML='<div class="emp">Sin registros hoy</div>'; }
+  else {
+    lst.innerHTML = rows.slice().reverse().map(r=>`
+      <div style="padding:8px 0;border-bottom:1px solid rgba(255,255,255,.05);">
+        <div style="display:flex;justify-content:space-between;align-items:center;">
+          <span style="font-size:13px;font-weight:700;color:#ffd060;overflow:hidden;text-overflow:ellipsis;max-width:200px;">👤 ${r.cliente}</span>
+          <span style="font-size:15px;font-weight:700;color:#5ddea0;">$${parseFloat(r.total).toLocaleString('es-MX',{minimumFractionDigits:2,maximumFractionDigits:2})}</span>
+        </div>
+        <div style="font-size:11px;color:#8888a0;margin-top:2px;">${r.hora} · ${r.usuario_nom}</div>
+      </div>`).join('');
+  }
+
+  // Total del mes
+  const qMes = aq()+'&mes='+( nd.getMonth()+1)+'&anio='+nd.getFullYear();
+  const rowsMes = await GET('/api/totalventa'+qMes);
+  const totalMes = rowsMes ? rowsMes.reduce((s,r)=>s+(parseFloat(r.total)||0),0) : 0;
+  if(el('tvMesTotal')) el('tvMesTotal').textContent = '$'+totalMes.toLocaleString('es-MX',{minimumFractionDigits:2,maximumFractionDigits:2});
+
+  // Actualizar card resumen en pantalla Captura
+  actualizarTVResumen();
+}
+
+async function actualizarTVResumen() {
+  const nd = new Date();
+  const qH = aq()+'&dia='+nd.getDate()+'&mes='+(nd.getMonth()+1)+'&anio='+nd.getFullYear();
+  const qM = aq()+'&mes='+(nd.getMonth()+1)+'&anio='+nd.getFullYear();
+  const [rH, rM] = await Promise.all([GET('/api/totalventa'+qH), GET('/api/totalventa'+qM)]);
+  const sumH = rH ? rH.reduce((s,r)=>s+(parseFloat(r.total)||0),0) : 0;
+  const sumM = rM ? rM.reduce((s,r)=>s+(parseFloat(r.total)||0),0) : 0;
+  const fmt = n => '$'+n.toLocaleString('es-MX',{minimumFractionDigits:2,maximumFractionDigits:2});
+  if(el('tvBarHoy')) el('tvBarHoy').textContent = fmt(sumH);
+  if(el('tvBarMes')) el('tvBarMes').textContent = fmt(sumM);
+}
+
+async function guardarTotalVenta() {
+  const msg = el('tvMsg');
+  if(!clienteActivo){ msg.innerHTML='<div class="al al-w">No hay cliente activo. Regresa a Captura.</div>'; return; }
+  const v = parseFloat(el('tvMonto').value);
+  if(isNaN(v)||v<=0){ msg.innerHTML='<div class="al al-w">Ingresa un monto válido mayor a $0.</div>'; return; }
+  // Truncar a 2 decimales
+  const total = Math.round(v * 100) / 100;
+  const n = nowD();
+  msg.innerHTML='<div class="al al-b"><span class="spin"></span>Guardando...</div>';
+  const res = await POST('/api/totalventa', {
+    cliente: clienteActivo, total,
+    token: CU.token, usuario_cel: CU.celular, usuario_nom: CU.nombre,
+    fecha: n.dt, hora: n.hr, dia: n.d, mes: n.m, anio: n.y, ts: n.ts
+  });
+  if(!res||!res.ok){ msg.innerHTML='<div class="al al-r">❌ '+(res&&res.error?res.error:'Sin conexión')+'</div>'; return; }
+  msg.innerHTML='<div class="al al-g">✅ Total guardado — $'+total.toLocaleString('es-MX',{minimumFractionDigits:2,maximumFractionDigits:2})+'</div>';
+  _tvGuardadoHoy = true;
+  el('tvMonto').value = '';
+  if(el('tvGuardarBtn')) el('tvGuardarBtn').disabled = true;
+  refTotalVenta();
+  // Preguntar si quiere cerrar el cliente
+  setTimeout(()=>{
+    msg.innerHTML='<div class="al al-g" style="display:flex;align-items:center;justify-content:space-between;gap:10px;">✅ Guardado<button onclick="cerrarClienteDefinitivo()" style="background:#30c97e;border:none;border-radius:7px;color:#fff;font-size:13px;font-weight:700;padding:6px 14px;cursor:pointer;font-family:inherit;">Cerrar cliente →</button></div>';
+  }, 1200);
+}
+
+function cerrarClienteDefinitivo() {
+  _tvGuardadoHoy = true;
+  salirCliente();
 }
 
 // ════════════════════════════════════════════════════════════

@@ -48,7 +48,7 @@ try {
 } catch(e) {}
 
 // ── Auto-repair corrupt JSON files on startup ─────────────────
-const DB_FILES = ['usuarios','registros','merch','ventas','tracking','accesos'];
+const DB_FILES = ['usuarios','registros','merch','ventas','tracking','accesos','totalventa'];
 DB_FILES.forEach(name => {
   const f = path.join(DATA_DIR, name + '.json');
   if (!fs.existsSync(f)) return;
@@ -700,6 +700,58 @@ const server = http.createServer(async (req, res) => {
     const lines=['Codigo,Familia,Competencia,Precio_Competencia,Usuario,Celular,Fecha,Hora'];
     filtered.forEach(r=>lines.push([r.codigo,'"'+(r.familia||'')+'"',r.competencia,r.precio_competencia||'',r.usuario_nom,r.usuario_cel,r.fecha,r.hora].join(',')));
     return sendCSV(res,lines.join('\r\n'),'competencia.csv');
+  }
+
+  // ── TOTAL VENTA POST ─────────────────────────────────────────
+  if (req.method === 'POST' && pathname === '/api/totalventa') {
+    const b = await readBody(req);
+    const esAdm = isAdmin(b.usuario_cel, b.usuario_nom);
+    if (!esAdm && !validarSesion(b.usuario_cel, b.token))
+      return sendJSON(res, { ok:false, error:'Sesión no válida.' });
+    const cliente = String(b.cliente || '').trim().toUpperCase();
+    if (!cliente) return sendJSON(res, { ok:false, error:'Cliente requerido.' });
+    const total = parseFloat(b.total);
+    if (isNaN(total) || total < 0) return sendJSON(res, { ok:false, error:'Total inválido.' });
+    const tvArr = readDB('totalventa');
+    const reg = {
+      id: newId(tvArr), cliente, total,
+      usuario_cel: String(b.usuario_cel), usuario_nom: b.usuario_nom || '',
+      fecha: b.fecha, hora: b.hora, dia: b.dia, mes: b.mes, anio: b.anio,
+      ts: b.ts || new Date().toISOString()
+    };
+    tvArr.push(reg);
+    writeDB('totalventa', tvArr);
+    const track = readDB('tracking');
+    track.push({ id:newId(track), tipo:'total_venta', usuario_nom:b.usuario_nom, usuario_cel:String(b.usuario_cel), fecha:b.fecha, hora:b.hora });
+    writeDB('tracking', track);
+    console.log('[TOTAL VENTA]', cliente, '$'+total, b.usuario_nom);
+    return sendJSON(res, { ok:true, id:reg.id });
+  }
+
+  // ── TOTAL VENTA GET ──────────────────────────────────────────
+  if (req.method === 'GET' && pathname === '/api/totalventa') {
+    const admin = isAdmin(q.cel, q.nom);
+    let rows = readDB('totalventa');
+    if (!admin) rows = rows.filter(r => String(r.usuario_cel) === String(q.cel));
+    else if (q.vendedor) rows = rows.filter(r => String(r.usuario_cel) === String(q.vendedor));
+    if (q.dia)  rows = rows.filter(r => Number(r.dia)  === Number(q.dia));
+    if (q.mes)  rows = rows.filter(r => Number(r.mes)  === Number(q.mes));
+    if (q.anio) rows = rows.filter(r => Number(r.anio) === Number(q.anio));
+    return sendJSON(res, rows);
+  }
+
+  // ── EXPORT TOTAL VENTA ───────────────────────────────────────
+  if (req.method === 'GET' && pathname === '/api/export/totalventa') {
+    const admin = isAdmin(q.cel, q.nom);
+    let rows = readDB('totalventa');
+    if (!admin) rows = rows.filter(r => String(r.usuario_cel) === String(q.cel));
+    else if (q.vendedor) rows = rows.filter(r => String(r.usuario_cel) === String(q.vendedor));
+    if (q.dia)  rows = rows.filter(r => Number(r.dia)  === Number(q.dia));
+    if (q.mes)  rows = rows.filter(r => Number(r.mes)  === Number(q.mes));
+    if (q.anio) rows = rows.filter(r => Number(r.anio) === Number(q.anio));
+    const lines = ['ID,Cliente,Total_MXN,Usuario,Celular,Fecha,Hora'];
+    rows.forEach(r => lines.push([r.id, '"'+(r.cliente||'').replace(/"/g,'""')+'"', r.total, r.usuario_nom, r.usuario_cel, r.fecha, r.hora].join(',')));
+    return sendCSV(res, lines.join('\r\n'), 'total_venta.csv');
   }
 
   // ── 404 ──────────────────────────────────────────────────────
