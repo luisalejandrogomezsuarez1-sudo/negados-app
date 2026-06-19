@@ -730,6 +730,14 @@ select option { font-size:12px !important; }
         <svg width="30" height="30" viewBox="0 0 32 32" fill="none"><path d="M5 7a2 2 0 0 1 2-2h6l3 3h9a2 2 0 0 1 2 2v13a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V7Z" fill="#e84855" opacity=".18"/><path d="M5 7a2 2 0 0 1 2-2h6l3 3h9a2 2 0 0 1 2 2v13a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V7Z" stroke="#e84855" stroke-width="2" stroke-linejoin="round"/><path d="M11 19v-3M16 19v-6M21 19v-4" stroke="#e84855" stroke-width="2" stroke-linecap="round"/></svg>
         <span class="hgt">Reportes</span>
       </button>
+      <button class="hgbtn" id="homeBtnCaptura" onclick="ir('Captura')">
+        <svg width="30" height="30" viewBox="0 0 32 32" fill="none"><rect x="7" y="5" width="18" height="23" rx="3" fill="#f7b731" opacity=".18"/><rect x="7" y="5" width="18" height="23" rx="3" stroke="#f7b731" stroke-width="2"/><rect x="12" y="3" width="8" height="4.5" rx="1.5" fill="#f7b731"/><path d="M11 14h10M11 18h10M11 22h6" stroke="#f7b731" stroke-width="2" stroke-linecap="round"/></svg>
+        <span class="hgt">Captura</span>
+      </button>
+      <button class="hgbtn full hide" id="homeBtnAccesos" onclick="ir('Accesos')">
+        <svg width="30" height="30" viewBox="0 0 32 32" fill="none"><circle cx="12" cy="11" r="4.5" fill="#f7b731" opacity=".2"/><circle cx="12" cy="11" r="4.5" stroke="#f7b731" stroke-width="2"/><path d="M4.5 26c0-4.4 3.4-7.5 7.5-7.5s7.5 3.1 7.5 7.5" stroke="#f7b731" stroke-width="2" stroke-linecap="round"/><circle cx="23" cy="13" r="3.2" stroke="#f7b731" stroke-width="2"/><path d="M21 26c.3-3.4 2-5.5 4.8-5.8" stroke="#f7b731" stroke-width="2" stroke-linecap="round"/></svg>
+        <span class="hgt">Accesos</span>
+      </button>
     </div>
   </div>
 </div>
@@ -2565,6 +2573,12 @@ async function refInicio() {
   const fechaTxt = dias[nd.getDay()].charAt(0).toUpperCase()+dias[nd.getDay()].slice(1)+' '+nd.getDate()+' '+meses[nd.getMonth()]+', '+nd.getFullYear();
   if(el('homeDate')) el('homeDate').textContent='📅 '+fechaTxt;
   if(el('homeName')) el('homeName').textContent = CU ? CU.nombre : '';
+  // Botón Accesos solo para superadmin y admin
+  const btnAcc = el('homeBtnAccesos');
+  if(btnAcc){
+    if(ROL==='superadmin' || ROL==='admin'){ btnAcc.classList.remove('hide'); }
+    else { btnAcc.classList.add('hide'); }
+  }
   if(el('homeModeBtn')) el('homeModeBtn').textContent = document.body.classList.contains('tema-claro') ? '☀️' : '🌙';
   if(el('homeWelName')) el('homeWelName').textContent = CU ? CU.nombre : '';
 
