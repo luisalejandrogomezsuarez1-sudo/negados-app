@@ -2542,10 +2542,11 @@ function rebuildCS(id) {
 let _tvGuardadoHoy = false; // flag: ya guardó total para el cliente activo
 
 function onTVInput(v) {
-  // Solo permite números con hasta 2 decimales
+  // Permite guardar 0, pero no campo vacío
   const btn = el('tvGuardarBtn');
-  const num = parseFloat(v);
-  if(btn) btn.disabled = !(num > 0);
+  const raw = (v||'').trim();
+  const num = parseFloat(raw);
+  if(btn) btn.disabled = (raw === '' || isNaN(num) || num < 0);
 }
 
 // ── Tema claro / oscuro ──
@@ -2764,8 +2765,10 @@ async function actualizarTVResumen() {
 async function guardarTotalVenta() {
   const msg = el('tvMsg');
   if(!clienteActivo){ msg.innerHTML='<div class="al al-w">No hay cliente activo. Regresa a Captura.</div>'; return; }
-  const v = parseFloat(el('tvMonto').value);
-  if(isNaN(v)||v<=0){ msg.innerHTML='<div class="al al-w">Ingresa un monto válido mayor a $0.</div>'; return; }
+  const raw = el('tvMonto').value.trim();
+  if(raw===''){ msg.innerHTML='<div class="al al-w">Captura el total (puede ser 0 si no compró).</div>'; return; }
+  const v = parseFloat(raw);
+  if(isNaN(v)||v<0){ msg.innerHTML='<div class="al al-w">Ingresa un monto válido.</div>'; return; }
   // Truncar a 2 decimales
   const total = Math.round(v * 100) / 100;
   const n = nowD();
