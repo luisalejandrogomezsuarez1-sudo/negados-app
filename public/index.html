@@ -14,6 +14,28 @@
 <title>NegadosApp</title>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
 <style>
+/* ── TEMA CLARO (sobrescribe estructurales; acentos se mantienen) ── */
+body.tema-claro{ background:#eef1f6 !important; color:#1a1d24 !important; }
+body.tema-claro .topbar{ background:#ffffff; border-bottom-color:rgba(0,0,0,.09); color:#1a1d24; }
+body.tema-claro .card{ background:#ffffff; border-color:rgba(0,0,0,.09); }
+body.tema-claro input, body.tema-claro select{ background:#f3f5f8; border-color:rgba(0,0,0,.14); color:#1a1d24; }
+body.tema-claro select option{ background:#ffffff; }
+body.tema-claro .tgl, body.tema-claro .sc, body.tema-claro .li, body.tema-claro .fb, body.tema-claro .mb, body.tema-claro .chtab, body.tema-claro .motbtn, body.tema-claro .cs-btn{ background:#f3f5f8; border-color:rgba(0,0,0,.12); }
+body.tema-claro .nav{ background:#ffffff; border-top-color:rgba(0,0,0,.09); }
+body.tema-claro .ni{ color:#697586; }
+body.tema-claro .btn-o{ color:#1a1d24; border-color:rgba(0,0,0,.18); }
+body.tema-claro .pb2{ background:#e3e8ef; }
+body.tema-claro .ac-drop{ background:#ffffff; border-color:rgba(0,0,0,.15); }
+body.tema-claro .ac-item{ border-bottom-color:rgba(0,0,0,.06); color:#1a1d24; }
+body.tema-claro .ac-desc{ color:#697586; }
+body.tema-claro .pf{ } /* barras de progreso mantienen su color */
+body.tema-claro .welcard{ background:#ffffff; border-color:rgba(0,0,0,.09); }
+body.tema-claro .welcard .wname{ color:#1a1d24; border-bottom-color:rgba(0,0,0,.09); }
+body.tema-claro .home-cli{ border-bottom-color:rgba(0,0,0,.09); }
+body.tema-claro .home-cli .hc-name{ color:#1a1d24; }
+body.tema-claro .hgbtn{ border-color:rgba(0,0,0,.1); }
+body.tema-claro .hgbtn .hgt{ color:#1a1d24; }
+body.tema-claro .emp, body.tema-claro .card h3, body.tema-claro .sc .l, body.tema-claro .statline .sl-l, body.tema-claro .welcard .welcome{ color:#697586; }
 *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;}
 body{font-family:system-ui,-apple-system,sans-serif;background:#0f0f13;color:#f0f0f5;max-width:480px;margin:0 auto;min-height:100vh;;overscroll-behavior-y:contain;}
 .hide{display:none!important;}
@@ -93,6 +115,33 @@ body.cli-on #captSticky{top:98px;}
 .spin{display:inline-block;width:14px;height:14px;border:2px solid rgba(255,255,255,.2);border-top-color:#fff;border-radius:50%;animation:sp .7s linear infinite;vertical-align:middle;margin-right:6px;}
 @keyframes sp{to{transform:rotate(360deg);}}
 .slbl{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;padding:0 2px;}
+/* ── Pantalla Inicio (rediseño) ── */
+.home-bar{background:#d32027;color:#fff;padding:16px 18px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:10;}
+.home-bar .hb-date{font-size:11px;opacity:.9;font-weight:500;}
+.home-bar .hb-name{font-size:17px;font-weight:800;margin-top:2px;}
+.home-modebtn{cursor:pointer;border:1px solid rgba(255,255,255,.3);background:rgba(255,255,255,.12);color:#fff;border-radius:9px;width:36px;height:36px;display:flex;align-items:center;justify-content:center;font-size:15px;flex-shrink:0;}
+.welcard{background:#22222d;border:1px solid rgba(255,255,255,.08);border-radius:12px;padding:18px;}
+.welcard .welcome{font-size:13px;color:#8888a0;}
+.welcard .wname{font-size:20px;font-weight:800;color:#f0f0f5;padding-bottom:14px;border-bottom:1px solid rgba(255,255,255,.08);margin-bottom:12px;}
+.statline{display:flex;justify-content:space-between;align-items:center;padding:8px 0;}
+.statline .sl-l{font-size:14px;color:#8888a0;font-weight:500;}
+.statline .sl-v{font-size:16px;font-weight:700;font-variant-numeric:tabular-nums;}
+.home-cli{padding:11px 0;border-bottom:1px solid rgba(255,255,255,.08);}
+.home-cli:last-child{border:none;padding-bottom:0;}
+.home-cli:first-child{padding-top:0;}
+.home-cli .hc-top{display:flex;justify-content:space-between;margin-bottom:6px;}
+.home-cli .hc-name{font-size:12px;font-weight:700;display:flex;align-items:center;gap:6px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:#f0f0f5;}
+.home-cli .hc-time{font-size:10px;color:#8888a0;flex-shrink:0;}
+.home-cli .hc-stats{display:flex;gap:7px;}
+.hchip{font-size:11px;font-weight:700;padding:3px 9px;border-radius:6px;display:inline-flex;align-items:center;gap:4px;}
+.hchip-y{background:rgba(61,155,233,.16);color:#6bb8f7;}
+.hchip-n{background:rgba(232,72,85,.16);color:#ff7a85;}
+.hchip-v{background:rgba(48,201,126,.16);color:#5ddea0;}
+.home-grid{display:grid;grid-template-columns:1fr 1fr;gap:11px;}
+.hgbtn{background:transparent;border:1.5px solid rgba(255,255,255,.08);border-radius:16px;padding:18px 10px;display:flex;flex-direction:column;align-items:center;gap:10px;cursor:pointer;font-family:inherit;transition:transform .1s;}
+.hgbtn:active{transform:scale(.95);}
+.hgbtn .hgt{font-size:13px;font-weight:700;color:#f0f0f5;}
+.hgbtn.full{grid-column:span 2;}
 .dt-badge{font-size:11px;background:#e84855;color:#fff;padding:2px 8px;border-radius:20px;white-space:nowrap;}
 .offbar{background:#f7b731;color:#000;text-align:center;font-size:12px;font-weight:700;padding:6px;display:none;}
 select { font-size:12px !important; }
@@ -631,7 +680,8 @@ select option { font-size:12px !important; }
 </div>
 
 <nav class="nav hide" id="mainNav">
-  <button class="ni on" id="navC" onclick="ir('Captura')"><span>📝</span>Captura</button>
+  <button class="ni on" id="navI" onclick="ir('Inicio')"><span>🏠</span>Inicio</button>
+  <button class="ni" id="navC" onclick="ir('Captura')"><span>📝</span>Captura</button>
   <button class="ni" id="navD" onclick="ir('Dash')"><span>📊</span>Dashboard</button>
   <button class="ni" id="navM" onclick="ir('Merch')"><span>🛒</span>Merch</button>
   <button class="ni" id="navTV" onclick="ir('TotalVenta')"><span>💲</span>Venta</button>
@@ -639,6 +689,50 @@ select option { font-size:12px !important; }
   <button class="ni hide" id="navA" onclick="ir('Accesos')"><span>👥</span>Accesos</button>
 </nav>
 
+
+<!-- ════════ INICIO ════════ -->
+<div id="scrInicio" class="scr">
+  <div class="home-bar">
+    <div>
+      <div class="hb-date" id="homeDate">--/--/----</div>
+      <div class="hb-name" id="homeName">—</div>
+    </div>
+    <button class="home-modebtn" onclick="toggleTema()" id="homeModeBtn">🌙</button>
+  </div>
+  <div class="body" style="padding-bottom:90px;">
+    <div class="welcard">
+      <div class="welcome">Bienvenido,</div>
+      <div class="wname" id="homeWelName">—</div>
+      <div class="statline"><span class="sl-l">Ventas del mes:</span><span class="sl-v" style="color:#5ddea0;" id="homeVMes">$0.00</span></div>
+      <div class="statline"><span class="sl-l">Ventas del día:</span><span class="sl-v" style="color:#6bb8f7;" id="homeVDia">$0.00</span></div>
+      <div class="statline"><span class="sl-l">Clientes visitados:</span><span class="sl-v" id="homeNCli">0</span></div>
+      <div class="statline"><span class="sl-l">Códigos SÍ maneja:</span><span class="sl-v" style="color:#6bb8f7;" id="homeSi">0</span></div>
+      <div class="statline"><span class="sl-l">Códigos NO maneja:</span><span class="sl-v" style="color:#ff7a85;" id="homeNo">0</span></div>
+    </div>
+    <div class="card">
+      <div class="row jb" style="margin-bottom:12px;"><h3 style="margin:0;">Clientes visitados hoy</h3><span class="pill pw" id="homeCliCount">0</span></div>
+      <div id="homeCliList"><div class="emp">Sin clientes hoy</div></div>
+    </div>
+    <div class="home-grid">
+      <button class="hgbtn" onclick="ir('Dash')">
+        <svg width="30" height="30" viewBox="0 0 32 32" fill="none"><rect x="4" y="4" width="10" height="13" rx="2.5" fill="#3d9be9" opacity=".22"/><rect x="4" y="4" width="10" height="13" rx="2.5" stroke="#3d9be9" stroke-width="2"/><rect x="18" y="4" width="10" height="8" rx="2.5" stroke="#3d9be9" stroke-width="2"/><rect x="4" y="21" width="10" height="7" rx="2.5" stroke="#3d9be9" stroke-width="2"/><rect x="18" y="16" width="10" height="12" rx="2.5" fill="#3d9be9" opacity=".22"/><rect x="18" y="16" width="10" height="12" rx="2.5" stroke="#3d9be9" stroke-width="2"/></svg>
+        <span class="hgt">Dashboard</span>
+      </button>
+      <button class="hgbtn" onclick="ir('Merch')">
+        <svg width="30" height="30" viewBox="0 0 32 32" fill="none"><path d="M6 9h3l2.2 12.5a2 2 0 0 0 2 1.7h9.3a2 2 0 0 0 2-1.6L26.5 12H10" stroke="#f7b731" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M10 12h16.5l-1 5.5H11" fill="#f7b731" opacity=".2"/><circle cx="13.5" cy="26.5" r="2" fill="#f7b731"/><circle cx="24" cy="26.5" r="2" fill="#f7b731"/></svg>
+        <span class="hgt">Merch</span>
+      </button>
+      <button class="hgbtn" onclick="ir('TotalVenta')">
+        <svg width="30" height="30" viewBox="0 0 32 32" fill="none"><rect x="4" y="8" width="24" height="16" rx="3" fill="#30c97e" opacity=".18"/><rect x="4" y="8" width="24" height="16" rx="3" stroke="#30c97e" stroke-width="2"/><circle cx="16" cy="16" r="4" stroke="#30c97e" stroke-width="2"/><path d="M16 14v4M14.7 14.8h2.3a.9.9 0 0 1 0 1.8h-1.8a.9.9 0 0 0 0 1.8H17" stroke="#30c97e" stroke-width="1.3" stroke-linecap="round"/></svg>
+        <span class="hgt">Venta</span>
+      </button>
+      <button class="hgbtn" onclick="ir('Rep')">
+        <svg width="30" height="30" viewBox="0 0 32 32" fill="none"><path d="M5 7a2 2 0 0 1 2-2h6l3 3h9a2 2 0 0 1 2 2v13a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V7Z" fill="#e84855" opacity=".18"/><path d="M5 7a2 2 0 0 1 2-2h6l3 3h9a2 2 0 0 1 2 2v13a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V7Z" stroke="#e84855" stroke-width="2" stroke-linejoin="round"/><path d="M11 19v-3M16 19v-6M21 19v-4" stroke="#e84855" stroke-width="2" stroke-linecap="round"/></svg>
+        <span class="hgt">Reportes</span>
+      </button>
+    </div>
+  </div>
+</div>
 
 <!-- ════════ TOTAL VENTA ════════ -->
 <div id="scrTotalVenta" class="scr">
@@ -799,6 +893,8 @@ document.addEventListener('touchmove', e => {
 // ESTADO GLOBAL
 // ════════════════════════════════════════════════════════════
 let CU = null, ADM = false, ROL = 'vendedor';
+// Restaurar tema guardado
+try { if(localStorage.getItem('negados_tema')==='claro') document.body.classList.add('tema-claro'); } catch(e){}
 let sAccRol = 'usuario'; // rol para crear acceso
 let sVCod = null; // código para venta
 let captAsesorFil = ''; // asesor filter in captura (admin only)
@@ -990,14 +1086,14 @@ function iniciarApp() {
       mab.style.display='none';
     }
   }
-  loadCatalog().then(() => { buildFamGrid(); ir('Captura'); initCustomSelects(); });
+  loadCatalog().then(() => { buildFamGrid(); ir('Inicio'); initCustomSelects(); });
 }
 
 // ════════════════════════════════════════════════════════════
 // NAVEGACIÓN
 // ════════════════════════════════════════════════════════════
-const SCRS = ['Captura','Dash','Merch','Rep','Accesos','Ventas','TotalVenta'];
-const NIDS = {Captura:'navC',Dash:'navD',Merch:'navM',Rep:'navR',Accesos:'navA',Ventas:'',TotalVenta:'navTV'};
+const SCRS = ['Inicio','Captura','Dash','Merch','Rep','Accesos','Ventas','TotalVenta'];
+const NIDS = {Inicio:'navI',Captura:'navC',Dash:'navD',Merch:'navM',Rep:'navR',Accesos:'navA',Ventas:'',TotalVenta:'navTV'};
 function ir(nm) {
   SCRS.forEach(s => {
     const e = el('scr'+s); if(e){e.classList.remove('on');e.style.display='';}
@@ -1015,6 +1111,7 @@ function ir(nm) {
     if(body) body.scrollTop = 0;
   }
   const n = el(NIDS[nm]); if(n) n.classList.add('on');
+  if(nm==='Inicio')     refInicio();
   if(nm==='Captura')  {
     if(clienteActivo){ hide('cliStep'); show('capStep'); if(el('capBody')) el('capBody').style.display=''; }
     else { show('cliStep'); hide('capStep'); if(el('capBody')) el('capBody').style.display='none'; }
@@ -2445,6 +2542,83 @@ function onTVInput(v) {
   const btn = el('tvGuardarBtn');
   const num = parseFloat(v);
   if(btn) btn.disabled = !(num > 0);
+}
+
+// ── Tema claro / oscuro ──
+function toggleTema(){
+  const claro = document.body.classList.toggle('tema-claro');
+  const btn = el('homeModeBtn');
+  if(btn) btn.textContent = claro ? '☀️' : '🌙';
+  try { localStorage.setItem('negados_tema', claro ? 'claro' : 'oscuro'); } catch(e){}
+  // Redibujar gráficas si Chart está activo (para que tomen colores nuevos)
+  if(typeof refDash==='function' && el('scrDash') && el('scrDash').classList.contains('on')) refDash();
+}
+
+// ════════════════════════════════════════════════════════════
+// INICIO (pantalla principal)
+// ════════════════════════════════════════════════════════════
+async function refInicio() {
+  const nd = new Date();
+  // Fecha y nombre en barra roja + tarjeta
+  const meses=['enero','febrero','marzo','abril','mayo','junio','julio','agosto','septiembre','octubre','noviembre','diciembre'];
+  const dias=['domingo','lunes','martes','miércoles','jueves','viernes','sábado'];
+  const fechaTxt = dias[nd.getDay()].charAt(0).toUpperCase()+dias[nd.getDay()].slice(1)+' '+nd.getDate()+' '+meses[nd.getMonth()]+', '+nd.getFullYear();
+  if(el('homeDate')) el('homeDate').textContent='📅 '+fechaTxt;
+  if(el('homeName')) el('homeName').textContent = CU ? CU.nombre : '';
+  if(el('homeModeBtn')) el('homeModeBtn').textContent = document.body.classList.contains('tema-claro') ? '☀️' : '🌙';
+  if(el('homeWelName')) el('homeWelName').textContent = CU ? CU.nombre : '';
+
+  const fmt = n => '$'+n.toLocaleString('es-MX',{minimumFractionDigits:2,maximumFractionDigits:2});
+
+  // Ventas mes / día (reusa /api/totalventa, igual que actualizarTVResumen)
+  const qDia = aq()+'&dia='+nd.getDate()+'&mes='+(nd.getMonth()+1)+'&anio='+nd.getFullYear();
+  const qMes = aq()+'&mes='+(nd.getMonth()+1)+'&anio='+nd.getFullYear();
+  const [vDia, vMes] = await Promise.all([GET('/api/totalventa'+qDia), GET('/api/totalventa'+qMes)]);
+  const sumDia = vDia ? vDia.reduce((s,r)=>s+(parseFloat(r.total)||0),0) : 0;
+  const sumMes = vMes ? vMes.reduce((s,r)=>s+(parseFloat(r.total)||0),0) : 0;
+  if(el('homeVDia')) el('homeVDia').textContent = fmt(sumDia);
+  if(el('homeVMes')) el('homeVMes').textContent = fmt(sumMes);
+
+  // Registros de hoy → clientes visitados + códigos maneja/no maneja
+  const qReg = aq()+'&dia='+nd.getDate()+'&mes='+(nd.getMonth()+1)+'&anio='+nd.getFullYear()+'&limit=9999';
+  const regs = await GET('/api/registros'+qReg);
+  let totSi=0, totNo=0;
+  const porCliente = {};
+  if(regs){
+    regs.forEach(r=>{
+      if(r.distribuidor==='si') totSi++; else if(r.distribuidor==='no') totNo++;
+      const cli = r.cliente || '(sin cliente)';
+      if(!porCliente[cli]) porCliente[cli] = {si:0,no:0,ultima:r.hora||r.fecha||''};
+      if(r.distribuidor==='si') porCliente[cli].si++; else porCliente[cli].no++;
+      if((r.hora||'') > porCliente[cli].ultima) porCliente[cli].ultima = r.hora||'';
+    });
+  }
+  if(el('homeSi')) el('homeSi').textContent = totSi;
+  if(el('homeNo')) el('homeNo').textContent = totNo;
+
+  const clientes = Object.keys(porCliente);
+  if(el('homeNCli')) el('homeNCli').textContent = clientes.length;
+  if(el('homeCliCount')) el('homeCliCount').textContent = clientes.length;
+
+  const lst = el('homeCliList');
+  if(lst){
+    if(!clientes.length){ lst.innerHTML='<div class="emp">Sin clientes hoy</div>'; }
+    else {
+      lst.innerHTML = clientes.map(cli=>{
+        const c = porCliente[cli];
+        return `<div class="home-cli">
+          <div class="hc-top">
+            <div class="hc-name"><svg width="14" height="14" viewBox="0 0 24 24" fill="none"><path d="M4 9 5 4h14l1 5M5 9v10a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V9M4 9h16" stroke="#ffd060" stroke-width="2" stroke-linejoin="round"/></svg>${cli}</div>
+            <div class="hc-time">${c.ultima||''}</div>
+          </div>
+          <div class="hc-stats">
+            <span class="hchip hchip-y">${c.si} maneja</span>
+            <span class="hchip hchip-n">${c.no} no</span>
+          </div>
+        </div>`;
+      }).join('');
+    }
+  }
 }
 
 async function refTotalVenta() {
