@@ -587,11 +587,11 @@ select option { font-size:12px !important; }
       <button class="btn btn-b" onclick="filtrar()">🔍 Filtrar resultados</button>
       <div style="font-size:11px;color:#8888a0;margin-top:10px;margin-bottom:6px;font-weight:600;">EXPORTAR LO FILTRADO A EXCEL (.CSV):</div>
       <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;">
-        <button class="btn btn-g" style="margin:0;padding:10px;font-size:13px;" onclick="exportar('regs')">⬇ Captura</button>
+        <button class="btn btn-o" style="margin:0;padding:10px;font-size:13px;" onclick="exportar('regs')">⬇ Captura</button>
         <button class="btn btn-o" style="margin:0;padding:10px;font-size:13px;" onclick="exportar('merch')">⬇ Merch</button>
         <button class="btn btn-o" style="margin:0;padding:10px;font-size:13px;grid-column:span 2;" onclick="exportar('codigo')">⬇ Códigos</button>
         <button class="btn btn-o" style="margin:0;padding:10px;font-size:13px;grid-column:span 2;" onclick="exportar('competencia')">⬇ Competencia &amp; Precio</button>
-        <button class="btn btn-o" style="margin:0;padding:10px;font-size:13px;grid-column:span 2;border-color:#5ddea0;color:#5ddea0;" onclick="exportar('totalventa')">⬇ Total Venta Cliente</button>
+        <button class="btn btn-o" style="margin:0;padding:10px;font-size:13px;grid-column:span 2;" onclick="exportar('totalventa')">⬇ Total Venta Cliente</button>
       </div>
     </div>
     <div class="card">
@@ -636,7 +636,7 @@ select option { font-size:12px !important; }
   <button class="ni" id="navM" onclick="ir('Merch')"><span>🛒</span>Merch</button>
   <button class="ni" id="navR" onclick="ir('Rep')"><span>📁</span>Reportes</button>
   <button class="ni hide" id="navA" onclick="ir('Accesos')"><span>👥</span>Accesos</button>
-  <button class="ni" id="navTV" onclick="ir('TotalVenta')"><span>💲</span>$ Venta</button>
+  <button class="ni" id="navTV" onclick="ir('TotalVenta')"><span>💲</span>Venta</button>
 </nav>
 
 
@@ -663,7 +663,7 @@ select option { font-size:12px !important; }
           style="text-align:right;font-size:28px;font-weight:700;color:#5ddea0;padding-left:32px;padding-right:13px;"
           oninput="onTVInput(this.value)" />
       </div>
-      <button class="btn btn-g" id="tvGuardarBtn" onclick="guardarTotalVenta()">💾 Guardar total de venta</button>
+      <button class="btn" id="tvGuardarBtn" onclick="guardarTotalVenta()" style="background:#2a9d6a;color:#fff;font-size:14px;font-weight:600;">💾 Guardar total de venta</button>
       <div id="tvMsg" style="margin-top:10px;"></div>
     </div>
 
@@ -681,6 +681,22 @@ select option { font-size:12px !important; }
         <h3 style="margin:0;">Este mes</h3>
         <span id="tvMesTotal" class="pill pg">$0</span>
       </div>
+    </div>
+
+    <!-- ── BLOQUE ADMIN: filtro por usuario + día ── -->
+    <div class="card hide" id="tvAdminCard" style="border:1px solid rgba(61,155,233,.25);">
+      <h3 style="margin:0 0 10px 0;color:#6bb8f7;">🔎 Consulta por vendedor</h3>
+      <label style="font-size:11px;color:#8888a0;display:block;margin-bottom:4px;">VENDEDOR</label>
+      <select id="tvAdminUsuSel" onchange="filtrarTVAdmin()" style="margin-bottom:12px;">
+        <option value="">Todos los vendedores</option>
+      </select>
+      <label style="font-size:11px;color:#8888a0;display:block;margin-bottom:4px;">DÍA</label>
+      <input id="tvAdminFecha" type="date" onchange="filtrarTVAdmin()" style="margin-bottom:12px;" />
+      <div class="row jb" style="margin-bottom:8px;">
+        <span style="font-size:12px;color:#8888a0;">Resultados</span>
+        <span id="tvAdminTotal" class="pill pg">$0</span>
+      </div>
+      <div id="tvAdminList"><div class="emp">Selecciona un filtro</div></div>
     </div>
   </div>
 </div>
@@ -1699,6 +1715,7 @@ function buildCharts(dias, t, statsData){
         type:'bar',
         data:{labels,datasets:[ {...dsSi(pzSiArr)}, {...dsNo(pzNoArr)} ]},
         options:{...optsH, indexAxis:'y', layout:{padding:{right:34}},
+          plugins:{legend:{display:false}},
           scales:{
             x:{suggestedMax:maxV+1,ticks:{color:'#8888a0',font:{size:10}},grid:{color:'rgba(255,255,255,.04)'}},
             y:{ticks:{color:'#8888a0',font:{size:10}},grid:{color:'rgba(255,255,255,.04)'}}
@@ -2473,6 +2490,69 @@ async function refTotalVenta() {
 
   // Actualizar card resumen en pantalla Captura
   actualizarTVResumen();
+
+  // Bloque admin: cargar selector de vendedores
+  if(ADM){
+    show('tvAdminCard');
+    await cargarTVAdminSelect();
+  } else {
+    hide('tvAdminCard');
+  }
+}
+
+async function cargarTVAdminSelect() {
+  const sel = el('tvAdminUsuSel');
+  if(!sel) return;
+  const cur = sel.value;
+  const users = await GET('/api/usuarios'+aq());
+  if(!users) return;
+  sel.innerHTML = '<option value="">Todos los vendedores</option>';
+  users.forEach(u => {
+    const o = document.createElement('option');
+    o.value = u.celular;
+    o.textContent = u.nombre;
+    if(u.celular === cur) o.selected = true;
+    sel.appendChild(o);
+  });
+  if(sel.dataset.csBuilt) rebuildCS('tvAdminUsuSel');
+  else buildCS(sel);
+}
+
+async function filtrarTVAdmin() {
+  const lst = el('tvAdminList');
+  const totEl = el('tvAdminTotal');
+  if(!lst) return;
+  const vend  = el('tvAdminUsuSel') ? el('tvAdminUsuSel').value : '';
+  const fecha = el('tvAdminFecha') ? el('tvAdminFecha').value : '';
+
+  let q = aq();
+  if(vend) q += '&vendedor='+encodeURIComponent(vend);
+  if(fecha){
+    const p = fecha.split('-'); // YYYY-MM-DD
+    q += '&dia='+parseInt(p[2])+'&mes='+parseInt(p[1])+'&anio='+parseInt(p[0]);
+  }
+  const rows = await GET('/api/totalventa'+q);
+  if(!rows){ lst.innerHTML='<div class="emp">Sin conexión</div>'; return; }
+
+  // Orden ascendente por hora
+  rows.sort((a,b)=>{
+    const ka = (a.fecha||'')+' '+(a.hora||'');
+    const kb = (b.fecha||'')+' '+(b.hora||'');
+    return ka.localeCompare(kb);
+  });
+
+  const total = rows.reduce((s,r)=>s+(parseFloat(r.total)||0),0);
+  if(totEl) totEl.textContent = '$'+total.toLocaleString('es-MX',{minimumFractionDigits:2,maximumFractionDigits:2});
+
+  if(!rows.length){ lst.innerHTML='<div class="emp">Sin resultados</div>'; return; }
+  lst.innerHTML = rows.map(r=>`
+    <div style="padding:8px 0;border-bottom:1px solid rgba(255,255,255,.05);">
+      <div style="display:flex;justify-content:space-between;align-items:center;">
+        <span style="font-size:13px;font-weight:700;color:#ffd060;overflow:hidden;text-overflow:ellipsis;max-width:180px;">👤 ${r.cliente}</span>
+        <span style="font-size:15px;font-weight:700;color:#5ddea0;">$${parseFloat(r.total).toLocaleString('es-MX',{minimumFractionDigits:2,maximumFractionDigits:2})}</span>
+      </div>
+      <div style="font-size:11px;color:#8888a0;margin-top:2px;">${r.hora} · <span style="color:#6bb8f7;">${r.usuario_nom}</span></div>
+    </div>`).join('');
 }
 
 async function actualizarTVResumen() {
