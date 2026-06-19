@@ -33,7 +33,7 @@ body.tema-claro .welcard{ background:#ffffff; border-color:rgba(0,0,0,.09); }
 body.tema-claro .welcard .wname{ color:#1a1d24; border-bottom-color:rgba(0,0,0,.09); }
 body.tema-claro .home-cli{ border-bottom-color:rgba(0,0,0,.09); }
 body.tema-claro .home-cli .hc-name{ color:#1a1d24; }
-body.tema-claro .hgbtn{ border-color:rgba(0,0,0,.1); }
+body.tema-claro .hgbtn{ background:#ffffff; border-color:rgba(0,0,0,.12); }
 body.tema-claro .hgbtn .hgt{ color:#1a1d24; }
 body.tema-claro .emp, body.tema-claro .card h3, body.tema-claro .sc .l, body.tema-claro .statline .sl-l, body.tema-claro .welcard .welcome{ color:#697586; }
 *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;}
@@ -137,11 +137,11 @@ body.cli-on #captSticky{top:98px;}
 .hchip-y{background:rgba(61,155,233,.16);color:#6bb8f7;}
 .hchip-n{background:rgba(232,72,85,.16);color:#ff7a85;}
 .hchip-v{background:rgba(48,201,126,.16);color:#5ddea0;}
-.home-grid{display:grid;grid-template-columns:1fr 1fr;gap:11px;}
-.hgbtn{background:transparent;border:1.5px solid rgba(255,255,255,.08);border-radius:16px;padding:18px 10px;display:flex;flex-direction:column;align-items:center;gap:10px;cursor:pointer;font-family:inherit;transition:transform .1s;}
+.home-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;justify-items:stretch;}
+.hgbtn{background:#22222d;border:1.5px solid rgba(255,255,255,.14);border-radius:16px;padding:16px 8px;display:flex;flex-direction:column;align-items:center;gap:9px;cursor:pointer;font-family:inherit;transition:transform .1s;}
 .hgbtn:active{transform:scale(.95);}
-.hgbtn .hgt{font-size:13px;font-weight:700;color:#f0f0f5;}
-.hgbtn.full{grid-column:span 2;}
+.hgbtn .hgt{font-size:12px;font-weight:700;color:#f0f0f5;}
+.hgbtn.full{grid-column:span 1;}
 .dt-badge{font-size:11px;background:#e84855;color:#fff;padding:2px 8px;border-radius:20px;white-space:nowrap;}
 .offbar{background:#f7b731;color:#000;text-align:center;font-size:12px;font-weight:700;padding:6px;display:none;}
 select { font-size:12px !important; }
@@ -327,7 +327,6 @@ select option { font-size:12px !important; }
   <div class="topbar">
     <div id="avt2" class="av" style="flex-shrink:0;">U</div>
     <span id="usrLbl2" style="font-size:13px;max-width:100px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;"></span>
-    <span style="font-size:16px;margin-left:4px;">📊</span><span style="font-size:15px;font-weight:700;">Dashboard</span>
     <span id="dtLbl2" class="dt-badge" style="margin-left:auto;margin-right:4px;">--/--/----</span>
     <span id="rolTopBadge2" style="font-size:10px;font-weight:700;padding:2px 8px;border-radius:20px;"></span>
   </div>
@@ -439,7 +438,6 @@ select option { font-size:12px !important; }
   <div class="topbar">
     <div id="avt3" class="av" style="flex-shrink:0;">U</div>
     <span id="usrLbl3" style="font-size:13px;max-width:100px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;"></span>
-    <span style="font-size:16px;margin-left:4px;">🛒</span><span style="font-size:15px;font-weight:700;">Merch</span>
     <span id="dtLbl3" class="dt-badge" style="margin-left:auto;margin-right:4px;">--/--/----</span>
     <span id="rolTopBadge3" style="font-size:10px;font-weight:700;padding:2px 8px;border-radius:20px;"></span>
   </div>
@@ -608,7 +606,6 @@ select option { font-size:12px !important; }
   <div class="topbar">
     <div id="avt4" class="av" style="flex-shrink:0;">U</div>
     <span id="usrLbl4" style="font-size:13px;max-width:100px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;"></span>
-    <span style="font-size:16px;margin-left:4px;">📁</span><span style="font-size:15px;font-weight:700;">Reportes</span>
     <span id="dtLbl4" class="dt-badge" style="margin-left:auto;margin-right:4px;">--/--/----</span>
     <span id="rolTopBadge4" style="font-size:10px;font-weight:700;padding:2px 8px;border-radius:20px;"></span>
   </div>
@@ -692,12 +689,12 @@ select option { font-size:12px !important; }
 
 <!-- ════════ INICIO ════════ -->
 <div id="scrInicio" class="scr">
-  <div class="home-bar">
-    <div>
-      <div class="hb-date" id="homeDate">--/--/----</div>
-      <div class="hb-name" id="homeName">—</div>
-    </div>
-    <button class="home-modebtn" onclick="toggleTema()" id="homeModeBtn">🌙</button>
+  <div class="topbar" style="padding:10px 14px;">
+    <div id="avtI" class="av">U</div>
+    <span id="homeName" style="font-size:14px;font-weight:700;max-width:120px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;"></span>
+    <span id="homeDate" class="dt-badge" style="margin-left:auto;margin-right:4px;">--/--/----</span>
+    <span id="homeRolBadge" style="font-size:10px;font-weight:700;padding:2px 8px;border-radius:20px;margin-right:4px;"></span>
+    <button onclick="toggleTema()" id="homeModeBtn" style="background:none;border:1px solid rgba(255,255,255,.15);border-radius:6px;color:#8888a0;font-size:14px;cursor:pointer;padding:4px 8px;font-family:inherit;">🌙</button>
   </div>
   <div class="body" style="padding-bottom:90px;">
     <div class="welcard">
@@ -714,6 +711,10 @@ select option { font-size:12px !important; }
       <div id="homeCliList"><div class="emp">Sin clientes hoy</div></div>
     </div>
     <div class="home-grid">
+      <button class="hgbtn" id="homeBtnCaptura" onclick="ir('Captura')">
+        <svg width="30" height="30" viewBox="0 0 32 32" fill="none"><rect x="7" y="5" width="18" height="23" rx="3" fill="#f7b731" opacity=".18"/><rect x="7" y="5" width="18" height="23" rx="3" stroke="#f7b731" stroke-width="2"/><rect x="12" y="3" width="8" height="4.5" rx="1.5" fill="#f7b731"/><path d="M11 14h10M11 18h10M11 22h6" stroke="#f7b731" stroke-width="2" stroke-linecap="round"/></svg>
+        <span class="hgt">Captura</span>
+      </button>
       <button class="hgbtn" onclick="ir('Dash')">
         <svg width="30" height="30" viewBox="0 0 32 32" fill="none"><rect x="4" y="4" width="10" height="13" rx="2.5" fill="#3d9be9" opacity=".22"/><rect x="4" y="4" width="10" height="13" rx="2.5" stroke="#3d9be9" stroke-width="2"/><rect x="18" y="4" width="10" height="8" rx="2.5" stroke="#3d9be9" stroke-width="2"/><rect x="4" y="21" width="10" height="7" rx="2.5" stroke="#3d9be9" stroke-width="2"/><rect x="18" y="16" width="10" height="12" rx="2.5" fill="#3d9be9" opacity=".22"/><rect x="18" y="16" width="10" height="12" rx="2.5" stroke="#3d9be9" stroke-width="2"/></svg>
         <span class="hgt">Dashboard</span>
@@ -730,11 +731,7 @@ select option { font-size:12px !important; }
         <svg width="30" height="30" viewBox="0 0 32 32" fill="none"><path d="M5 7a2 2 0 0 1 2-2h6l3 3h9a2 2 0 0 1 2 2v13a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V7Z" fill="#e84855" opacity=".18"/><path d="M5 7a2 2 0 0 1 2-2h6l3 3h9a2 2 0 0 1 2 2v13a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V7Z" stroke="#e84855" stroke-width="2" stroke-linejoin="round"/><path d="M11 19v-3M16 19v-6M21 19v-4" stroke="#e84855" stroke-width="2" stroke-linecap="round"/></svg>
         <span class="hgt">Reportes</span>
       </button>
-      <button class="hgbtn" id="homeBtnCaptura" onclick="ir('Captura')">
-        <svg width="30" height="30" viewBox="0 0 32 32" fill="none"><rect x="7" y="5" width="18" height="23" rx="3" fill="#f7b731" opacity=".18"/><rect x="7" y="5" width="18" height="23" rx="3" stroke="#f7b731" stroke-width="2"/><rect x="12" y="3" width="8" height="4.5" rx="1.5" fill="#f7b731"/><path d="M11 14h10M11 18h10M11 22h6" stroke="#f7b731" stroke-width="2" stroke-linecap="round"/></svg>
-        <span class="hgt">Captura</span>
-      </button>
-      <button class="hgbtn full hide" id="homeBtnAccesos" onclick="ir('Accesos')">
+      <button class="hgbtn hide" id="homeBtnAccesos" onclick="ir('Accesos')">
         <svg width="30" height="30" viewBox="0 0 32 32" fill="none"><circle cx="12" cy="11" r="4.5" fill="#f7b731" opacity=".2"/><circle cx="12" cy="11" r="4.5" stroke="#f7b731" stroke-width="2"/><path d="M4.5 26c0-4.4 3.4-7.5 7.5-7.5s7.5 3.1 7.5 7.5" stroke="#f7b731" stroke-width="2" stroke-linecap="round"/><circle cx="23" cy="13" r="3.2" stroke="#f7b731" stroke-width="2"/><path d="M21 26c.3-3.4 2-5.5 4.8-5.8" stroke="#f7b731" stroke-width="2" stroke-linecap="round"/></svg>
         <span class="hgt">Accesos</span>
       </button>
@@ -747,7 +744,6 @@ select option { font-size:12px !important; }
   <div class="topbar">
     <div id="avt5" class="av" style="flex-shrink:0;">U</div>
     <span id="usrLbl5" style="font-size:13px;max-width:100px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;"></span>
-    <span style="font-size:18px;margin-left:4px;">💲</span><span style="font-size:15px;font-weight:700;">Total Venta</span>
     <span id="dtLbl5" class="dt-badge" style="margin-left:auto;margin-right:4px;">--/--/----</span>
     <span id="rolTopBadge5" style="font-size:10px;font-weight:700;padding:2px 8px;border-radius:20px;"></span>
   </div>
@@ -2571,8 +2567,18 @@ async function refInicio() {
   const meses=['enero','febrero','marzo','abril','mayo','junio','julio','agosto','septiembre','octubre','noviembre','diciembre'];
   const dias=['domingo','lunes','martes','miércoles','jueves','viernes','sábado'];
   const fechaTxt = dias[nd.getDay()].charAt(0).toUpperCase()+dias[nd.getDay()].slice(1)+' '+nd.getDate()+' '+meses[nd.getMonth()]+', '+nd.getFullYear();
-  if(el('homeDate')) el('homeDate').textContent='📅 '+fechaTxt;
+  // Fecha corta tipo dt-badge (como las demás pantallas)
+  if(el('homeDate')) el('homeDate').textContent = nd.getDate()+'/'+(nd.getMonth()+1)+'/'+nd.getFullYear();
   if(el('homeName')) el('homeName').textContent = CU ? CU.nombre : '';
+  // Avatar con inicial
+  if(el('avtI') && CU) el('avtI').textContent = (CU.nombre||'U').charAt(0).toUpperCase();
+  // Badge de rol igual que las otras pantallas
+  const hrb = el('homeRolBadge');
+  if(hrb){
+    if(ROL==='superadmin'){ hrb.textContent='👑 Admin General'; hrb.style.background='rgba(247,183,49,.2)'; hrb.style.color='#ffd060'; }
+    else if(ROL==='admin'){ hrb.textContent='🔑 Administrador'; hrb.style.background='rgba(61,155,233,.2)'; hrb.style.color='#6bb8f7'; }
+    else { hrb.textContent='👤 Promotor'; hrb.style.background='rgba(136,136,160,.2)'; hrb.style.color='#8888a0'; }
+  }
   // Botón Accesos solo para superadmin y admin
   const btnAcc = el('homeBtnAccesos');
   if(btnAcc){
