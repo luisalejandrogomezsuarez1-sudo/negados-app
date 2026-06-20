@@ -19,10 +19,17 @@ body.tema-claro{ background:#eef1f6 !important; color:#1a1d24 !important; }
 body.tema-claro .topbar{ background:#ffffff; border-bottom-color:rgba(0,0,0,.09); color:#1a1d24; }
 body.tema-claro .card{ background:#ffffff; border-color:rgba(0,0,0,.09); }
 body.tema-claro input, body.tema-claro select{ background:#f3f5f8; border-color:rgba(0,0,0,.14); color:#1a1d24; }
-body.tema-claro select option{ background:#ffffff; }
+body.tema-claro select option{ background:#ffffff; color:#1a1d24; }
+body.tema-claro #fTipo, body.tema-claro #fAnio, body.tema-claro #fMes, body.tema-claro #fDia{ color:#1a1d24; }
 body.tema-claro .tgl, body.tema-claro .sc, body.tema-claro .li, body.tema-claro .fb, body.tema-claro .mb, body.tema-claro .chtab, body.tema-claro .motbtn, body.tema-claro .cs-btn{ background:#f3f5f8; border-color:rgba(0,0,0,.12); }
+body.tema-claro .cs-btn{ color:#1a1d24; }
+body.tema-claro .cs-drop{ background:#ffffff; border-color:rgba(0,0,0,.15); }
+body.tema-claro .cs-opt{ color:#1a1d24; }
+body.tema-claro .cs-opt:hover{ background:#f0f2f5; }
 body.tema-claro .nav{ background:#ffffff; border-top-color:rgba(0,0,0,.09); }
-body.tema-claro .ni{ color:#697586; }
+body.tema-claro .ni{ color:#5a6475; }
+body.tema-claro .ni span:first-child{ filter:drop-shadow(0 1px 1px rgba(0,0,0,.25)); }
+body.tema-claro .ni.on{ color:#e84855; }
 body.tema-claro .btn-o{ color:#1a1d24; border-color:rgba(0,0,0,.18); }
 body.tema-claro .pb2{ background:#e3e8ef; }
 body.tema-claro .ac-drop{ background:#ffffff; border-color:rgba(0,0,0,.15); }
@@ -669,8 +676,8 @@ select option { font-size:12px !important; }
   <button onclick="salirCliente()" style="flex-shrink:0;background:rgba(15,15,19,.12);border:1px solid rgba(15,15,19,.35);border-radius:7px;color:#0f0f13;font-size:12px;font-weight:800;padding:7px 12px;cursor:pointer;font-family:inherit;">✕ Cerrar</button>
   <div style="min-width:0;display:flex;align-items:center;gap:8px;justify-content:flex-end;text-align:right;">
     <div style="min-width:0;">
-      <div style="font-size:9px;font-weight:700;color:#0f0f13;opacity:.65;text-transform:uppercase;letter-spacing:.05em;line-height:1;">Cliente</div>
-      <div id="cliActivo" style="font-size:15px;font-weight:800;color:#0f0f13;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;line-height:1.25;"></div>
+      <div style="font-size:9px;font-weight:700;color:#ffd060;opacity:.7;text-transform:uppercase;letter-spacing:.05em;line-height:1;">Cliente</div>
+      <div id="cliActivo" style="font-size:15px;font-weight:800;color:#ffd060;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;line-height:1.25;"></div>
     </div>
     <span style="font-size:16px;">👤</span>
   </div>
