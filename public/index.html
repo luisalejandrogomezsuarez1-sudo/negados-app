@@ -22,6 +22,9 @@ body.tema-claro input, body.tema-claro select{ background:#f3f5f8; border-color:
 body.tema-claro select option{ background:#ffffff; color:#1a1d24; }
 body.tema-claro #fTipo, body.tema-claro #fAnio, body.tema-claro #fMes, body.tema-claro #fDia{ color:#1a1d24; }
 body.tema-claro .tgl, body.tema-claro .sc, body.tema-claro .li, body.tema-claro .fb, body.tema-claro .mb, body.tema-claro .chtab, body.tema-claro .motbtn, body.tema-claro .cs-btn{ background:#f3f5f8; border-color:rgba(0,0,0,.12); }
+body.tema-claro .fb, body.tema-claro .tgl, body.tema-claro .mb, body.tema-claro .chtab{ color:#1a1d24; }
+body.tema-claro .fb, body.tema-claro .tgl, body.tema-claro .mb, body.tema-claro .chtab{ color:#1a1d24; }
+body.tema-claro .fb, body.tema-claro .tgl, body.tema-claro .mb, body.tema-claro .chtab{ color:#1a1d24; }
 body.tema-claro .cs-btn{ color:#1a1d24; }
 body.tema-claro .cs-drop{ background:#ffffff; border-color:rgba(0,0,0,.15); }
 body.tema-claro .cs-opt{ color:#1a1d24; }
@@ -97,7 +100,7 @@ select option{background:#1e1e28;}
 .slist{display:flex;flex-direction:column;max-height:320px;overflow-y:auto;}
 .emp{text-align:center;color:#8888a0;font-size:13px;padding:24px 0;}
 .nav{position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:100%;max-width:480px;background:#17171e;border-top:1px solid rgba(255,255,255,.08);display:flex;z-index:20;}
-#cliBanner{position:fixed;top:0;left:50%;transform:translateX(-50%);width:100%;max-width:480px;height:42px;background:#ffd060;display:none;align-items:center;justify-content:space-between;gap:10px;padding:0 14px;z-index:30;box-shadow:0 2px 8px rgba(0,0,0,.35);}
+#cliBanner{position:fixed;top:0;left:50%;transform:translateX(-50%);width:100%;max-width:480px;height:42px;background:#22222d;border-bottom:2px solid #ffd060;display:none;align-items:center;justify-content:space-between;gap:10px;padding:0 14px;z-index:30;box-shadow:0 2px 8px rgba(0,0,0,.35);}
 body.cli-on{padding-top:42px;}
 body.cli-on #cliBanner{display:flex;}
 body.cli-on .topbar{top:42px;}
@@ -128,7 +131,7 @@ body.cli-on #captSticky{top:98px;}
 .home-bar .hb-name{font-size:17px;font-weight:800;margin-top:2px;}
 .home-modebtn{cursor:pointer;border:1px solid rgba(255,255,255,.3);background:rgba(255,255,255,.12);color:#fff;border-radius:9px;width:36px;height:36px;display:flex;align-items:center;justify-content:center;font-size:15px;flex-shrink:0;}
 .welcard{background:#22222d;border:1px solid rgba(255,255,255,.08);border-radius:12px;padding:18px;}
-.welcard .welcome{font-size:13px;color:#8888a0;}
+.welcard .welcome{font-size:14px;color:#8888a0;font-weight:600;}
 .welcard .wname{font-size:20px;font-weight:800;color:#f0f0f5;padding-bottom:14px;border-bottom:1px solid rgba(255,255,255,.08);margin-bottom:12px;}
 .statline{display:flex;justify-content:space-between;align-items:center;padding:8px 0;}
 .statline .sl-l{font-size:14px;color:#8888a0;font-weight:500;}
@@ -673,7 +676,7 @@ select option { font-size:12px !important; }
 </div>
 
 <div id="cliBanner">
-  <button onclick="salirCliente()" style="flex-shrink:0;background:rgba(15,15,19,.12);border:1px solid rgba(15,15,19,.35);border-radius:7px;color:#0f0f13;font-size:12px;font-weight:800;padding:7px 12px;cursor:pointer;font-family:inherit;">✕ Cerrar</button>
+  <button onclick="salirCliente()" style="flex-shrink:0;background:none;border:1px solid #ffd060;border-radius:7px;color:#ffd060;font-size:12px;font-weight:800;padding:7px 12px;cursor:pointer;font-family:inherit;">✕ Cerrar</button>
   <div style="min-width:0;display:flex;align-items:center;gap:8px;justify-content:flex-end;text-align:right;">
     <div style="min-width:0;">
       <div style="font-size:9px;font-weight:700;color:#ffd060;opacity:.7;text-transform:uppercase;letter-spacing:.05em;line-height:1;">Cliente</div>
@@ -705,8 +708,7 @@ select option { font-size:12px !important; }
   </div>
   <div class="body" style="padding-bottom:90px;">
     <div class="welcard">
-      <div class="welcome">Bienvenido,</div>
-      <div class="wname" id="homeWelName">—</div>
+      <div class="wname"><span class="welcome">Bienvenido,</span> <span id="homeWelName">—</span></div>
       <div class="statline"><span class="sl-l">Ventas del mes:</span><span class="sl-v" style="color:#5ddea0;" id="homeVMes">$0.00</span></div>
       <div class="statline"><span class="sl-l">Ventas del día:</span><span class="sl-v" style="color:#6bb8f7;" id="homeVDia">$0.00</span></div>
       <div class="statline"><span class="sl-l">Clientes visitados:</span><span class="sl-v" id="homeNCli">0</span></div>
@@ -755,7 +757,7 @@ select option { font-size:12px !important; }
     <span id="rolTopBadge5" style="font-size:10px;font-weight:700;padding:2px 8px;border-radius:20px;"></span>
   </div>
   <div class="body">
-    <div class="card" id="tvClienteInfo" style="background:rgba(247,183,49,.08);border:1px solid rgba(247,183,49,.3);">
+    <div class="card hide" id="tvClienteInfo" style="background:rgba(247,183,49,.08);border:1px solid rgba(247,183,49,.3);">
       <div style="font-size:10px;font-weight:700;color:#ffd060;text-transform:uppercase;letter-spacing:.06em;margin-bottom:4px;">Cliente activo</div>
       <div id="tvCliNom" style="font-size:18px;font-weight:800;color:#ffd060;">—</div>
     </div>
@@ -1737,8 +1739,8 @@ function buildCharts(dias, t, statsData){
 
   const dsSi=(data,lbl)=>({label:'✅ SÍ maneja',data,backgroundColor:'rgba(61,155,233,.85)',borderColor:'#3d9be9',borderWidth:1,borderRadius:4,barPercentage:.38});
   const dsNo=(data,lbl)=>({label:'❌ NO maneja',data,backgroundColor:'rgba(232,72,85,.85)',borderColor:'#e84855',borderWidth:1,borderRadius:4,barPercentage:.38});
-  const optsV ={responsive:true,plugins:{legend:{labels:{color:'#f0f0f5',font:{size:11},boxWidth:10}}},scales:{x:scX,y:scY}};
-  const optsH ={responsive:true,plugins:{legend:{labels:{color:'#f0f0f5',font:{size:11},boxWidth:10}}},scales:{x:{...scX},y:{...scYH,ticks:{color:'#8888a0',font:{size:10}}}}};
+  const optsV ={responsive:true,plugins:{legend:{labels:{boxWidth:0,boxHeight:0,font:{size:11},generateLabels:()=>[{text:'✅ SÍ maneja',fontColor:'#3d9be9'},{text:'❌ NO maneja',fontColor:'#e84855'}]}}},scales:{x:scX,y:scY}};
+  const optsH ={responsive:true,plugins:{legend:{labels:{boxWidth:0,boxHeight:0,font:{size:11},generateLabels:()=>[{text:'✅ SÍ maneja',fontColor:'#3d9be9'},{text:'❌ NO maneja',fontColor:'#e84855'}]}}},scales:{x:{...scX},y:{...scYH,ticks:{color:'#8888a0',font:{size:10}}}}};
 
   if(t==='dia' && dias && dias.length){
     const labels=dias.map(d=>d.label);
