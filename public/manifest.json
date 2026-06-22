@@ -4,8 +4,8 @@
   "description": "IUSA · Gestión de Promotoría",
   "start_url": "/",
   "display": "standalone",
-  "background_color": "#0a0a0c",
-  "theme_color": "#e3b23c",
+  "background_color": "#ffffff",
+  "theme_color": "#ffffff",
   "icons": [
     {
       "src": "/logo.png",
