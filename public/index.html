@@ -14,6 +14,45 @@
 <title>NegadosApp</title>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
 <style>
+/* ════ REDISEÑO NEGRO & DORADO — INICIO ════ */
+:root{ --gold:#e3b23c; }
+#scrInicio{ background:#0a0a0c; }
+#scrInicio .topbar{ background:linear-gradient(180deg,#161619,#0e0e10); border-bottom:1px solid #26262b; }
+#scrInicio .av{ background:linear-gradient(135deg,#e3b23c,#c8941f)!important; color:#0a0a0c!important; }
+#scrInicio #homeName{ color:#f0f0f2; }
+#scrInicio #homeModeBtn{ color:#e3b23c!important; border-color:#26262b!important; }
+.nd-welcome{ font-size:13px;color:#9a9aa2; }
+.nd-name{ font-size:23px;font-weight:800;color:#f0f0f2;letter-spacing:-.01em;margin-top:2px; }
+.nd-card{ background:#141417;border:1px solid #26262b;border-radius:16px;padding:16px;margin-bottom:13px; }
+.nd-ch{ display:flex;justify-content:space-between;align-items:center;margin-bottom:13px; }
+.nd-ct{ display:flex;align-items:center;gap:8px;font-size:14px;font-weight:700;color:#f0f0f2; }
+.nd-ct svg{ color:#e3b23c; }
+.nd-det{ font-size:12px;font-weight:600;color:#e3b23c; }
+.nd-srow{ display:flex; }
+.nd-scell{ flex:1; }
+.nd-scell+.nd-scell{ border-left:1px solid #26262b;padding-left:14px; }
+.nd-sv{ font-size:21px;font-weight:800;color:#f0f0f2; }
+.nd-sk{ font-size:11px;color:#65656e;margin-top:2px; }
+.nd-cli{ padding:11px 0;border-bottom:1px solid #26262b;display:flex;justify-content:space-between;align-items:center; }
+.nd-cli:last-child{ border-bottom:none; }
+.nd-cli-n{ font-size:13px;font-weight:600;color:#f0f0f2; }
+.nd-cli-m{ font-size:11px;color:#65656e;margin-top:2px; }
+.nd-cli-v{ font-size:13px;font-weight:700;color:#e3b23c; }
+.nd-grid{ display:grid;grid-template-columns:1fr 1fr 1fr;gap:11px; }
+.nd-block{ background:#141417;border:1px solid #26262b;border-radius:16px;padding:20px 8px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;cursor:pointer;transition:transform .1s;min-height:108px;text-align:center; }
+.nd-block:active{ transform:scale(.96); }
+.nd-block-i{ width:44px;height:44px;border-radius:12px;background:rgba(227,178,60,.12);display:flex;align-items:center;justify-content:center;color:#e3b23c; }
+.nd-block-t{ font-size:13px;font-weight:700;color:#f0f0f2; }
+.nd-block.wide{ grid-column:span 3;flex-direction:row;min-height:0;padding:16px;gap:12px; }
+/* Inicio en modo claro */
+body.tema-claro #scrInicio{ background:#f4f4f6; }
+body.tema-claro #scrInicio .topbar{ background:#ffffff; }
+body.tema-claro .nd-name,body.tema-claro .nd-ct,body.tema-claro .nd-sv,body.tema-claro .nd-cli-n,body.tema-claro .nd-block-t{ color:#16161a; }
+body.tema-claro .nd-card,body.tema-claro .nd-block{ background:#ffffff;border-color:#e6e6ea; }
+body.tema-claro .nd-welcome,body.tema-claro .nd-sk,body.tema-claro .nd-cli-m{ color:#5f5f6b; }
+body.tema-claro .nd-scell+.nd-scell,body.tema-claro .nd-cli{ border-color:#e6e6ea; }
+body.tema-claro .nd-det,body.tema-claro .nd-cli-v,body.tema-claro #scrInicio .av{ color:#b8860b!important; }
+body.tema-claro .nd-block-i{ background:rgba(184,134,11,.12);color:#b8860b; }
 /* ── TEMA CLARO (sobrescribe estructurales; acentos se mantienen) ── */
 body.tema-claro{ background:#eef1f6 !important; color:#1a1d24 !important; }
 body.tema-claro .topbar{ background:#ffffff; border-bottom-color:rgba(0,0,0,.09); color:#1a1d24; }
@@ -707,43 +746,65 @@ select option { font-size:12px !important; }
     <button onclick="toggleTema()" id="homeModeBtn" style="background:none;border:1px solid rgba(255,255,255,.15);border-radius:6px;color:#8888a0;font-size:14px;cursor:pointer;padding:4px 8px;font-family:inherit;">🌙</button>
   </div>
   <div class="body" style="padding-bottom:90px;">
-    <div class="welcard">
-      <div class="wname"><span class="welcome">Bienvenido,</span> <span id="homeWelName">—</span></div>
-      <div class="statline"><span class="sl-l">Ventas del mes:</span><span class="sl-v" style="color:#5ddea0;" id="homeVMes">$0.00</span></div>
-      <div class="statline"><span class="sl-l">Ventas del día:</span><span class="sl-v" style="color:#6bb8f7;" id="homeVDia">$0.00</span></div>
-      <div class="statline"><span class="sl-l">Clientes visitados:</span><span class="sl-v" id="homeNCli">0</span></div>
-      <div class="statline"><span class="sl-l">Códigos SÍ maneja:</span><span class="sl-v" style="color:#6bb8f7;" id="homeSi">0</span></div>
-      <div class="statline"><span class="sl-l">Códigos NO maneja:</span><span class="sl-v" style="color:#ff7a85;" id="homeNo">0</span></div>
+    <div>
+      <div class="nd-welcome">Bienvenido,</div>
+      <div class="nd-name" id="homeWelName">—</div>
     </div>
-    <div class="card">
-      <div class="row jb" style="margin-bottom:12px;"><h3 style="margin:0;">Clientes visitados hoy</h3><span class="pill pw" id="homeCliCount">0</span></div>
+
+    <div class="nd-card">
+      <div class="nd-ch">
+        <div class="nd-ct"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 7 13.5 15.5 8.5 10.5 2 17"/><polyline points="16 7 22 7 22 13"/></svg>Ventas</div>
+      </div>
+      <div class="nd-srow">
+        <div class="nd-scell"><div class="nd-sv" id="homeVMes">$0.00</div><div class="nd-sk">Mes</div></div>
+        <div class="nd-scell"><div class="nd-sv" id="homeVDia">$0.00</div><div class="nd-sk">Día</div></div>
+      </div>
+    </div>
+
+    <div class="nd-card">
+      <div class="nd-ch">
+        <div class="nd-ct"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10.5V8a2 2 0 0 0-2-2h-5"/><path d="m9 11 3 3L22 4"/><path d="M3 6v14a2 2 0 0 0 2 2h14"/></svg>Códigos hoy</div>
+      </div>
+      <div class="nd-srow">
+        <div class="nd-scell"><div class="nd-sv" style="color:#6bb8f7;" id="homeSi">0</div><div class="nd-sk">SÍ maneja</div></div>
+        <div class="nd-scell"><div class="nd-sv" style="color:#ff7a85;" id="homeNo">0</div><div class="nd-sk">NO maneja</div></div>
+        <div class="nd-scell"><div class="nd-sv" id="homeNCli">0</div><div class="nd-sk">Clientes</div></div>
+      </div>
+    </div>
+
+    <div class="nd-card">
+      <div class="nd-ch">
+        <div class="nd-ct"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m4 9 1-5h14l1 5M4 9v10a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1V9M4 9h16"/></svg>Clientes visitados hoy</div>
+        <span class="nd-det" id="homeCliCount">0</span>
+      </div>
       <div id="homeCliList"><div class="emp">Sin clientes hoy</div></div>
     </div>
-    <div class="home-grid">
-      <button class="hgbtn" id="homeBtnCaptura" onclick="ir('Captura')">
-        <svg width="30" height="30" viewBox="0 0 32 32" fill="none"><rect x="7" y="5" width="18" height="23" rx="3" fill="#f7b731" opacity=".18"/><rect x="7" y="5" width="18" height="23" rx="3" stroke="#f7b731" stroke-width="2"/><rect x="12" y="3" width="8" height="4.5" rx="1.5" fill="#f7b731"/><path d="M11 14h10M11 18h10M11 22h6" stroke="#f7b731" stroke-width="2" stroke-linecap="round"/></svg>
-        <span class="hgt">Captura</span>
-      </button>
-      <button class="hgbtn" onclick="ir('Dash')">
-        <svg width="30" height="30" viewBox="0 0 32 32" fill="none"><rect x="4" y="4" width="10" height="13" rx="2.5" fill="#3d9be9" opacity=".22"/><rect x="4" y="4" width="10" height="13" rx="2.5" stroke="#3d9be9" stroke-width="2"/><rect x="18" y="4" width="10" height="8" rx="2.5" stroke="#3d9be9" stroke-width="2"/><rect x="4" y="21" width="10" height="7" rx="2.5" stroke="#3d9be9" stroke-width="2"/><rect x="18" y="16" width="10" height="12" rx="2.5" fill="#3d9be9" opacity=".22"/><rect x="18" y="16" width="10" height="12" rx="2.5" stroke="#3d9be9" stroke-width="2"/></svg>
-        <span class="hgt">Dashboard</span>
-      </button>
-      <button class="hgbtn" onclick="ir('Merch')">
-        <svg width="30" height="30" viewBox="0 0 32 32" fill="none"><path d="M6 9h3l2.2 12.5a2 2 0 0 0 2 1.7h9.3a2 2 0 0 0 2-1.6L26.5 12H10" stroke="#f7b731" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M10 12h16.5l-1 5.5H11" fill="#f7b731" opacity=".2"/><circle cx="13.5" cy="26.5" r="2" fill="#f7b731"/><circle cx="24" cy="26.5" r="2" fill="#f7b731"/></svg>
-        <span class="hgt">Merch</span>
-      </button>
-      <button class="hgbtn" onclick="ir('TotalVenta')">
-        <svg width="30" height="30" viewBox="0 0 32 32" fill="none"><rect x="4" y="8" width="24" height="16" rx="3" fill="#30c97e" opacity=".18"/><rect x="4" y="8" width="24" height="16" rx="3" stroke="#30c97e" stroke-width="2"/><circle cx="16" cy="16" r="4" stroke="#30c97e" stroke-width="2"/><path d="M16 14v4M14.7 14.8h2.3a.9.9 0 0 1 0 1.8h-1.8a.9.9 0 0 0 0 1.8H17" stroke="#30c97e" stroke-width="1.3" stroke-linecap="round"/></svg>
-        <span class="hgt">Venta</span>
-      </button>
-      <button class="hgbtn" onclick="ir('Rep')">
-        <svg width="30" height="30" viewBox="0 0 32 32" fill="none"><path d="M5 7a2 2 0 0 1 2-2h6l3 3h9a2 2 0 0 1 2 2v13a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V7Z" fill="#e84855" opacity=".18"/><path d="M5 7a2 2 0 0 1 2-2h6l3 3h9a2 2 0 0 1 2 2v13a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V7Z" stroke="#e84855" stroke-width="2" stroke-linejoin="round"/><path d="M11 19v-3M16 19v-6M21 19v-4" stroke="#e84855" stroke-width="2" stroke-linecap="round"/></svg>
-        <span class="hgt">Reportes</span>
-      </button>
-      <button class="hgbtn hide" id="homeBtnAccesos" onclick="ir('Accesos')">
-        <svg width="30" height="30" viewBox="0 0 32 32" fill="none"><circle cx="12" cy="11" r="4.5" fill="#f7b731" opacity=".2"/><circle cx="12" cy="11" r="4.5" stroke="#f7b731" stroke-width="2"/><path d="M4.5 26c0-4.4 3.4-7.5 7.5-7.5s7.5 3.1 7.5 7.5" stroke="#f7b731" stroke-width="2" stroke-linecap="round"/><circle cx="23" cy="13" r="3.2" stroke="#f7b731" stroke-width="2"/><path d="M21 26c.3-3.4 2-5.5 4.8-5.8" stroke="#f7b731" stroke-width="2" stroke-linecap="round"/></svg>
-        <span class="hgt">Accesos</span>
-      </button>
+
+    <div class="nd-grid">
+      <div class="nd-block" id="homeBtnCaptura" onclick="ir('Captura')">
+        <div class="nd-block-i"><svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg></div>
+        <span class="nd-block-t">Captura</span>
+      </div>
+      <div class="nd-block" onclick="ir('Dash')">
+        <div class="nd-block-i"><svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" x2="18" y1="20" y2="10"/><line x1="12" x2="12" y1="20" y2="4"/><line x1="6" x2="6" y1="20" y2="14"/></svg></div>
+        <span class="nd-block-t">Dashboard</span>
+      </div>
+      <div class="nd-block" onclick="ir('Merch')">
+        <div class="nd-block-i"><svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4Z"/><path d="M3 6h18"/><path d="M16 10a4 4 0 0 1-8 0"/></svg></div>
+        <span class="nd-block-t">Merch</span>
+      </div>
+      <div class="nd-block" onclick="ir('TotalVenta')">
+        <div class="nd-block-i"><svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 5H5a2 2 0 0 0-2 2v10a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2Z"/><path d="M3 10h18"/></svg></div>
+        <span class="nd-block-t">Venta</span>
+      </div>
+      <div class="nd-block" onclick="ir('Rep')">
+        <div class="nd-block-i"><svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z"/><path d="M14 2v5h5"/><path d="M9 13h6M9 17h6"/></svg></div>
+        <span class="nd-block-t">Reportes</span>
+      </div>
+      <div class="nd-block hide" id="homeBtnAccesos" onclick="ir('Accesos')">
+        <div class="nd-block-i"><svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10Z"/></svg></div>
+        <span class="nd-block-t">Accesos</span>
+      </div>
     </div>
   </div>
 </div>
@@ -2636,14 +2697,10 @@ async function refInicio() {
     else {
       lst.innerHTML = clientes.map(cli=>{
         const c = porCliente[cli];
-        return `<div class="home-cli">
-          <div class="hc-top">
-            <div class="hc-name"><svg width="14" height="14" viewBox="0 0 24 24" fill="none"><path d="M4 9 5 4h14l1 5M5 9v10a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V9M4 9h16" stroke="#ffd060" stroke-width="2" stroke-linejoin="round"/></svg>${cli}</div>
-            <div class="hc-time">${c.ultima||''}</div>
-          </div>
-          <div class="hc-stats">
-            <span class="hchip hchip-y">${c.si} maneja</span>
-            <span class="hchip hchip-n">${c.no} no</span>
+        return `<div class="nd-cli">
+          <div>
+            <div class="nd-cli-n">${cli}</div>
+            <div class="nd-cli-m">${c.ultima||''} · ${c.si} maneja, ${c.no} no maneja</div>
           </div>
         </div>`;
       }).join('');
