@@ -1817,9 +1817,14 @@ function buildTop(arr,id,col,bcol){
 }
 
 function mkChart(id,cfg){if(chs[id])chs[id].destroy();const c=el(id);if(!c)return;chs[id]=new Chart(c.getContext('2d'),cfg);}
+const gridClr=()=>document.body.classList.contains('tema-claro')?'rgba(0,0,0,.08)':'rgba(255,255,255,.04)';
+const tickClr=()=>document.body.classList.contains('tema-claro')?'#5f5f6b':'#8888a0';
 const scX={ticks:{color:'#8888a0',font:{size:9}},grid:{color:'rgba(255,255,255,.04)'}};
 const scY={ticks:{color:'#8888a0',font:{size:10}},grid:{color:'rgba(255,255,255,.04)'}};
 const scYH={ticks:{color:'#8888a0',font:{size:9}},grid:{color:'rgba(255,255,255,.04)'}};
+function scXd(){return{ticks:{color:tickClr(),font:{size:9}},grid:{color:gridClr()}};}
+function scYd(){return{ticks:{color:tickClr(),font:{size:10}},grid:{color:gridClr()}};}
+function scYHd(){return{ticks:{color:tickClr(),font:{size:9}},grid:{color:gridClr()}};}
 
 // Store last stats for chart re-use when switching tabs
 let _lastStats = null;
@@ -1831,8 +1836,8 @@ function buildCharts(dias, t, statsData){
 
   const dsSi=(data,lbl)=>({label:'✅ SÍ maneja',data,backgroundColor:'rgba(61,155,233,.85)',borderColor:'#3d9be9',borderWidth:1,borderRadius:4,barPercentage:.38});
   const dsNo=(data,lbl)=>({label:'❌ NO maneja',data,backgroundColor:'rgba(232,72,85,.85)',borderColor:'#e84855',borderWidth:1,borderRadius:4,barPercentage:.38});
-  const optsV ={responsive:true,plugins:{legend:{labels:{boxWidth:0,boxHeight:0,font:{size:11},generateLabels:()=>[{text:'✅ SÍ maneja',fontColor:'#3d9be9'},{text:'❌ NO maneja',fontColor:'#e84855'}]}}},scales:{x:scX,y:scY}};
-  const optsH ={responsive:true,plugins:{legend:{labels:{boxWidth:0,boxHeight:0,font:{size:11},generateLabels:()=>[{text:'✅ SÍ maneja',fontColor:'#3d9be9'},{text:'❌ NO maneja',fontColor:'#e84855'}]}}},scales:{x:{...scX},y:{...scYH,ticks:{color:'#8888a0',font:{size:10}}}}};
+  const optsV ={responsive:true,plugins:{legend:{labels:{boxWidth:0,boxHeight:0,font:{size:11},generateLabels:()=>[{text:'✅ SÍ maneja',fontColor:'#3d9be9'},{text:'❌ NO maneja',fontColor:'#e84855'}]}}},scales:{x:scXd(),y:scYd()}};
+  const optsH ={responsive:true,plugins:{legend:{labels:{boxWidth:0,boxHeight:0,font:{size:11},generateLabels:()=>[{text:'✅ SÍ maneja',fontColor:'#3d9be9'},{text:'❌ NO maneja',fontColor:'#e84855'}]}}},scales:{x:{...scXd()},y:{...scYHd(),ticks:{color:tickClr(),font:{size:10}}}}};
 
   if(t==='dia' && dias && dias.length){
     const labels=dias.map(d=>d.label);
